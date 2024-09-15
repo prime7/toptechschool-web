@@ -1,19 +1,18 @@
-import { getToken } from "next-auth/jwt";
-import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const RESTRICTED_ROUTES = ["/upload"];
 
-export async function middleware(req: NextRequest) {
-  const response = NextResponse.next();
+export default async function middleware(req: NextRequest) {
+  const session = await auth();
   const { pathname } = req.nextUrl;
-  const token = await getToken({ req });
-  const isAuthenticated = !!token;
 
   if (RESTRICTED_ROUTES.some((route) => pathname.startsWith(route))) {
-    if (!isAuthenticated) {
+    if (!session) {
       return NextResponse.redirect(new URL("/api/auth/signin", req.url));
     }
   }
 
-  return response;
+  return NextResponse.next();
 }

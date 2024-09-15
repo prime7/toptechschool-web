@@ -1,33 +1,27 @@
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import type { NextAuthOptions } from "next-auth";
-import { Adapter } from "next-auth/adapters";
-import type { DefaultSession } from "next-auth";
 import { prisma } from "./prisma";
 
-declare module "next-auth" {
-  interface Session {
-    user: DefaultSession["user"] & {
-      id: string;
-    };
-  }
-}
-
-export const authOptions: NextAuthOptions = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    Google({
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
   ],
-  adapter: PrismaAdapter(prisma) as Adapter,
-  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, account, user, trigger, session }) {
-      if (trigger === "update" && session?.name && token.id) {
+      if (trigger === "update" && session?.name && token.sub) {
         token.name = session.name;
         await prisma.user.update({
-          where: { id: token.id.toString() },
+          where: { id: token.sub },
           data: { name: session.name },
         });
       }
@@ -44,11 +38,10 @@ export const authOptions: NextAuthOptions = {
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
-
       return session;
     },
   },
   session: {
     strategy: "jwt",
   },
-};
+});
