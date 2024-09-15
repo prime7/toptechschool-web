@@ -40,7 +40,7 @@ export const POST = async (request: Request) => {
     await prisma.resume.update({
       where: { id: resume.id },
       data: {
-        url: `https://pub-52492f67bab14daaa9848d7a6eea862f.r2.dev/${encodedKey}`,
+        url: `${process.env.CLOUDFLARE_R2_ENDPOINT}/${encodedKey}`,
       },
     });
     return NextResponse.json({ signedUrl, resumeId: resume.id });
