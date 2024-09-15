@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 import React from "react";
 
 export default function Home() {
@@ -11,6 +12,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 bg-white rounded-lg shadow-md text-center">
         <h1 className="text-3xl font-bold mb-6">Welcome to Our App</h1>
+        <Link href="/upload">Resume</Link>
 
         {status === "loading" ? (
           <p className="text-gray-600 mb-4">Loading...</p>
