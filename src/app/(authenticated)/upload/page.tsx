@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+export const runtime = "edge";
+
 export default function UploadPage() {
   const router = useRouter();
   const [uploadStatus, setUploadStatus] = useState<

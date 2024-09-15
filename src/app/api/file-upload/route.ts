@@ -48,3 +48,5 @@ export const POST = async (request: Request) => {
     return NextResponse.json({ error: "Error generating signed URL" });
   }
 };
+
+export const runtime = "edge";

@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle, XCircle } from "lucide-react";
 
+export const runtime = "edge";
+
 interface ResumeContent {
   name: string;
   email: string;

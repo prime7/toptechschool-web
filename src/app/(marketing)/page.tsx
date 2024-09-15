@@ -5,6 +5,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 
+export const runtime = "edge";
+
 export default function Home() {
   const { data: session, status } = useSession();
 
