@@ -65,6 +65,7 @@ export default function Resume() {
 
   useEffect(() => {
     fetchResumeData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resumeId]);
 
   if (loading) {
