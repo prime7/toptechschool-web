@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -102,9 +101,6 @@ export default function UploadPage() {
             </div>
           )}
         </div>
-        <Button className="w-full" disabled={uploadStatus === "uploading"}>
-          {uploadStatus === "success" ? "Get ATS Feedback" : "Upload Resume"}
-        </Button>
       </div>
     </div>
   );
