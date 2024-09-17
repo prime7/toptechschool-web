@@ -5,8 +5,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 
-export const runtime = "edge";
-
 export default function Home() {
   const { data: session, status } = useSession();
 
@@ -18,7 +16,7 @@ export default function Home() {
 
         {status === "loading" ? (
           <p className="text-gray-600 mb-4">Loading...</p>
-        ) : session ? (
+        ) : session && session.user ? (
           <>
             <p className="text-xl mb-4">Hello, {session.user.name}!</p>
             <p className="text-gray-600 mb-6">
