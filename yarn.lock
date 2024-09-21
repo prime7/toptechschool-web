@@ -4351,6 +4351,11 @@ hast-util-whitespace@^3.0.0:
   dependencies:
     "@types/hast" "^3.0.0"
 
+hono@^4.6.2:
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-4.6.2.tgz#bdb2d3d33aedcdb8aaa0f12b67b738edf2b1ab37"
+  integrity sha512-v+39817TgAhetmHUEli8O0uHDmxp2Up3DnhS4oUZXOl5IQ9np9tYtldd42e5zgdLVS0wsOoXQNZ6mx+BGmEvCA==
+
 http-errors@1.7.3:
   version "1.7.3"
   resolved "https://registry.npmjs.org/http-errors/-/http-errors-1.7.3.tgz#6c619e4f9c60308c38519498c14fbb10aacebb06"

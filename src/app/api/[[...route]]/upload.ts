@@ -1,22 +1,24 @@
+import { Hono } from "hono";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import s3Client from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { NextResponse } from "next/server";
 
-export const POST = async (request: Request) => {
-  const { filename, fileType } = await request.json();
-  const session = await auth();
+const uploadApp = new Hono();
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ message: "Unauthorized" });
-  }
-
+uploadApp.post("/", async (c) => {
   try {
+    const { filename, fileType } = await c.req.json();
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return c.json({ message: "Unauthorized" }, 401);
+    }
+
     const resume = await prisma.resume.create({
       data: {
-        userId: session.user?.id,
+        userId: session.user.id,
         filename,
         url: "",
       },
@@ -40,8 +42,11 @@ export const POST = async (request: Request) => {
         url: `${process.env.CLOUDFLARE_R2_ENDPOINT}/${encodedKey}`,
       },
     });
-    return NextResponse.json({ signedUrl, resumeId: resume.id });
+    return c.json({ signedUrl, resumeId: resume.id });
   } catch (error) {
-    return NextResponse.json({ error: "Error generating signed URL" });
+    console.error("Error processing upload request:", error);
+    return c.json({ error: "Error processing upload request" }, 500);
   }
-};
+});
+
+export default uploadApp;
