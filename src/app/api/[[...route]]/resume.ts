@@ -5,15 +5,12 @@ import { parseResumeAndAnalyzeATS } from "@/lib/parser";
 
 const resumeApp = new Hono();
 
-const uuidPattern =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
 resumeApp.get(
   "/:resumeId",
   validator("param", (value, c) => {
     const { resumeId } = value;
-    if (!uuidPattern.test(resumeId)) {
-      return c.json({ message: "Invalid resumeId format" }, 400);
+    if (!resumeId) {
+      return c.json({ message: "resumeId is required" }, 400);
     }
     return { resumeId };
   }),
