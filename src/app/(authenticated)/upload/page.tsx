@@ -43,12 +43,12 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-light-background">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800">
+        <h2 className="text-2xl font-bold text-center text-light-text">
           Resume Upload
         </h2>
-        <p className="text-center text-gray-600">
+        <p className="text-center text-light-secondary">
           Upload your resume to get ATS-friendly feedback and improve your
           chances of landing an interview.
         </p>
@@ -56,15 +56,15 @@ export default function UploadPage() {
           <div className="flex items-center justify-center w-full">
             <Label
               htmlFor="resume"
-              className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+              className="flex flex-col items-center justify-center w-full h-32 border-2 border-light-border border-dashed rounded-lg cursor-pointer bg-light-hover hover:bg-light-primary/10"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                <p className="mb-2 text-sm text-gray-500">
+                <Upload className="w-10 h-10 mb-3 text-light-muted" />
+                <p className="mb-2 text-sm text-light-secondary">
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-light-muted">
                   PDF, DOC, or DOCX (MAX. 5MB)
                 </p>
               </div>
@@ -78,12 +78,12 @@ export default function UploadPage() {
             </Label>
           </div>
           {fileName && (
-            <p className="text-sm text-gray-600 text-center">
+            <p className="text-sm text-light-secondary text-center">
               Selected file: {fileName}
             </p>
           )}
           {uploadStatus === "uploading" && (
-            <div className="flex items-center justify-center text-blue-500">
+            <div className="flex items-center justify-center text-light-primary">
               <AlertCircle className="animate-spin mr-2" />
               Uploading...
             </div>

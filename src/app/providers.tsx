@@ -2,6 +2,7 @@
 
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "next-themes";
 
 interface Props {
   children?: React.ReactNode;
@@ -10,8 +11,10 @@ interface Props {
 export const Providers = ({ children }: Props) => {
   return (
     <SessionProvider>
-      {children}
-      <Toaster />
+      <ThemeProvider attribute="class" defaultTheme="light">
+        {children}
+        <Toaster />
+      </ThemeProvider>
     </SessionProvider>
   );
 };
