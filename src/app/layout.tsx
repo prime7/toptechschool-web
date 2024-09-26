@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
 import { Providers } from "./providers";
-import ThemeSwitch from "./Switch";
+import Navbar from "@/components/navbar";
+import "./globals.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,12 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Providers>
-          <ThemeSwitch />
           <main className="flex flex-col min-h-screen min-w-full">
+            <Navbar />
             {children}
           </main>
         </Providers>

@@ -10,12 +10,12 @@ const BlogPost: React.FC<{
   mdxSource: MDXRemoteSerializeResult;
 }> = ({ mdxSource }) => {
   return (
-    <div className="prose dark:prose-invert mx-auto my-8 p-4">
-      <h1 className="text-light-text dark:text-dark-text">
+    <div className="prose mx-auto my-8 p-4">
+      <h1 className="text-foreground">
         {mdxSource.frontmatter?.title as string}
       </h1>
       <div className="flex flex-row justify-between items-center">
-        <Badge className="capitalize bg-light-primary/10 text-light-primary dark:bg-dark-primary/10 dark:text-dark-primary">
+        <Badge className="capitalize bg-primary/10 text-primary">
           {mdxSource.frontmatter?.category as string}
         </Badge>
         <div>
@@ -23,7 +23,7 @@ const BlogPost: React.FC<{
             <Button
               variant="outline"
               size="sm"
-              className="text-light-text dark:text-dark-text border-light-border dark:border-dark-border hover:bg-light-hover dark:hover:bg-dark-hover"
+              className="text-foreground border-border hover:bg-accent"
             >
               <MoveLeft size={20} className="mr-2" />
               Back
@@ -31,7 +31,7 @@ const BlogPost: React.FC<{
           </Link>
         </div>
       </div>
-      <div className="flex flex-row gap-2 divide-x mt-2 text-light-muted dark:text-dark-muted">
+      <div className="flex flex-row gap-2 divide-x mt-2 text-muted-foreground">
         <span>Published on: {mdxSource.frontmatter?.date as string}</span>
         <span className="pl-2">
           {(mdxSource.frontmatter?.author as { name: string }[])[0]?.name}
@@ -43,10 +43,10 @@ const BlogPost: React.FC<{
           width={Number(mdxSource.frontmatter.coverImageWidth) || 0}
           src={mdxSource.frontmatter.coverImage}
           alt="Blog thumbnail"
-          className="dark:filter dark:brightness-90"
+          className="filter brightness-100"
         />
       )}
-      <div className="text-light-text dark:text-dark-text">
+      <div className="text-foreground">
         <MDXRemote {...mdxSource} />
       </div>
     </div>

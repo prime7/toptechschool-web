@@ -11,7 +11,13 @@ interface Props {
 export const Providers = ({ children }: Props) => {
   return (
     <SessionProvider>
-      <ThemeProvider attribute="class" defaultTheme="light">
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        enableSystem
+        disableTransitionOnChange
+        themes={["light", "dark", "orange"]}
+      >
         {children}
         <Toaster />
       </ThemeProvider>

@@ -1,6 +1,6 @@
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="container mx-auto bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">
+    <div className="container mx-auto bg-background text-foreground">
       {children}
     </div>
   );
