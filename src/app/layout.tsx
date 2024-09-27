@@ -27,12 +27,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col bg-background`}
+      >
         <Providers>
-          <main className="flex flex-col min-h-screen min-w-full ">
-            <Navbar />
-            {children}
-          </main>
+          <Navbar />
+          <main className="flex-1">{children}</main>
         </Providers>
       </body>
     </html>

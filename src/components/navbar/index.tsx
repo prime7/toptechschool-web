@@ -42,7 +42,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-background shadow-sm">
+    <nav className="bg-background shadow-sm border-b border-border">
       <div className="container mx-auto">
         <div className="flex justify-between h-16">
           <div className="flex">
