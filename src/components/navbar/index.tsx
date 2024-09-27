@@ -46,9 +46,6 @@ const Navbar = () => {
       <div className="container mx-auto">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-foreground">Logo</span>
-            </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navItems.map((item) => (
                 <a

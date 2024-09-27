@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <div className="h-[calc(100vh-64px)] flex items-center justify-center">
-      <Card className="w-[350px] border-secondary">
+      <Card className="w-[350px]">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center">
             Welcome to Toptechschool
