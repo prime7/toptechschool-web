@@ -17,7 +17,7 @@ export default function Home() {
             asChild
             className="px-6 py-3 text-lg font-semibold rounded-full"
           >
-            <Link href="/upload">Upload Your Resume</Link>
+            <Link href="/resume">Upload Your Resume</Link>
           </Button>
         </CardContent>
       </Card>

@@ -36,7 +36,7 @@ export default function UploadPage() {
         },
       });
       setUploadStatus("success");
-      router.push(`/upload/feedback/${res.data.resumeId}`);
+      router.push(`/resume/feedback/${res.data.resumeId}`);
     } catch (err) {
       console.log(err);
       setUploadStatus("error");

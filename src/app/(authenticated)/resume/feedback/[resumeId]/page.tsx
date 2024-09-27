@@ -70,7 +70,7 @@ export default function Resume() {
 
   if (loading) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="container mx-auto px-4 py-8 space-y-4">
         <Skeleton className="h-8 w-3/4" />
         <Skeleton className="h-4 w-1/2" />
         <Skeleton className="h-[150px]" />
@@ -80,28 +80,30 @@ export default function Resume() {
 
   if (error) {
     return (
-      <Alert variant="destructive" className="m-4">
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
+      <div className="container mx-auto px-4 py-8">
+        <Alert variant="destructive" className="m-4">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </div>
     );
   }
 
   if (!resumeData) {
     return (
-      <Alert className="m-4">
-        <AlertTitle>No Data</AlertTitle>
-        <AlertDescription>No resume data found.</AlertDescription>
-      </Alert>
+      <div className="container mx-auto px-4 py-8">
+        <Alert className="m-4">
+          <AlertTitle>No Data</AlertTitle>
+          <AlertDescription>No resume data found.</AlertDescription>
+        </Alert>
+      </div>
     );
   }
 
   return (
-    <div className="p-4 bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">
+    <div className="container mx-auto px-4 py-8 bg-background text-foreground">
       <h1 className="text-2xl font-bold mb-4">Resume Analysis</h1>
-      <p className="mb-4 text-sm text-light-muted dark:text-dark-muted">
-        {resumeData.message}
-      </p>
+      <p className="mb-4 text-sm text-muted-foreground">{resumeData.message}</p>
 
       <Tabs defaultValue="content" className="mb-4">
         <TabsList className="grid w-full grid-cols-2">
@@ -110,17 +112,17 @@ export default function Resume() {
         </TabsList>
         <TabsContent value="content">
           {resumeData.content && (
-            <Card className="mt-4 bg-light-background dark:bg-dark-background border-light-border dark:border-dark-border">
+            <Card className="mt-4 bg-background border-border">
               <CardHeader>
                 <CardTitle className="text-lg">Resume Content</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <div>
                   <h2 className="font-semibold">{resumeData.content.name}</h2>
-                  <p className="text-light-muted dark:text-dark-muted">
+                  <p className="text-muted-foreground">
                     {resumeData.content.email} | {resumeData.content.phone}
                   </p>
-                  <p className="text-light-muted dark:text-dark-muted">
+                  <p className="text-muted-foreground">
                     {resumeData.content.address}
                   </p>
                 </div>
@@ -145,7 +147,7 @@ export default function Resume() {
                       <Badge
                         key={index}
                         variant="secondary"
-                        className="text-xs bg-light-secondary/20 text-light-secondary dark:bg-dark-secondary/20 dark:text-dark-secondary"
+                        className="text-xs bg-secondary/20 text-secondary"
                       >
                         {skill}
                       </Badge>
@@ -160,7 +162,7 @@ export default function Resume() {
                       <Badge
                         key={index}
                         variant="outline"
-                        className="text-xs border-light-border dark:border-dark-border"
+                        className="text-xs border-border"
                       >
                         {language}
                       </Badge>
@@ -173,12 +175,12 @@ export default function Resume() {
         </TabsContent>
         <TabsContent value="analysis">
           {resumeData.atsAnalysis && (
-            <Card className="mt-4 bg-light-background dark:bg-dark-background border-light-border dark:border-dark-border">
+            <Card className="mt-4 bg-background border-border">
               <CardHeader>
                 <CardTitle className="text-lg">ATS Analysis</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
                     {
                       label: "Formatting",
@@ -207,9 +209,9 @@ export default function Resume() {
                   ].map((item, index) => (
                     <div key={index} className="flex items-center space-x-1">
                       {item.value ? (
-                        <CheckCircle className="h-4 w-4 text-green-500 dark:text-green-400" />
+                        <CheckCircle className="h-4 w-4 text-green-500" />
                       ) : (
-                        <XCircle className="h-4 w-4 text-red-500 dark:text-red-400" />
+                        <XCircle className="h-4 w-4 text-red-500" />
                       )}
                       <span>{item.label}</span>
                     </div>
@@ -220,7 +222,7 @@ export default function Resume() {
                   <span className="font-semibold">File Type:</span>
                   <Badge
                     variant="secondary"
-                    className="ml-2 text-xs bg-light-secondary/20 text-light-secondary dark:bg-dark-secondary/20 dark:text-dark-secondary"
+                    className="ml-2 text-xs bg-secondary/20 text-secondary"
                   >
                     {resumeData.atsAnalysis.fileType}
                   </Badge>
@@ -234,7 +236,7 @@ export default function Resume() {
                         <div key={index}>
                           <div className="flex justify-between text-xs mb-1">
                             <span>{keyword.keyword}</span>
-                            <span className="text-light-muted dark:text-dark-muted">
+                            <span className="text-muted-foreground">
                               {keyword.count} ({keyword.density.toFixed(2)}%)
                             </span>
                           </div>
@@ -249,7 +251,7 @@ export default function Resume() {
                   <h3 className="font-semibold">Readability Score</h3>
                   <p className="text-lg font-bold">
                     {resumeData.atsAnalysis.readabilityScore.toFixed(1)}
-                    <span className="text-xs font-normal text-light-muted dark:text-dark-muted ml-1">
+                    <span className="text-xs font-normal text-muted-foreground ml-1">
                       (Flesch-Kincaid)
                     </span>
                   </p>
