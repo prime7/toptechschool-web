@@ -28,7 +28,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
+    --border: 240 5.9% 80%;
     --input: 240 5.9% 90%;
     --ring: 240 10% 3.9%;
 
@@ -60,7 +60,7 @@
     --destructive: 0 70% 50%;
     --destructive-foreground: 210 18% 85%;
 
-    --border: 215 14% 26%;
+    --border: 215 14% 35%;
     --input: 215 14% 26%;
     --ring: 216 12% 84%;
   }

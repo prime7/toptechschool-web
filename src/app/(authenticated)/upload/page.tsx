@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -43,65 +44,69 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-light-background">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-light-text">
-          Resume Upload
-        </h2>
-        <p className="text-center text-light-secondary">
-          Upload your resume to get ATS-friendly feedback and improve your
-          chances of landing an interview.
-        </p>
-        <div className="space-y-4">
-          <div className="flex items-center justify-center w-full">
-            <Label
-              htmlFor="resume"
-              className="flex flex-col items-center justify-center w-full h-32 border-2 border-light-border border-dashed rounded-lg cursor-pointer bg-light-hover hover:bg-light-primary/10"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="w-10 h-10 mb-3 text-light-muted" />
-                <p className="mb-2 text-sm text-light-secondary">
-                  <span className="font-semibold">Click to upload</span> or drag
-                  and drop
-                </p>
-                <p className="text-xs text-light-muted">
-                  PDF, DOC, or DOCX (MAX. 5MB)
-                </p>
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">
+            Resume Upload
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <p className="text-center text-muted-foreground">
+            Upload your resume to get ATS-friendly feedback and improve your
+            chances of landing an interview.
+          </p>
+          <div className="space-y-4">
+            <div className="flex items-center justify-center w-full">
+              <Label
+                htmlFor="resume"
+                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-accent hover:bg-opacity-50"
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <Upload className="w-10 h-10 mb-3 text-muted-foreground" />
+                  <p className="mb-2 text-sm text-muted-foreground">
+                    <span className="font-semibold">Click to upload</span> or
+                    drag and drop
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    PDF, DOC, or DOCX (MAX. 5MB)
+                  </p>
+                </div>
+                <Input
+                  id="resume"
+                  type="file"
+                  className="hidden"
+                  onChange={handleUpload}
+                  accept=".pdf,.doc,.docx"
+                />
+              </Label>
+            </div>
+            {fileName && (
+              <p className="text-sm text-muted-foreground text-center">
+                Selected file: {fileName}
+              </p>
+            )}
+            {uploadStatus === "uploading" && (
+              <div className="flex items-center justify-center text-primary">
+                <AlertCircle className="animate-spin mr-2" />
+                Uploading...
               </div>
-              <Input
-                id="resume"
-                type="file"
-                className="hidden"
-                onChange={handleUpload}
-                accept=".pdf,.doc,.docx"
-              />
-            </Label>
+            )}
+            {uploadStatus === "success" && (
+              <div className="flex items-center justify-center text-green-500">
+                <CheckCircle className="mr-2" />
+                Upload successful!
+              </div>
+            )}
+            {uploadStatus === "error" && (
+              <div className="flex items-center justify-center text-destructive">
+                <AlertCircle className="mr-2" />
+                Upload failed. Please try again.
+              </div>
+            )}
           </div>
-          {fileName && (
-            <p className="text-sm text-light-secondary text-center">
-              Selected file: {fileName}
-            </p>
-          )}
-          {uploadStatus === "uploading" && (
-            <div className="flex items-center justify-center text-light-primary">
-              <AlertCircle className="animate-spin mr-2" />
-              Uploading...
-            </div>
-          )}
-          {uploadStatus === "success" && (
-            <div className="flex items-center justify-center text-green-500">
-              <CheckCircle className="mr-2" />
-              Upload successful!
-            </div>
-          )}
-          {uploadStatus === "error" && (
-            <div className="flex items-center justify-center text-red-500">
-              <AlertCircle className="mr-2" />
-              Upload failed. Please try again.
-            </div>
-          )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
