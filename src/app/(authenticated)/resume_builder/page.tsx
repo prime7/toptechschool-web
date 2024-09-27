@@ -2,16 +2,18 @@ import ContactInfoForm from "@/components/resume/ContactInfoForm";
 import EducationForm from "@/components/resume/EducationForm";
 import PersonalDetailsForm from "@/components/resume/PersonalDetailsForm";
 import SkillsForm from "@/components/resume/SkillsForm";
+import SummaryForm from "@/components/resume/SummaryForm";
 import WorkExperienceForm from "@/components/resume/WorkExperienceForm";
 import React from "react";
 
 export default function page() {
   return (
-    <div>
-      <h1 className="text-center text-2xl py-20">Create your resume</h1>
+    <div className="container mx-auto max-w-screen-lg ">
+      <h1 className="text-center text-2xl py-5">Create your resume</h1>
       <form action="">
         <PersonalDetailsForm />
         <ContactInfoForm />
+        <SummaryForm />
         <EducationForm />
         <WorkExperienceForm />
         <SkillsForm />
