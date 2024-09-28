@@ -1,6 +1,8 @@
+import CertificationForm from "@/components/resume/CertificationForm";
 import ContactInfoForm from "@/components/resume/ContactInfoForm";
 import EducationForm from "@/components/resume/EducationForm";
 import PersonalDetailsForm from "@/components/resume/PersonalDetailsForm";
+import ProjectsForm from "@/components/resume/ProjectsForm";
 import SkillsForm from "@/components/resume/SkillsForm";
 import SummaryForm from "@/components/resume/SummaryForm";
 import WorkExperienceForm from "@/components/resume/WorkExperienceForm";
@@ -15,8 +17,10 @@ export default function page() {
         <ContactInfoForm />
         <SummaryForm />
         <EducationForm />
-        <WorkExperienceForm />
         <SkillsForm />
+        <WorkExperienceForm />
+        <ProjectsForm />
+        <CertificationForm />
       </form>
     </div>
   );
