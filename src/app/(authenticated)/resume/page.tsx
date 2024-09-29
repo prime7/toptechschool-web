@@ -5,13 +5,41 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
+export const revalidate = 300;
+
 export default async function UploadPage() {
   const user = await auth();
-  const resumes = await prisma.resume.findMany({
-    where: {
-      userId: user?.user?.id,
-    },
-  });
+  type ResumeField = "id" | "filename" | "createdAt" | "url";
+
+  type ResumeData = {
+    [K in ResumeField]?: K extends "id" | "filename"
+      ? string
+      : K extends "createdAt"
+      ? Date
+      : string;
+  };
+
+  async function getResumes(
+    userId: string | undefined,
+    fields: ResumeField[]
+  ): Promise<ResumeData[]> {
+    return await prisma.resume.findMany({
+      where: {
+        userId: userId,
+      },
+      select: fields.reduce((acc, field) => ({ ...acc, [field]: true }), {}),
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 10,
+    });
+  }
+
+  const resumes = await getResumes(user?.user?.id, [
+    "id",
+    "filename",
+    "createdAt",
+  ]);
 
   return (
     <div className="container mx-auto py-8">
@@ -35,11 +63,18 @@ export default async function UploadPage() {
           <Link href={`/resume/feedback/${resume.id}`} key={resume.id}>
             <Card className="cursor-pointer hover:shadow-md transition-shadow">
               <CardHeader>
-                <CardTitle>{resume.filename}</CardTitle>
+                <CardTitle>
+                  {resume.filename && resume.filename.length > 20
+                    ? resume.filename.substring(0, 17) + "..."
+                    : resume.filename || "Untitled Resume"}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p>
-                  Uploaded on: {new Date(resume.createdAt).toLocaleDateString()}
+                  Uploaded on:{" "}
+                  {resume.createdAt
+                    ? new Date(resume.createdAt).toLocaleDateString()
+                    : "N/A"}
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
                   Click to view feedback
