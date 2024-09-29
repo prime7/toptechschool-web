@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { waitlistSchema, WaitlistInput } from "@/validations/waitlist";
+import { waitlistSchema, WaitlistInput } from "./schema";
 
 export async function submitToWaitlist(data: WaitlistInput) {
   try {

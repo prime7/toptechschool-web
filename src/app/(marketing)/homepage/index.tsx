@@ -16,7 +16,7 @@ import { FeatureItem } from "./Feature";
 import { submitToWaitlist } from "@/actions/waitlist";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { waitlistSchema, WaitlistInput } from "@/validations/waitlist";
+import { waitlistSchema, WaitlistInput } from "@/actions/waitlist";
 
 export default function Home() {
   const waitlistRef = useRef<HTMLDivElement>(null);
