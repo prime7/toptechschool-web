@@ -68,6 +68,12 @@ model Resume {
   parsed ParsingStatus @default(NOT_STARTED)
 }
 
+model Waitlist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
 enum ParsingStatus {
   NOT_STARTED
   STARTED
