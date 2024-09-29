@@ -1,3 +1,5 @@
+"use server";
+
 import fs from "fs/promises";
 import matter from "gray-matter";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";

@@ -1,8 +1,13 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import axios from "axios";
 import pdf from "pdf-parse";
+import { ResumeContent, ATSAnalysis } from "./types";
 
-export async function parseResumeAndAnalyzeATS(resumeId: string) {
+export async function parseResumeAndAnalyzeATS(
+  resumeId: string
+): Promise<ResumeContent & { atsAnalysis: ATSAnalysis }> {
   try {
     await prisma.resume.update({
       where: { id: resumeId },
@@ -44,7 +49,7 @@ export async function parseResumeAndAnalyzeATS(resumeId: string) {
   }
 }
 
-function extractResumeContent(text: string) {
+function extractResumeContent(text: string): ResumeContent {
   return {
     name: text.match(/Name:\s*(.*)/i)?.[1] || "Unknown",
     email: text.match(/Email:\s*([\w.-]+@[\w.-]+\.\w+)/i)?.[1] || "Unknown",
@@ -71,7 +76,7 @@ function extractResumeContent(text: string) {
   };
 }
 
-function analyzeATSFriendliness(text: string) {
+function analyzeATSFriendliness(text: string): ATSAnalysis {
   return {
     hasProperFormatting: !text.match(
       /\btable\b|\bfont\b|\bheader\b|\bfooter\b/i
@@ -89,7 +94,9 @@ function analyzeATSFriendliness(text: string) {
   };
 }
 
-function calculateKeywordDensity(text: string) {
+function calculateKeywordDensity(
+  text: string
+): Array<{ keyword: string; count: number; density: number }> {
   const commonKeywords = [
     "experience",
     "skills",
@@ -110,7 +117,7 @@ function calculateKeywordDensity(text: string) {
   return keywordCounts;
 }
 
-function calculateReadabilityScore(text: string) {
+function calculateReadabilityScore(text: string): number {
   const sentences = text.split(/[.!?]+/);
   const words = text.split(/\s+/);
   const syllables = words.reduce(
@@ -128,7 +135,7 @@ function calculateReadabilityScore(text: string) {
   return Math.round(readabilityScore * 10) / 10; // Round to one decimal place
 }
 
-function countSyllables(word: string) {
+function countSyllables(word: string): number {
   word = word.toLowerCase();
   if (word.length <= 3) return 1;
   word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, "");
