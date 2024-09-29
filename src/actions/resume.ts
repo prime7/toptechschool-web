@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { ResumeDetailData, ResumeFields } from "./types";
+import { ResumeAnalysisData, ResumeField } from "./types";
 import { cache } from "react";
 
 const checkAuthorization = async () => {
@@ -15,10 +15,10 @@ const checkAuthorization = async () => {
 
 const getUserResumes = cache(
   async (
-    fields: ResumeFields[] = ["id", "filename", "createdAt", "url"],
+    fields: ResumeField[] = ["id", "filename", "createdAt", "url"],
     take: number = 3,
     orderBy: "asc" | "desc" = "desc"
-  ): Promise<Partial<Record<ResumeFields, ResumeFields[number]>>[]> => {
+  ): Promise<Partial<Record<ResumeField, ResumeField[number]>>[]> => {
     try {
       const userId = await checkAuthorization();
       return await prisma.resume.findMany({
@@ -36,7 +36,7 @@ const getUserResumes = cache(
 const getUserResume = cache(
   async (
     resumeId: string,
-    fields: ResumeFields[] = [
+    fields: ResumeField[] = [
       "id",
       "filename",
       "createdAt",
@@ -44,7 +44,7 @@ const getUserResume = cache(
       "content",
       "atsAnalysis",
     ]
-  ): Promise<ResumeDetailData | null> => {
+  ): Promise<ResumeAnalysisData | null> => {
     try {
       const userId = await checkAuthorization();
       return await prisma.resume.findUnique({

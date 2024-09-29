@@ -3,11 +3,11 @@
 import { prisma } from "@/lib/prisma";
 import axios from "axios";
 import pdf from "pdf-parse";
-import { ResumeContent, ATSAnalysis } from "./types";
+import { ParsedResumeContent, ATSAnalysisResult } from "./types";
 
 export async function parseResumeAndAnalyzeATS(
   resumeId: string
-): Promise<ResumeContent & { atsAnalysis: ATSAnalysis }> {
+): Promise<ParsedResumeContent & { atsAnalysis: ATSAnalysisResult }> {
   try {
     await prisma.resume.update({
       where: { id: resumeId },
@@ -49,7 +49,7 @@ export async function parseResumeAndAnalyzeATS(
   }
 }
 
-function extractResumeContent(text: string): ResumeContent {
+function extractResumeContent(text: string): ParsedResumeContent {
   return {
     name: text.match(/Name:\s*(.*)/i)?.[1] || "Unknown",
     email: text.match(/Email:\s*([\w.-]+@[\w.-]+\.\w+)/i)?.[1] || "Unknown",
@@ -76,7 +76,7 @@ function extractResumeContent(text: string): ResumeContent {
   };
 }
 
-function analyzeATSFriendliness(text: string): ATSAnalysis {
+function analyzeATSFriendliness(text: string): ATSAnalysisResult {
   return {
     hasProperFormatting: !text.match(
       /\btable\b|\bfont\b|\bheader\b|\bfooter\b/i

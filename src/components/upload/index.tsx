@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { parseResumeAndAnalyzeATS } from "@/lib/parser";
+import { parseResumeAndAnalyzeATS } from "@/actions/parser";
 
 const UploadComponent: React.FC = () => {
   const router = useRouter();

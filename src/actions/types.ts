@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
 
-export type ResumeFields = keyof typeof Prisma.ResumeScalarFieldEnum;
+export type ResumeField = keyof typeof Prisma.ResumeScalarFieldEnum;
 
-interface ResumeContent {
+export type ParsedResumeContent = {
   name: string;
   email: string;
   phone: string;
@@ -12,9 +12,9 @@ interface ResumeContent {
   skills: string[];
   certifications: string;
   languages: string[];
-}
+};
 
-interface ATSAnalysis {
+export type ATSAnalysisResult = {
   hasProperFormatting: boolean;
   hasAppropriateLength: boolean;
   hasReasonableLineBreaks: boolean;
@@ -24,8 +24,9 @@ interface ATSAnalysis {
   keywordDensity: Array<{ keyword: string; count: number; density: number }>;
   readabilityScore: number;
   fileType: string;
-}
-export type ResumeDetailData = {
-  content?: ResumeContent;
-  atsAnalysis?: ATSAnalysis;
+};
+
+export type ResumeAnalysisData = {
+  content?: ParsedResumeContent;
+  atsAnalysis?: ATSAnalysisResult;
 };
