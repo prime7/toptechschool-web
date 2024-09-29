@@ -6,14 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { parseResumeAndAnalyzeATS } from "@/lib/parser";
 
-interface UploadComponentProps {
-  onUploadSuccess?: (resumeId: string) => void;
-}
-
-const UploadComponent: React.FC<UploadComponentProps> = ({
-  onUploadSuccess,
-}) => {
+const UploadComponent: React.FC = () => {
   const router = useRouter();
   const [uploadStatus, setUploadStatus] = useState<
     "idle" | "uploading" | "success" | "error"
@@ -42,11 +37,10 @@ const UploadComponent: React.FC<UploadComponentProps> = ({
         },
       });
       setUploadStatus("success");
-      if (onUploadSuccess) {
-        onUploadSuccess(res.data.resumeId);
-      } else {
-        router.push(`/resume/feedback/${res.data.resumeId}`);
-      }
+
+      parseResumeAndAnalyzeATS(res.data.resumeId);
+
+      router.push(`/resume/${res.data.resumeId}`);
     } catch (err) {
       console.log(err);
       setUploadStatus("error");

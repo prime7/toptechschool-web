@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import UploadComponent from "@/components/upload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getUserResumes } from "@/services/resume";
+import { getUserResumes } from "@/actions/resume";
 
 export default async function UploadPage() {
   const resumes = await getUserResumes(["id", "filename", "createdAt"]);
@@ -32,7 +32,7 @@ export default async function UploadPage() {
           </p>
         </div>
         {resumes.slice(0, 3).map((resume) => (
-          <Link href={`/resume/feedback/${resume.id}`} key={resume.id}>
+          <Link href={`/resume/${resume.id}`} key={resume.id}>
             <Card className="cursor-pointer hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle>

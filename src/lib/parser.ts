@@ -19,8 +19,7 @@ export async function parseResumeAndAnalyzeATS(resumeId: string) {
       throw new Error(`Failed to fetch resume. Status: ${response.status}`);
     }
 
-    const fileBuffer = Buffer.from(response.data);
-    const pdfData = await pdf(fileBuffer);
+    const pdfData = await pdf(response.data);
     const text = pdfData.text;
 
     const parsedContent = extractResumeContent(text);
@@ -37,7 +36,6 @@ export async function parseResumeAndAnalyzeATS(resumeId: string) {
 
     return { ...parsedContent, atsAnalysis };
   } catch (error) {
-    console.error("Error parsing resume:", error);
     await prisma.resume.update({
       where: { id: resumeId },
       data: { parsed: "ERROR" },
