@@ -10,8 +10,7 @@ import { Session } from "next-auth";
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const navItems = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
+    { name: "TTS", href: "/" },
     { name: "Resume", href: "/resume" },
     { name: "Blog", href: "/blog" },
   ];
@@ -45,7 +44,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
       <div className="container mx-auto">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <div className="hidden sm:flex sm:space-x-8">
               {navItems.map((item) => (
                 <a
                   key={item.name}
@@ -57,7 +56,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
               ))}
             </div>
           </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+          <div className="hidden sm:flex sm:items-center sm:space-x-4">
             <ThemeToggle />
             <AuthButton />
           </div>
