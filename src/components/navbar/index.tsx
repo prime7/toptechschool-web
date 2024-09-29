@@ -4,18 +4,17 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { ThemeToggle } from "./ThemeSwitch";
+import { Session } from "next-auth";
 
-const Navbar = () => {
+const Navbar = ({ session }: { session: Session | null }) => {
   const navItems = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
     { name: "Resume", href: "/resume" },
     { name: "Blog", href: "/blog" },
   ];
-
-  const { data: session } = useSession();
 
   const AuthButton = () => {
     if (session) {
