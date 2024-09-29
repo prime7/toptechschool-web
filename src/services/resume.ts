@@ -13,15 +13,17 @@ const checkAuthorization = async () => {
 
 export const getUserResumes = cache(
   async (
-    fields: ResumeFields[] = ["id", "filename", "createdAt", "url"]
+    fields: ResumeFields[] = ["id", "filename", "createdAt", "url"],
+    take: number = 3,
+    orderBy: "asc" | "desc" = "desc"
   ): Promise<Partial<Record<ResumeFields, ResumeFields[number]>>[]> => {
     try {
       const userId = await checkAuthorization();
       return await prisma.resume.findMany({
         where: { userId },
         select: Object.fromEntries(fields.map((field) => [field, true])),
-        orderBy: { createdAt: "desc" },
-        take: 3,
+        orderBy: { createdAt: orderBy },
+        take,
       });
     } catch (error) {
       throw error;
