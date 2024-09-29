@@ -33,7 +33,7 @@ const parsePostData = (fileName: string, content: string): PostData => {
   return { slug, frontmatter };
 };
 
-export const getPosts = async (): Promise<PostData[]> => {
+const getPosts = async (): Promise<PostData[]> => {
   const files = await fs.readdir(postDirectory);
   const posts = await Promise.all(
     files.map(async (fileName) => {
@@ -44,7 +44,7 @@ export const getPosts = async (): Promise<PostData[]> => {
   return posts;
 };
 
-export const getPost = async (
+const getPost = async (
   slug: string
 ): Promise<{
   mdxSource: MDXRemoteSerializeResult;
@@ -55,7 +55,7 @@ export const getPost = async (
   return { mdxSource };
 };
 
-export const getAllCategories = async (): Promise<string[]> => {
+const getAllCategories = async (): Promise<string[]> => {
   const files = await fs.readdir(postDirectory);
   const categories = await Promise.all(
     files.map(async (fileName) => {
@@ -67,9 +67,7 @@ export const getAllCategories = async (): Promise<string[]> => {
   return Array.from(new Set(categories));
 };
 
-export const getPostCountByCategory = async (): Promise<
-  Record<string, number>
-> => {
+const getPostCountByCategory = async (): Promise<Record<string, number>> => {
   const files = await fs.readdir(postDirectory);
   const categories = await Promise.all(
     files.map(async (fileName) => {
@@ -85,7 +83,7 @@ export const getPostCountByCategory = async (): Promise<
   }, {} as Record<string, number>);
 };
 
-export const getPostsByCategory = async (
+const getPostsByCategory = async (
   category: string,
   filter: string
 ): Promise<PostData[]> => {
@@ -119,4 +117,12 @@ export const getPostsByCategory = async (
     default:
       return posts.sort(sortByDate);
   }
+};
+
+export {
+  getPosts,
+  getPost,
+  getAllCategories,
+  getPostCountByCategory,
+  getPostsByCategory,
 };
