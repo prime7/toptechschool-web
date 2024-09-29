@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { ResumeFields } from "./types";
+import { ResumeDetailData, ResumeFields } from "./types";
 import { cache } from "react";
 
 const checkAuthorization = async () => {
@@ -24,6 +24,30 @@ export const getUserResumes = cache(
         select: Object.fromEntries(fields.map((field) => [field, true])),
         orderBy: { createdAt: orderBy },
         take,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const getUserResume = cache(
+  async (
+    resumeId: string,
+    fields: ResumeFields[] = [
+      "id",
+      "filename",
+      "createdAt",
+      "url",
+      "content",
+      "atsAnalysis",
+    ]
+  ): Promise<ResumeDetailData | null> => {
+    try {
+      const userId = await checkAuthorization();
+      return await prisma.resume.findUnique({
+        where: { id: resumeId, userId },
+        select: Object.fromEntries(fields.map((field) => [field, true])),
       });
     } catch (error) {
       throw error;

@@ -1,93 +1,21 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "next/navigation";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle, XCircle } from "lucide-react";
+import { getUserResume } from "@/services/resume";
 
-interface ResumeContent {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  education: string;
-  experience: string;
-  skills: string[];
-  certifications: string;
-  languages: string[];
-}
-
-interface ATSAnalysis {
-  hasProperFormatting: boolean;
-  hasAppropriateLength: boolean;
-  hasReasonableLineBreaks: boolean;
-  containsEmail: boolean;
-  containsPhone: boolean;
-  containsLinkedIn: boolean;
-  keywordDensity: Array<{ keyword: string; count: number; density: number }>;
-  readabilityScore: number;
-  fileType: string;
-}
-
-interface ResumeData {
-  message: string;
-  content?: ResumeContent;
-  atsAnalysis?: ATSAnalysis;
-}
-
-export default function Resume() {
-  const { resumeId } = useParams();
-  const [resumeData, setResumeData] = useState<ResumeData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchResumeData = async () => {
-    try {
-      const response = await axios.get<ResumeData>(`/api/resume/${resumeId}`);
-      setResumeData(response.data);
-      if (response.data.message === "Resume is being parsed") {
-        setTimeout(fetchResumeData, 5000);
-      } else {
-        setLoading(false);
-      }
-    } catch (err) {
-      console.error("Error fetching resume data:", err);
-      setError("Failed to fetch resume data. Please try again later.");
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchResumeData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resumeId]);
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 space-y-4">
-        <Skeleton className="h-8 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-[150px]" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Alert variant="destructive" className="m-4">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
+export default async function Resume({
+  params,
+}: {
+  params: { resumeId: string };
+}) {
+  const resumeData = await getUserResume(params.resumeId, [
+    "content",
+    "atsAnalysis",
+  ]);
 
   if (!resumeData) {
     return (
@@ -103,7 +31,6 @@ export default function Resume() {
   return (
     <div className="container mx-auto px-4 py-8 bg-background text-foreground">
       <h1 className="text-2xl font-bold mb-4">Resume Analysis</h1>
-      <p className="mb-4 text-sm text-muted-foreground">{resumeData.message}</p>
 
       <Tabs defaultValue="content" className="mb-4">
         <TabsList className="grid w-full grid-cols-2">
