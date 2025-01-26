@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     await prisma.resume.update({
       where: { id: resume.id },
       data: {
-        url: `${process.env.CLOUDFLARE_R2_ENDPOINT}/${encodedKey}`,
+        url: `${process.env.R2_CLOUDFLARE_ENDPOINT}/${encodedKey}`,
       },
     });
 
