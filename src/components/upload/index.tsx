@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, CheckCircle, Upload } from "lucide-react";
+import { AlertCircle, CheckCircle, Upload, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { parseResumeAndAnalyzeATS } from "@/actions/parser";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const UploadComponent: React.FC = () => {
   const router = useRouter();
@@ -14,36 +15,83 @@ const UploadComponent: React.FC = () => {
     "idle" | "uploading" | "success" | "error"
   >("idle");
   const [fileName, setFileName] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const validateFile = (file: File): boolean => {
+    if (file.size > MAX_FILE_SIZE) {
+      setErrorMessage("File size exceeds 5MB limit");
+      return false;
+    }
+
+    const validTypes = ["application/pdf", "application/msword"];
+    if (!validTypes.includes(file.type)) {
+      setErrorMessage("Invalid file type. Please upload PDF or DOC");
+      return false;
+    }
+
+    return true;
+  };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setErrorMessage(null);
+    if (!validateFile(file)) {
+      setUploadStatus("error");
+      return;
+    }
+
     setFileName(file.name);
     setUploadStatus("uploading");
 
     try {
-      const res = await axios.post("/api/file-upload", {
+      const { data } = await axios.post("/api/file-upload", {
         filename: file.name,
         fileType: file.type,
       });
-      const url = res.data.signedUrl;
-      await fetch(url, {
-        method: "PUT",
-        body: file,
+
+      await axios.put(data.signedUrl, file, {
         headers: {
           "Content-Type": file.type,
         },
       });
+
       setUploadStatus("success");
-
-      parseResumeAndAnalyzeATS(res.data.resumeId);
-
-      router.push(`/resume/${res.data.resumeId}`);
+      router.push(`/resume/${data.resumeId}`);
     } catch (err) {
-      console.log(err);
+      console.error("Upload error:", err);
+      setErrorMessage("Failed to upload file. Please try again.");
       setUploadStatus("error");
+    }
+  };
+
+  const getStatusDisplay = () => {
+    switch (uploadStatus) {
+      case "uploading":
+        return (
+          <div className="flex items-center justify-center text-primary">
+            <Loader2 className="animate-spin mr-2" />
+            Uploading...
+          </div>
+        );
+      case "success":
+        return (
+          <div className="flex items-center justify-center text-green-500">
+            <CheckCircle className="mr-2" />
+            Upload successful!
+          </div>
+        );
+      case "error":
+        return (
+          <div className="flex items-center justify-center text-destructive">
+            <AlertCircle className="mr-2" />
+            {errorMessage || "Upload failed. Please try again."}
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
@@ -52,7 +100,7 @@ const UploadComponent: React.FC = () => {
       <div className="flex items-center justify-center w-full">
         <Label
           htmlFor="resume"
-          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-accent hover:bg-opacity-50"
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-accent hover:bg-opacity-50 transition-colors"
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
             <Upload className="w-10 h-10 mb-3 text-muted-foreground" />
@@ -78,24 +126,7 @@ const UploadComponent: React.FC = () => {
           Selected file: {fileName}
         </p>
       )}
-      {uploadStatus === "uploading" && (
-        <div className="flex items-center justify-center text-primary">
-          <AlertCircle className="animate-spin mr-2" />
-          Uploading...
-        </div>
-      )}
-      {uploadStatus === "success" && (
-        <div className="flex items-center justify-center text-green-500">
-          <CheckCircle className="mr-2" />
-          Upload successful!
-        </div>
-      )}
-      {uploadStatus === "error" && (
-        <div className="flex items-center justify-center text-destructive">
-          <AlertCircle className="mr-2" />
-          Upload failed. Please try again.
-        </div>
-      )}
+      {getStatusDisplay()}
     </div>
   );
 };
