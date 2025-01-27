@@ -56,46 +56,55 @@ export async function parseResumeAndAnalyzeATS(
 
 function extractResumeContent(text: string): ParsedResumeContent {
   return {
-    name: text.match(/Name:\s*(.*)/i)?.[1] || "Unknown",
-    email: text.match(/Email:\s*([\w.-]+@[\w.-]+\.\w+)/i)?.[1] || "Unknown",
+    name: text.match(/Name:\s*(.*)/i)?.[1]?.trim() || "Unknown",
+    email: text.match(/Email:\s*([\w.-]+@[\w.-]+\.\w+)/i)?.[1]?.trim() || "Unknown",
     phone:
       text.match(
         /Phone:\s*(\+?1?\s*\(?[0-9]{3}[\s.-]?\)?[0-9]{3}[\s.-]?[0-9]{4})/i
-      )?.[1] || "Unknown",
-    address: text.match(/Address:\s*(.*)/i)?.[1] || "Unknown",
-    education: text.match(/Education:[\s\S]*?(?=\n\n|\Z)/i)?.[0] || "Not found",
+      )?.[1]?.trim() || "Unknown",
+    address: text.match(/Address:\s*(.*)/i)?.[1]?.trim() || "Unknown",
+    education: text.match(/Education:[\s\S]*?(?=\n\n|\Z)/i)?.[0]?.trim() || "Not found",
     experience:
-      text.match(/Experience:[\s\S]*?(?=\n\n|\Z)/i)?.[0] || "Not found",
+      text.match(/Experience:[\s\S]*?(?=\n\n|\Z)/i)?.[0]?.trim() || "Not found",
     skills:
       text
         .match(/Skills:[\s\S]*?(?=\n\n|\Z)/i)?.[0]
         ?.split(",")
         .map((s) => s.trim()) || [],
     certifications:
-      text.match(/Certifications:[\s\S]*?(?=\n\n|\Z)/i)?.[0] || "Not found",
+      text.match(/Certifications:[\s\S]*?(?=\n\n|\Z)/i)?.[0]?.trim() || "Not found",
     languages:
       text
         .match(/Languages:[\s\S]*?(?=\n\n|\Z)/i)?.[0]
         ?.split(",")
         .map((s) => s.trim()) || [],
+    linkedIn: text.match(/linkedin\.com\/in\/[\w-]+/i)?.[0]?.trim() || "Not found",
+    summary: text.match(/Summary:[\s\S]*?(?=\n\n|\Z)/i)?.[0]?.trim() || "Not found",
+    projects:
+      text
+        .match(/Projects:[\s\S]*?(?=\n\n|\Z)/i)?.[0]
+        ?.split("\n")
+        .map((s) => s.trim()) || [],
   };
 }
 
 function analyzeATSFriendliness(text: string): ATSAnalysisResult {
+  const lineBreaks = text.split(/\n/).length;
+  const wordCount = text.split(/\s+/).length;
+
   return {
-    hasProperFormatting: !text.match(
-      /\btable\b|\bfont\b|\bheader\b|\bfooter\b/i
-    ),
-    hasAppropriateLength: text.length > 300 && text.length < 20000,
-    hasReasonableLineBreaks: text.split(/\n/).length < 200,
-    containsEmail: !!text.match(
-      /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/
-    ),
+    hasProperFormatting: !text.match(/\btable\b|\bfont\b|\bheader\b|\bfooter\b/i),
+    hasAppropriateLength: wordCount > 300 && wordCount < 20000,
+    hasReasonableLineBreaks: lineBreaks < 200,
+    containsEmail: !!text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/),
     containsPhone: !!text.match(/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/),
-    containsLinkedIn: !!text.match(/linkedin\.com\/in\/[\w-]+/),
+    containsLinkedIn: !!text.match(/linkedin\.com\/in\/[\w-]+/i),
     keywordDensity: calculateKeywordDensity(text),
     readabilityScore: calculateReadabilityScore(text),
-    fileType: "PDF", // Assuming it's always PDF based on the current implementation
+    fileType: "PDF",
+    hasSummary: !!text.match(/Summary:[\s\S]*?(?=\n\n|\Z)/i),
+    hasCertifications: !!text.match(/Certifications:[\s\S]*?(?=\n\n|\Z)/i),
+    hasProjects: !!text.match(/Projects:[\s\S]*?(?=\n\n|\Z)/i),
   };
 }
 
@@ -109,6 +118,10 @@ function calculateKeywordDensity(
     "project",
     "achievement",
     "responsibility",
+    "leadership",
+    "communication",
+    "technical",
+    "analytical",
   ];
   const wordCount = text.split(/\s+/).length;
   const keywordCounts = commonKeywords.map((keyword) => ({

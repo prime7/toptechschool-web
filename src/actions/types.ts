@@ -12,12 +12,18 @@ export type ParsedResumeContent = {
   skills: string[];
   certifications: string;
   languages: string[];
+  linkedIn: string;
+  summary: string;
+  projects: string[];
 };
 
 export type ATSAnalysisResult = {
   hasProperFormatting: boolean;
   hasAppropriateLength: boolean;
   hasReasonableLineBreaks: boolean;
+  hasSummary: boolean;
+  hasCertifications: boolean;
+  hasProjects: boolean;
   containsEmail: boolean;
   containsPhone: boolean;
   containsLinkedIn: boolean;
