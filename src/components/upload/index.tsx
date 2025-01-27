@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle, Upload, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { parseResumeAndAnalyzeATS } from "@/actions/parser";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -59,6 +60,9 @@ const UploadComponent: React.FC = () => {
       });
 
       setUploadStatus("success");
+
+      parseResumeAndAnalyzeATS(data.resumeId);
+
       router.push(`/resume/${data.resumeId}`);
     } catch (err) {
       console.error("Upload error:", err);

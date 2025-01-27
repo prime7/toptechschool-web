@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 import axios from "axios";
 import pdf from "pdf-parse";
 import { ParsedResumeContent, ATSAnalysisResult } from "./types";
+import { r2Client } from "@/lib/r2";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 export async function parseResumeAndAnalyzeATS(
   resumeId: string
@@ -17,9 +20,22 @@ export async function parseResumeAndAnalyzeATS(
     const resume = await prisma.resume.findUnique({ where: { id: resumeId } });
     if (!resume) throw new Error("Resume not found");
 
-    const response = await axios.get(resume.url, {
+    const presignedUrl = await getSignedUrl(
+      r2Client,
+      new GetObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME,
+        Key: decodeURIComponent(resume.fileKey),
+      }),
+      {
+        expiresIn: 3600,
+      }
+    );
+
+    const response = await axios.get(presignedUrl, {
+      timeout: 5000,
       responseType: "arraybuffer",
     });
+
     if (response.status !== 200) {
       throw new Error(`Failed to fetch resume. Status: ${response.status}`);
     }

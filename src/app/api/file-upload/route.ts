@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       data: {
         userId: session.user.id,
         filename,
-        url: "",
+        fileKey: "",
       },
     });
 
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     await prisma.resume.update({
       where: { id: resume.id },
       data: {
-        url: `${process.env.R2_CLOUDFLARE_ENDPOINT}/${encodedKey}`,
+        fileKey: encodedKey,
       },
     });
 
