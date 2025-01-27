@@ -15,7 +15,7 @@ const checkAuthorization = async () => {
 
 const getUserResumes = cache(
   async (
-    fields: ResumeField[] = ["id", "filename", "createdAt", "url"],
+    fields: ResumeField[] = ["id", "filename", "createdAt"],
     take: number = 3,
     orderBy: "asc" | "desc" = "desc"
   ): Promise<Partial<Record<ResumeField, ResumeField[number]>>[]> => {
@@ -40,7 +40,6 @@ const getUserResume = cache(
       "id",
       "filename",
       "createdAt",
-      "url",
       "content",
       "atsAnalysis",
     ]
