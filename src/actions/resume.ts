@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { ResumeAnalysisData, ResumeField } from "./types";
+import { ResumeAnalysisResult, ResumeFields } from "./parser/types";
 import { cache } from "react";
 
 const checkAuthorization = async () => {
@@ -15,10 +15,10 @@ const checkAuthorization = async () => {
 
 const getUserResumes = cache(
   async (
-    fields: ResumeField[] = ["id", "filename", "createdAt"],
+    fields: ResumeFields[] = ["id", "filename", "createdAt"],
     take: number = 3,
     orderBy: "asc" | "desc" = "desc"
-  ): Promise<Partial<Record<ResumeField, ResumeField[number]>>[]> => {
+  ): Promise<Partial<Record<ResumeFields, ResumeFields[number]>>[]> => {
     try {
       const userId = await checkAuthorization();
       return await prisma.resume.findMany({
@@ -36,20 +36,34 @@ const getUserResumes = cache(
 const getUserResume = cache(
   async (
     resumeId: string,
-    fields: ResumeField[] = [
+    fields: ResumeFields[] = [
       "id",
       "filename",
       "createdAt",
       "content",
-      "atsAnalysis",
+      "analysis",
     ]
-  ): Promise<ResumeAnalysisData | null> => {
+  ): Promise<ResumeAnalysisResult | null> => {
     try {
       const userId = await checkAuthorization();
-      return await prisma.resume.findUnique({
+      const resume = await prisma.resume.findUnique({
         where: { id: resumeId, userId },
         select: Object.fromEntries(fields.map((field) => [field, true])),
       });
+      
+      if (!resume?.analysis) {
+        return null;
+      }
+      
+      return {
+        content: resume.content,
+        analysis: resume.analysis,
+        metadata: {
+          analyzedAt: new Date(),
+          confidenceScore: 1,
+          processingTime: 0
+        }
+      } as ResumeAnalysisResult;
     } catch (error) {
       throw error;
     }

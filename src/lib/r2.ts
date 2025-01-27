@@ -29,7 +29,7 @@ const r2Client = new S3Client({
 const getPresignedUrl = async (key: string): Promise<string> => {
   const command = new GetObjectCommand({
     Bucket: process.env.R2_BUCKET_NAME,
-    Key: key,
+    Key: decodeURIComponent(key),
   });
   return await getSignedUrl(r2Client, command, { expiresIn: 3600 });
 };
