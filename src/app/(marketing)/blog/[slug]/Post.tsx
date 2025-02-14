@@ -10,7 +10,7 @@ const BlogPost: React.FC<{
   mdxSource: MDXRemoteSerializeResult;
 }> = ({ mdxSource }) => {
   return (
-    <div className="prose mx-auto my-8 p-4">
+    <div className="prose dark:prose-invert mx-auto my-8 p-4">
       <h1 className="text-foreground">
         {mdxSource.frontmatter?.title as string}
       </h1>
