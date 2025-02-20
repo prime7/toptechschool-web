@@ -1,0 +1,202 @@
+---
+title: Adding Multi-Chain Wallet Support with Reown Wallet in Next.js and Supabase
+metaTitle: "Adding Multi-Chain Wallet Support with Reown Wallet in Next.js and Supabase"
+metaDesc: "Learn how to add multi-chain wallet support with Reown Wallet in Next.js and Supabase"
+date: "2025-02-14"
+coverImage: "/images/image1.png"
+coverImageWidth: 640
+coverImageHeight: 260
+author:
+  - name: Tarek Ahmed
+  - title: Software engineer
+category: blockchain
+---
+
+This tutorial will guide you through creating a multi-chain wallet in Next.js and Supabase. 
+We'll use Reown Wallet, a multi-chain wallet that supports multiple chains like Ethereum, Polygon, and BSC.
+
+## Prerequisites
+
+- Basic knowledge of Next.js and Supabase
+- Node.js and npm installed
+- Reown Wallet account
+
+## Step 1: Create a Next.js project
+
+1. Create a new Next.js project using the following command:
+
+```bash
+npx create-next-app@latest
+```
+
+Name it `reown-wallet-nextjs-supabase`.
+
+Add Yes to all the options.
+
+2. Now we will clean up code in `./app/page.tsx` file.
+
+```tsx
+export default function Home() {
+  return <div>Hello World</div>;
+}
+```
+
+Now let's check if the project is working.
+
+```bash
+yarn dev
+```
+
+You should see a Hello World message on the screen.
+
+## Step 2: Install reown wallet
+
+1. Install reown wallet in the project. First visit [Reown Wallet](https://reown.com/cloud) and create an account. Sign in and create a new project.
+2. Get the project id.
+3. Paste the project id in the `.env.local` file.
+
+```bash
+REOWN_PROJECT_ID=d55ea5fc0cc087e5a1f04e7a24f1156b
+```
+
+3. Install the dependencies.
+
+```bash
+yarn add @reown/appkit @reown/appkit-adapter-wagmi wagmi @tanstack/react-query
+```
+
+### Configuring Reown Wallet
+
+In this section, we will configure the Reown Wallet for our Next.js project. This involves setting up the project ID, defining the networks we want to support, and creating a Wagmi adapter for our application.
+
+#### Importing Necessary Modules
+
+First, we need to import the necessary modules from the Reown Wallet and Wagmi libraries. We import `WagmiAdapter` from `@reown/appkit-adapter-wagmi` to create an adapter for our Wagmi configuration. We also import various networks from `@reown/appkit/networks` that we want to support in our application. Additionally, we import `cookieStorage` and `createStorage` from `@wagmi/core` to handle storage for our Wagmi adapter.
+
+```typescript
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import {
+  mainnet,
+  arbitrum,
+  base,
+  optimism,
+  polygon,
+  AppKitNetwork,
+} from "@reown/appkit/networks";
+import { cookieStorage, createStorage } from "@wagmi/core";
+```
+
+#### Setting Up Project ID
+
+Next, we define the `projectId` variable by accessing the `NEXT_PUBLIC_REOWN_PROJECT_ID` environment variable. If this variable is not set, we throw an error.
+
+```typescript
+export const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID;
+
+if (!projectId) {
+  throw new Error("REOWN_PROJECT_ID is not set");
+}
+```
+
+#### Defining Supported Networks
+
+We then define the `networks` array, which includes the networks we imported earlier. This array is typed as an array of `AppKitNetwork` objects.
+
+```typescript
+export const networks = [mainnet, arbitrum, base, optimism, polygon] as [
+  AppKitNetwork,
+  ...AppKitNetwork[]
+];
+```
+
+#### Creating Wagmi Adapter
+
+Now, we create a new instance of `WagmiAdapter` and pass in the necessary configuration options. These options include the storage configuration using `cookieStorage`, setting `ssr` to `true` for server-side rendering support, the `projectId`, and the `networks` array we defined earlier.
+
+```typescript
+export const wagmiAdapter = new WagmiAdapter({
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
+  ssr: true,
+  projectId,
+  networks,
+});
+```
+
+#### Registering Adapters
+
+We then define the `adapters` array, which contains our Wagmi adapter instance. This array is used to register adapters for our application.
+
+```typescript
+export const adapters = [wagmiAdapter];
+```
+
+#### Defining Metadata
+
+Finally, we define the `metadata` object, which contains information about our application such as its name, description, URL, and icons.
+
+```typescript
+export const metadata = {
+  name: "Demo tutorial",
+  description: "AppKit Example",
+  url: "https://reown.com/appkit",
+  icons: ["https://assets.reown.com/reown-profile-pic.png"],
+};
+```
+
+#### Exporting Wagmi Config
+
+The `config` variable is set to the Wagmi configuration object returned by our Wagmi adapter instance. This configuration is used to initialize Wagmi in our application.
+
+```typescript
+export const config = wagmiAdapter.wagmiConfig;
+```
+
+With this configuration in place, we have successfully set up the Reown Wallet for our Next.js project, enabling support for multiple blockchain networks and server-side rendering.
+
+Now we will enable Solana support in the project.
+
+```bash
+yarn add @reown/appkit-adapter-solana @solana/wallet-adapter-wallets
+```
+
+Now we will add the Solana adapter to the project.
+
+```typescript
+import { SolanaAdapter } from "@reown/appkit-adapter-solana";
+```
+
+Now we will add the Solana adapter to the project.
+
+```typescript
+export const adapters = [wagmiAdapter, solanaAdapter];
+```
+
+Now we will add the Solana adapter to the project.
+
+And add new networks to the project
+```
+import {
+  ...
+  solanaDevnet,
+  solana,
+  solanaTestnet,
+} from "@reown/appkit/networks";
+```
+
+We are going to use phantom wallet for solana.
+
+```typescript
+import { phantomWallet } from "@solana/wallet-adapter-wallets";
+```
+
+Now we will add the phantom wallet to the project.
+
+```typescript
+export const solanaAdapter = new SolanaAdapter({
+  wallets: [new PhantomWalletAdapter()],
+});
+```
+
+This will help us to connect to the solana network using phantom wallet.
