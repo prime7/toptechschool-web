@@ -11,6 +11,7 @@ import { Session } from "next-auth";
 const Navbar = ({ session }: { session: Session | null }) => {
   const navItems = [
     { name: "TTS", href: "/" },
+    { name: "Job Matcher", href: "/resume/evaluate" },
     { name: "Resume", href: "/resume" },
     { name: "Blog", href: "/blog" },
   ];
