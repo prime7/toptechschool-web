@@ -5,11 +5,8 @@ import axios from "axios";
 import pdf from "pdf-parse";
 import { ResumeContent, ResumeAnalysis } from "./types";
 import { getPresignedUrl } from "@/lib/r2";
-import OpenAI from "openai";
+import { openai } from "@/lib/openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export async function parseResumeAndAnalyzeATS(
   resumeId: string
