@@ -2,13 +2,38 @@ import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const RESTRICTED_ROUTES = [
-  "/upload",
-  "/resume",
-];
+const RESTRICTED_ROUTES = ["/upload", "/resume"];
+const allowedOrigins = ["http://localhost:5173", "chrome-extension://"];
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const origin = req.headers.get("origin") || "";
+
+  const response = NextResponse.next();
+
+  const isAllowedOrigin = allowedOrigins.some(
+    (allowedOrigin) =>
+      allowedOrigin === origin ||
+      (allowedOrigin === "chrome-extension://" &&
+        origin.startsWith("chrome-extension://"))
+  );
+
+  if (isAllowedOrigin) {
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+    response.headers.set("Access-Control-Allow-Origin", origin);
+    response.headers.set(
+      "Access-Control-Allow-Methods",
+      "GET,DELETE,PATCH,POST,PUT"
+    );
+    response.headers.set(
+      "Access-Control-Allow-Headers",
+      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+    );
+  }
+
+  if (req.method === "OPTIONS") {
+    return response;
+  }
 
   if (RESTRICTED_ROUTES.some((route) => pathname.startsWith(route))) {
     const session = await auth();
@@ -17,12 +42,9 @@ export default async function middleware(req: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  matcher: [
-    "/upload",
-    "/resume",
-  ],
+  matcher: ["/upload", "/resume"],
 };
