@@ -11,11 +11,9 @@ export default async function middleware(req: NextRequest) {
 
   const response = NextResponse.next();
 
-  const isAllowedOrigin = allowedOrigins.some(
-    (allowedOrigin) =>
-      allowedOrigin === origin ||
-      (allowedOrigin === "chrome-extension://" &&
-        origin.startsWith("chrome-extension://"))
+  const isAllowedOrigin = allowedOrigins.some(allowedOrigin =>
+    allowedOrigin === origin || 
+    (allowedOrigin.startsWith('chrome-extension://') && origin.startsWith('chrome-extension://'))
   );
 
   if (isAllowedOrigin) {
@@ -46,5 +44,9 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/upload", "/resume"],
+  matcher: [
+    "/upload",
+    "/resume",
+    "/((?!_next/static|_next/image|favicon.ico).*)",
+  ],
 };
