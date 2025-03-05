@@ -12,6 +12,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
   const navItems = [
     { name: "TTS", href: "/" },
     { name: "Resume", href: "/resume" },
+    { name: "Startup", href: "/startup" },
     { name: "Blog", href: "/blog" },
   ];
 
