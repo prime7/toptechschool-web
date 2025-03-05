@@ -62,6 +62,7 @@ model Resume {
   fileKey   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  jobRole   JobRole?
 
   content  Json?
   analysis Json?
@@ -80,4 +81,23 @@ enum ParsingStatus {
   STARTED
   PARSED
   ERROR
+}
+
+enum JobRole {
+  SOFTWARE_ENGINEER
+  FRONTEND_DEVELOPER
+  BACKEND_DEVELOPER
+  FULLSTACK_DEVELOPER
+  DEVOPS_ENGINEER
+  QA_ENGINEER
+  DATA_SCIENTIST
+  DATA_ENGINEER
+  MACHINE_LEARNING_ENGINEER
+  PRODUCT_MANAGER
+  PROJECT_MANAGER
+  SCRUM_MASTER
+  UI_UX_DESIGNER
+  SYSTEM_ADMINISTRATOR
+  SECURITY_ENGINEER
+  DATABASE_ADMINISTRATOR
 }
