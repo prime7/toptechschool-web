@@ -59,14 +59,9 @@ model Resume {
   content   Json?
   parsed    ParsingStatus @default(NOT_STARTED)
   fileKey   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  analysis  Json?
   jobRole   JobRole?
-
-  content  Json?
-  analysis Json?
-
-  parsed ParsingStatus @default(NOT_STARTED)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Waitlist {
@@ -76,7 +71,7 @@ model Waitlist {
 }
 
 model TemplateRequests {
-  id        String   @id @default(cuid())
+  id        String   @id
   email     String   @unique
   createdAt DateTime @default(now())
 }
