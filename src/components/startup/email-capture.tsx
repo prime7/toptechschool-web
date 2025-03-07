@@ -12,8 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CheckCircle2, Send } from "lucide-react";
-import { submitTemplateRequest } from "@/actions/template-requests/action";
 import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
 
 export function EmailCapture() {
   const [email, setEmail] = useState("");
@@ -26,21 +26,22 @@ export function EmailCapture() {
     setIsLoading(true);
 
     try {
-      const result = await submitTemplateRequest({ email });
+      const response = await axios.post("/api/template-requests", { email });
 
-      if (result.success) {
+      if (response.status === 200) {
         setIsSubmitted(true);
       } else {
         toast({
           title: "Oops!",
-          description: result.message || "Something went wrong.",
+          description: response.data.message || "Something went wrong.",
         });
       }
     } catch (error) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
         toast({
           title: "Oops!",
-          description: error.message || "An unexpected error occurred.",
+          description:
+            error.response?.data?.message || "An unexpected error occurred.",
         });
       } else {
         toast({
