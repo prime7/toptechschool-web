@@ -1,8 +1,6 @@
-import { Benefits } from "@/components/startup/benefits";
-import { EmailCapture } from "@/components/startup/email-capture";
-import { FAQ } from "@/components/startup/faq";
-import { StartupHero } from "@/components/startup/hero";
-import { LeanStartupPrinciples } from "@/components/startup/principles";
+import { EmailCapture } from "./email-capture";
+import { StartupHero } from "./hero";
+import { LeanStartupPrinciples } from "./principles";
 import { Metadata } from "next";
 import React from "react";
 
@@ -55,12 +53,10 @@ export const metadata: Metadata = {
 
 export default function Startup() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <StartupHero />
       <LeanStartupPrinciples />
-      <Benefits />
       <EmailCapture />
-      <FAQ />
     </div>
   );
 }
