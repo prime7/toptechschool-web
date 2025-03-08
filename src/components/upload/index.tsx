@@ -7,6 +7,14 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle, Upload, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { parseResumeAndAnalyzeATS } from "@/actions/parser";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { JobRole } from "@prisma/client";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -17,6 +25,7 @@ const UploadComponent: React.FC = () => {
   >("idle");
   const [fileName, setFileName] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedJobRole, setSelectedJobRole] = useState<string | null>(null);
 
   const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
@@ -38,6 +47,12 @@ const UploadComponent: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!selectedJobRole) {
+      setErrorMessage("Please select a job role before uploading");
+      setUploadStatus("error");
+      return;
+    }
+
     setErrorMessage(null);
     if (!validateFile(file)) {
       setUploadStatus("error");
@@ -51,6 +66,7 @@ const UploadComponent: React.FC = () => {
       const { data } = await axios.post("/api/file-upload", {
         filename: file.name,
         fileType: file.type,
+        jobRole: selectedJobRole,
       });
 
       await axios.put(data.signedUrl, file, {
@@ -100,37 +116,78 @@ const UploadComponent: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-center w-full">
-        <Label
-          htmlFor="resume"
-          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-accent hover:bg-opacity-50 transition-colors"
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Select Job Role</label>
+        <Select 
+          name="jobRole" 
+          required 
+          onValueChange={(value) => setSelectedJobRole(value)}
         >
-          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            <Upload className="w-10 h-10 mb-3 text-muted-foreground" />
-            <p className="mb-2 text-sm text-muted-foreground">
-              <span className="font-semibold">Click to upload</span> or drag and
-              drop
-            </p>
-            <p className="text-xs text-muted-foreground">
-              PDF, DOC, or DOCX (MAX. 5MB)
-            </p>
-          </div>
-          <Input
-            id="resume"
-            type="file"
-            className="hidden"
-            onChange={handleUpload}
-            accept=".pdf,.doc,.docx"
-          />
-        </Label>
+          <SelectTrigger className="w-full h-12">
+            <SelectValue placeholder="Choose your target position" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(JobRole).map((role) => (
+              <SelectItem
+                key={role}
+                value={role}
+                className="hover:bg-primary/10"
+              >
+                {role.replace(/_/g, " ")}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {uploadStatus === "error" && !selectedJobRole && (
+          <p className="text-sm text-destructive mt-1">
+            Please select a job role
+          </p>
+        )}
       </div>
-      {fileName && (
-        <p className="text-sm text-muted-foreground text-center">
-          Selected file: {fileName}
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Upload Resume</label>
+        <div className="flex items-center justify-center w-full">
+          <Label
+            htmlFor="resume"
+            className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-accent hover:bg-opacity-50 transition-colors"
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <Upload className="w-10 h-10 mb-3 text-muted-foreground" />
+              <p className="mb-2 text-sm text-muted-foreground">
+                <span className="font-semibold">Click to upload</span> or drag
+                and drop
+              </p>
+              <p className="text-xs text-muted-foreground">
+                PDF, DOC, or DOCX (MAX. 5MB)
+              </p>
+            </div>
+            <Input
+              id="resume"
+              type="file"
+              className="hidden"
+              onChange={handleUpload}
+              accept=".pdf,.doc,.docx"
+            />
+          </Label>
+        </div>
+        {fileName && (
+          <p className="text-sm text-muted-foreground text-center">
+            Selected file: {fileName}
+          </p>
+        )}
+        {getStatusDisplay()}
+      </div>
+
+      <div className="bg-muted/30 rounded-lg p-4 text-sm text-muted-foreground">
+        <p className="flex items-center gap-2">
+          <span>💡</span>
+          <span>
+            Tip: Make sure your resume is in PDF format for best results
+          </span>
         </p>
-      )}
-      {getStatusDisplay()}
+      </div>
     </div>
   );
 };

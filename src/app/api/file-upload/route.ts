@@ -5,7 +5,7 @@ import { getSignedUrlForUpload } from "@/lib/r2";
 
 export async function POST(request: Request) {
   try {
-    const { filename, fileType } = await request.json();
+    const { filename, fileType, jobRole } = await request.json();
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -17,6 +17,7 @@ export async function POST(request: Request) {
         userId: session.user.id,
         filename,
         fileKey: "",
+        jobRole,
       },
     });
 
