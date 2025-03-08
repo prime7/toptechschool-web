@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/select";
 import { getUserResumes } from "@/actions/resume";
 import { JobRole } from '@prisma/client';
+import { ChevronRightIcon } from "lucide-react";
+import Link from "next/link";
+import { FileIcon } from "lucide-react";
 
 export default async function UploadPage() {
   const resumes = await getUserResumes(["id", "filename", "createdAt"]);
@@ -18,7 +21,6 @@ export default async function UploadPage() {
     <div className="container mx-auto py-12 px-4">
       <div className="max-w-3xl mx-auto space-y-8">
         <Card className="shadow-lg">
-          {/* Existing upload form content */}
           <CardHeader className="space-y-2">
             <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
               Resume Evaluation Assistant
@@ -74,17 +76,25 @@ export default async function UploadPage() {
           ) : (
             <div className="space-y-4">
               {resumes.map((resume) => (
-                <div
+                <Link
                   key={resume.id}
-                  className="flex items-center justify-between p-4 rounded-lg border"
+                  href={`/resume/${resume.id}`}
+                  className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/30 transition-colors group"
                 >
-                  <div>
-                    <p className="font-medium">{resume.filename}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {resume.createdAt ? new Date(resume.createdAt).toLocaleDateString() : 'No date'}
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-md">
+                      <FileIcon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium group-hover:text-primary transition-colors">{resume.filename}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {resume.createdAt ? new Date(resume.createdAt).toLocaleDateString() : 'No date'}
+                        {resume.jobRole && <span className="ml-2 px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs">{resume.jobRole.replace(/_/g, ' ')}</span>}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                  <ChevronRightIcon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </Link>
               ))}
             </div>
           )}
