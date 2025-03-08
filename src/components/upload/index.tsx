@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, CheckCircle, Upload, Loader2, FileText } from "lucide-react";
+import { Upload, Loader2, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { parseResumeAndAnalyzeATS } from "@/actions/parser";
 import {
@@ -122,34 +122,6 @@ const UploadComponent: React.FC = () => {
     }
   };
 
-  const getStatusDisplay = () => {
-    switch (uploadStatus) {
-      case "uploading":
-        return (
-          <div className="flex items-center justify-center text-primary">
-            <Loader2 className="animate-spin mr-2" />
-            Uploading...
-          </div>
-        );
-      case "success":
-        return (
-          <div className="flex items-center justify-center text-green-500">
-            <CheckCircle className="mr-2" />
-            Upload successful!
-          </div>
-        );
-      case "error":
-        return (
-          <div className="flex items-center justify-center text-destructive">
-            <AlertCircle className="mr-2" />
-            {errorMessage || "Upload failed. Please try again."}
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -228,15 +200,13 @@ const UploadComponent: React.FC = () => {
             accept=".pdf,.doc,.docx"
           />
         </div>
-        
-        {getStatusDisplay()}
       </div>
 
       {file && (
         <Button 
           onClick={handleUpload} 
           className="w-full h-12"
-          disabled={uploadStatus === "uploading" || !selectedJobRole}
+          disabled={uploadStatus === "uploading" || !selectedJobRole || errorMessage !== null}
         >
           {uploadStatus === "uploading" ? (
             <>

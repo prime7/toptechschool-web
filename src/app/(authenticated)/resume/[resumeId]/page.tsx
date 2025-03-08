@@ -23,6 +23,7 @@ import {
   BarChart,
   ListChecks,
   AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import { getUserResume } from "@/actions/resume";
 import type { ResumeAnalysisResult } from "@/actions/parser/types";
@@ -41,8 +42,15 @@ export default async function Resume({
     return (
       <div className="container mx-auto px-4 py-8">
         <Alert className="m-4">
-          <AlertTitle>No Data</AlertTitle>
-          <AlertDescription>No resume data found.</AlertDescription>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Resume Processing</AlertTitle>
+          <AlertDescription className="flex flex-col gap-2">
+            <p>Your resume is still being analyzed. This usually takes less than a minute.</p>
+            <div className="flex items-center gap-2 text-primary">
+              <RefreshCw className="h-4 w-4 animate-spin" />
+              <p>Please refresh the page in a few moments to see your results.</p>
+            </div>
+          </AlertDescription>
         </Alert>
       </div>
     );
