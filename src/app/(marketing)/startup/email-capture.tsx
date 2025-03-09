@@ -31,6 +31,7 @@ export function EmailCapture() {
         if (response.status === 200) {
           setIsSubmitted(true);
         } else {
+          alert(JSON.stringify(response.data));
           toast({
             title: "Submission Error",
             description: response.data.message || "Please try again later.",
@@ -39,20 +40,13 @@ export function EmailCapture() {
         }
       })
       .catch((error) => {
-        if (axios.isAxiosError(error)) {
-          toast({
-            title: "Submission Error",
-            description:
-              error.response?.data?.message || "Please try again later.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Submission Error",
-            description: "An unexpected error occurred. Please try again later.",
-            variant: "destructive",
-          });
-        }
+        alert(JSON.stringify(error.response?.data));
+        toast({
+          title: "Submission Error",
+          description:
+            error.response?.data?.message || "Please try again later.",
+          variant: "destructive",
+        });
       })
       .finally(() => {
         setIsLoading(false);
@@ -69,7 +63,8 @@ export function EmailCapture() {
                 Get Your Free Template
               </CardTitle>
               <CardDescription className="text-sm sm:text-base text-muted-foreground mx-auto">
-                Access our Notion template to build and validate your startup faster.
+                Access our Notion template to build and validate your startup
+                faster.
               </CardDescription>
             </CardHeader>
 
@@ -121,8 +116,10 @@ export function EmailCapture() {
                     </h3>
                     <p className="text-muted-foreground text-base">
                       We&apos;ve sent access instructions to{" "}
-                      <span className="font-semibold text-primary">{email}</span>. 
-                      Please check your inbox and spam folder.
+                      <span className="font-semibold text-primary">
+                        {email}
+                      </span>
+                      . Please check your inbox and spam folder.
                     </p>
                   </div>
                 </div>
@@ -132,7 +129,8 @@ export function EmailCapture() {
             <CardFooter className="flex justify-center px-8">
               <p className="text-center text-sm text-muted-foreground flex items-center gap-2">
                 <Shield className="h-4 w-4" />
-                Your data is secure. We respect your privacy and will never share your information.
+                Your data is secure. We respect your privacy and will never
+                share your information.
               </p>
             </CardFooter>
           </Card>
