@@ -17,6 +17,7 @@ export async function sendTemplateRequestEmail(to: string): Promise<EmailResult>
   // Log environment info for debugging
   console.log(`Sending email in environment: ${process.env.NODE_ENV}`);
   console.log(`RESEND_API_KEY configured: ${!!process.env.RESEND_API_KEY}`);
+  console.log(`RESEND_API_KEY length: ${process.env.RESEND_API_KEY?.length || 0}`);
   
   if (!process.env.RESEND_API_KEY) {
     return {
@@ -43,13 +44,40 @@ export async function sendTemplateRequestEmail(to: string): Promise<EmailResult>
       data: data as unknown as Record<string, unknown>
     };
   } catch (error) {
-    // Enhanced error logging
+    // Enhanced error logging with more details
     console.error("Error sending template request email:", error);
+    
+    if (error instanceof Error) {
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    
+    // Check if it's a Resend API error with specific structure
+    const resendError = error as { 
+      statusCode?: number; 
+      name?: string;
+      message?: string;
+      data?: unknown;
+    };
+    
+    if (resendError.statusCode) {
+      console.error("Resend API status code:", resendError.statusCode);
+      console.error("Resend API error data:", resendError.data);
+    }
     
     // Extract detailed error information
     const errorMessage = error instanceof Error ? error.message : "Unknown error sending email";
-    const errorDetails = error instanceof Error ? (error as unknown as { details?: Record<string, unknown> }).details : undefined;
-    const errorCode = error instanceof Error ? (error as unknown as { code?: string }).code : undefined;
+    const errorDetails = error instanceof Error 
+      ? { 
+          ...((error as unknown as { details?: Record<string, unknown> }).details || {}),
+          statusCode: (error as unknown as { statusCode?: number }).statusCode,
+          data: (error as unknown as { data?: unknown }).data
+        } 
+      : undefined;
+    const errorCode = error instanceof Error 
+      ? (error as unknown as { code?: string }).code || error.name 
+      : undefined;
     
     return { 
       success: false, 
