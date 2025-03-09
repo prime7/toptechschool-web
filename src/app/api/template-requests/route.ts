@@ -1,6 +1,6 @@
-import { templateRequestSchema } from "@/app/api/template-requests";
+import { templateRequestSchema } from "./schema";
 import { prisma } from "@/lib/prisma";
-import { sendTemplateRequestEmail } from "@/lib/resend";
+import { sendTemplateRequestEmail } from "@/actions/email";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
