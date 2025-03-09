@@ -30,7 +30,7 @@ export async function sendTemplateRequestEmail(to: string): Promise<EmailResult>
 
   try {
     const data = await resend.emails.send({
-      from: "Toptechschool <onboarding@resend.dev>",
+      from: "Toptechschool <support@toptechschool.com>",
       to,
       subject: "Access your lean Startup Notion template",
       react: TemplateRequestEmail({ to }),
