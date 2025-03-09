@@ -72,7 +72,7 @@ const UploadComponent: React.FC = () => {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     
@@ -80,7 +80,7 @@ const UploadComponent: React.FC = () => {
     if (droppedFile) {
       handleFileSelect(droppedFile);
     }
-  }, [handleFileSelect]);
+  };
 
   const handleUpload = async () => {
     if (!file) {

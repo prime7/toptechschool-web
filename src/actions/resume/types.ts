@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, ParsingStatus } from "@prisma/client";
 
 export type ResumeFields = keyof typeof Prisma.ResumeScalarFieldEnum;
 
@@ -31,5 +31,5 @@ export type ResumeAnalysis = {
 export type ResumeAnalysisResult = {
   content: ResumeContent;
   analysis: ResumeAnalysis;
-  parsed: boolean;
+  parsed: ParsingStatus;
 };

@@ -125,6 +125,7 @@ export async function analyzeResume(
     const result: ResumeAnalysisResult = {
       content: llmResult.content,
       analysis: llmResult.analysis,
+      parsed: "PARSED",
     };
 
     await prisma.resume.update({
