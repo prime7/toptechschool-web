@@ -23,7 +23,15 @@ export async function POST(request: Request) {
       data: { email: validatedData.email },
     });
 
-    await sendTemplateRequestEmail(validatedData.email);
+    const emailResult = await sendTemplateRequestEmail(validatedData.email);
+
+    if (!emailResult.success) {
+      console.error("Failed to send email:", emailResult.error);
+      return NextResponse.json(
+        { message: emailResult.error },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       { message: "Successfully added to template requests" },
