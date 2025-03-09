@@ -80,7 +80,7 @@ const UploadComponent: React.FC = () => {
     if (droppedFile) {
       handleFileSelect(droppedFile);
     }
-  }, []);
+  }, [handleFileSelect]);
 
   const handleUpload = async () => {
     if (!file) {

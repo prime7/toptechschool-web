@@ -120,7 +120,7 @@ export function EmailCapture() {
                       Template Access Granted
                     </h3>
                     <p className="text-muted-foreground text-base">
-                      We've sent access instructions to{" "}
+                      We&apos;ve sent access instructions to{" "}
                       <span className="font-semibold text-primary">{email}</span>. 
                       Please check your inbox and spam folder.
                     </p>
