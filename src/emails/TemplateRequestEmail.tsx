@@ -1,13 +1,4 @@
-import {
-  Html,
-  Body,
-  Head,
-  Heading,
-  Text,
-  Section,
-  Container,
-  Button,
-} from "@react-email/components";
+import React from "react";
 
 type Props = {
   to: string;
@@ -58,35 +49,39 @@ const styles = {
     color: "#999999",
     textAlign: "center" as const,
   },
+  section: {
+    textAlign: "center" as const,
+  },
 };
 
 export default function TemplateRequestEmail({ to }: Props) {
   return (
-    <Html>
-      <Head />
-      <Body style={styles.main}>
-        <Container style={styles.container}>
-          <Heading style={styles.heading}>Welcome to Toptechschool!</Heading>
+    <html>
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <body style={styles.main}>
+        <div style={styles.container}>
+          <h1 style={styles.heading}>Welcome to Toptechschool!</h1>
 
-          <Text style={styles.text}>
-            Thank you for your interest, <strong>{to}</strong>! Here’s your link
-            to access the Lean Startup Notion template:
-          </Text>
+          <p style={styles.text}>
+            Thank you for your interest, <strong>{to}</strong>! Here&apos;s your
+            link to access the Lean Startup Notion template:
+          </p>
 
-          <Section style={{ textAlign: "center" }}>
-            <Button
+          <div style={styles.section}>
+            <a
               href="https://canary-musician-7b8.notion.site/Lean-Canvas-Template-1ac197810e70805d9f1fcbe85b189fac"
               style={styles.button}
             >
               Access Template
-            </Button>
-          </Section>
+            </a>
+          </div>
 
-          <Text style={styles.footer}>
+          <p style={styles.footer}>
             © 2025 Toptechschool. All rights reserved.
-          </Text>
-        </Container>
-      </Body>
-    </Html>
+          </p>
+        </div>
+      </body>
+    </html>
   );
 }
