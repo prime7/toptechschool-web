@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { ResumeAnalysisResult, ResumeFields } from "./parser/types";
+import { ResumeAnalysisResult, ResumeFields } from "./types";
 import { cache } from "react";
 
 const checkAuthorization = async () => {
@@ -42,6 +42,7 @@ const getUserResume = cache(
       "createdAt",
       "content",
       "analysis",
+      "parsed",
     ]
   ): Promise<ResumeAnalysisResult | null> => {
     try {
@@ -58,11 +59,7 @@ const getUserResume = cache(
       return {
         content: resume.content,
         analysis: resume.analysis,
-        metadata: {
-          analyzedAt: new Date(),
-          confidenceScore: 1,
-          processingTime: 0
-        }
+        parsed: resume.parsed,
       } as ResumeAnalysisResult;
     } catch (error) {
       throw error;
