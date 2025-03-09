@@ -30,9 +30,8 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error handling POST request:", error);
     return NextResponse.json(
-      { message: "An unexpected error occurred." },
+      { message: error instanceof Error ? error.message : "An unexpected error occurred." },
       { status: 500 }
     );
   }
