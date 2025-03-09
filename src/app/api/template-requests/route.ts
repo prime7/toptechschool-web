@@ -1,25 +1,19 @@
-import TemplateRequestEmail from "@/emails/TemplateRequestEmail";
 import { templateRequestSchema } from "./schema";
 import { prisma } from "@/lib/prisma";
+import { sendTemplateRequestEmail } from "@/lib/resend";
 import { NextResponse } from "next/server";
-import { resend } from "@/lib/resend";
 
 export async function POST(request: Request) {
   try {
+    // Log request information for debugging
+    console.log(`Processing template request in environment: ${process.env.NODE_ENV}`);
+    
     const body = await request.json();
-    const { success, data, error } = templateRequestSchema.safeParse(body);
-    
-    if (!success) {
-      return NextResponse.json(
-        { message: "Invalid input", errors: error?.flatten().fieldErrors },
-        { status: 400 }
-      );
-    }
-    
-    const { email } = data;
+    const validatedData = templateRequestSchema.parse(body);
 
+    // Check if email already exists
     const existingEntry = await prisma.templateRequests.findUnique({
-      where: { email },
+      where: { email: validatedData.email },
     });
 
     if (existingEntry) {
@@ -29,31 +23,31 @@ export async function POST(request: Request) {
       );
     }
 
-    const emailResult = await resend.emails.send({
-      // from: process.env.NODE_ENV === 'production' 
-      //   ? "Toptechschool <support@toptechschool.com>"
-      //   : "Toptechschool <onboarding@resend.dev>",
-      from: "Toptechschool <support@toptechschool.com>",
-      to: email,
-      subject: "Access your lean Startup Notion template",
-      react: TemplateRequestEmail({ to: email }),
-    });
-
-
+    // Create template request
     const templateRequest = await prisma.templateRequests.create({
-      data: { email },
+      data: { 
+        id: crypto.randomUUID(),
+        email: validatedData.email 
+      },
     });
 
-
-    if (!emailResult || emailResult.error) {
-      await prisma.templateRequests.delete({
-        where: { id: templateRequest.id },
-      });
+    // Send email with enhanced error handling
+    const emailResult = await sendTemplateRequestEmail(validatedData.email);
+    
+    // If email sending failed, return detailed error
+    if (!emailResult.success) {
+      console.error("Failed to send email:", emailResult.error);
       
+      // Return detailed error information
       return NextResponse.json(
-        { 
-          message: "Failed to send template email", 
-          error: emailResult?.error?.message || "Unknown email error"
+        {
+          message: "Template request created but email failed to send",
+          error: {
+            message: emailResult.error?.message || "Unknown email error",
+            code: emailResult.error?.code || "UNKNOWN_ERROR",
+            details: emailResult.error?.details || null
+          },
+          data: { requestId: templateRequest.id }
         },
         { status: 500 }
       );
@@ -67,8 +61,18 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
+    // Enhanced error logging
+    console.error("Template request error:", error);
+    
+    // Return more detailed error information
     return NextResponse.json(
-      { message: "Internal server error", error: (error as Error).message },
+      { 
+        message: "Internal server error", 
+        error: {
+          message: error instanceof Error ? error.message : "Unknown error",
+          stack: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : null) : null
+        }
+      },
       { status: 500 }
     );
   }

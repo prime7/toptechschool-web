@@ -39,10 +39,24 @@ export function EmailCapture() {
         }
       })
       .catch((error) => {
+        console.error("Template request error:", error);
+        
+        // Format error message for better debugging
+        const errorData = error.response?.data;
+        const errorMessage = errorData?.error?.message || errorData?.error || "Unknown error";
+        const errorCode = errorData?.error?.code ? `[${errorData.error.code}]` : "";
+        const errorDetails = errorData?.error?.details ? JSON.stringify(errorData.error.details) : "";
+        
+        const formattedError = [
+          errorMessage,
+          errorCode,
+          errorDetails,
+          `Environment: ${process.env.NODE_ENV || 'unknown'}`
+        ].filter(Boolean).join(" ");
+        
         toast({
-          title: error.response?.data?.message,
-          description:
-            error.response?.data?.error || "Please try again later.",
+          title: errorData?.message || "Request failed",
+          description: formattedError,
           variant: "destructive",
         });
       })
