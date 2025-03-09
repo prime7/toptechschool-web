@@ -32,17 +32,17 @@ export function EmailCapture() {
           setIsSubmitted(true);
         } else {
           toast({
-            title: "Submission Error",
-            description: response.data.message || "Please try again later.",
+            title: response.data.message,
+            description: response.data.error || "Please try again later.",
             variant: "destructive",
           });
         }
       })
       .catch((error) => {
         toast({
-          title: "Submission Error",
+          title: error.response?.data?.message,
           description:
-            error.response?.data?.message || "Please try again later.",
+            error.response?.data?.error || "Please try again later.",
           variant: "destructive",
         });
       })

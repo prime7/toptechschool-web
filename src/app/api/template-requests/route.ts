@@ -30,9 +30,10 @@ export async function POST(request: Request) {
     }
 
     const emailResult = await resend.emails.send({
-      from: process.env.NODE_ENV === 'production' 
-        ? "Toptechschool <support@toptechschool.com>"
-        : "Toptechschool <onboarding@resend.dev>",
+      // from: process.env.NODE_ENV === 'production' 
+      //   ? "Toptechschool <support@toptechschool.com>"
+      //   : "Toptechschool <onboarding@resend.dev>",
+      from: "Toptechschool <support@toptechschool.com>",
       to: email,
       subject: "Access your lean Startup Notion template",
       react: TemplateRequestEmail({ to: email }),
