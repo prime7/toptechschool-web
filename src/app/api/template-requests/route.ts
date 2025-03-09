@@ -1,15 +1,25 @@
+import TemplateRequestEmail from "@/emails/TemplateRequestEmail";
 import { templateRequestSchema } from "./schema";
 import { prisma } from "@/lib/prisma";
-import { sendTemplateRequestEmail } from "@/actions/email";
 import { NextResponse } from "next/server";
+import { resend } from "@/lib/resend";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const validatedData = templateRequestSchema.parse(body);
+    const { success, data, error } = templateRequestSchema.safeParse(body);
+    
+    if (!success) {
+      return NextResponse.json(
+        { message: "Invalid input", errors: error?.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+    
+    const { email } = data;
 
     const existingEntry = await prisma.templateRequests.findUnique({
-      where: { email: validatedData.email },
+      where: { email },
     });
 
     if (existingEntry) {
@@ -19,27 +29,45 @@ export async function POST(request: Request) {
       );
     }
 
-    await prisma.templateRequests.create({
-      data: { email: validatedData.email },
+    const emailResult = await resend.emails.send({
+      from: process.env.NODE_ENV === 'production' 
+        ? "Toptechschool <support@toptechschool.com>"
+        : "Toptechschool <onboarding@resend.dev>",
+      to: email,
+      subject: "Access your lean Startup Notion template",
+      react: TemplateRequestEmail({ to: email }),
     });
 
-    const emailResult = await sendTemplateRequestEmail(validatedData.email);
 
-    if (!emailResult.success) {
-      console.error("Failed to send email:", emailResult.error);
+    const templateRequest = await prisma.templateRequests.create({
+      data: { email },
+    });
+
+
+    if (!emailResult || emailResult.error) {
+      await prisma.templateRequests.delete({
+        where: { id: templateRequest.id },
+      });
+      
       return NextResponse.json(
-        { message: emailResult.error },
+        { 
+          message: "Failed to send template email", 
+          error: emailResult?.error?.message || "Unknown email error"
+        },
         { status: 500 }
       );
     }
 
     return NextResponse.json(
-      { message: "Successfully added to template requests" },
+      { 
+        message: "Successfully added to template requests",
+        data: { requestId: templateRequest.id }
+      },
       { status: 200 }
     );
   } catch (error) {
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : "An unexpected error occurred." },
+      { message: "Internal server error", error: (error as Error).message },
       { status: 500 }
     );
   }

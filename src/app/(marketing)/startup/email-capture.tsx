@@ -31,7 +31,6 @@ export function EmailCapture() {
         if (response.status === 200) {
           setIsSubmitted(true);
         } else {
-          alert(JSON.stringify(response.data));
           toast({
             title: "Submission Error",
             description: response.data.message || "Please try again later.",
@@ -40,7 +39,6 @@ export function EmailCapture() {
         }
       })
       .catch((error) => {
-        alert(JSON.stringify(error.response?.data));
         toast({
           title: "Submission Error",
           description:
