@@ -1,6 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { ChevronRightIcon, Trash2Icon, EditIcon, BriefcaseIcon, CalendarIcon } from "lucide-react";
+import {
+  ChevronRightIcon,
+  Trash2Icon,
+  EditIcon,
+  BriefcaseIcon,
+  CalendarIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type ResumeProps = {
@@ -10,7 +16,12 @@ type ResumeProps = {
   jobRole?: string;
 };
 
-export default function Resume({ id, filename, createdAt, jobRole }: ResumeProps) {
+export default async function Resume({
+  id,
+  filename,
+  createdAt,
+  jobRole,
+}: ResumeProps) {
   return (
     <div className="flex flex-col rounded-lg border border-border hover:bg-muted/30 transition-colors group">
       <div className="flex items-center justify-between p-4">
@@ -29,9 +40,9 @@ export default function Resume({ id, filename, createdAt, jobRole }: ResumeProps
             </div>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Button 
+          <Button
             variant="secondary"
             size="icon"
             className="h-8 w-8 rounded-full"
@@ -39,7 +50,7 @@ export default function Resume({ id, filename, createdAt, jobRole }: ResumeProps
           >
             <EditIcon className="h-4 w-4 text-muted-foreground hover:text-primary" />
           </Button>
-          <Button 
+          <Button
             variant="secondary"
             size="icon"
             className="h-8 w-8 rounded-full"
@@ -49,7 +60,7 @@ export default function Resume({ id, filename, createdAt, jobRole }: ResumeProps
           </Button>
         </div>
       </div>
-      
+
       {jobRole && (
         <div className="px-4 pb-2 -mt-1">
           <div className="flex items-center text-sm">
@@ -60,7 +71,7 @@ export default function Resume({ id, filename, createdAt, jobRole }: ResumeProps
           </div>
         </div>
       )}
-      
+
       <Link
         href={`/resume/${id}`}
         className="flex items-center justify-center p-2 mt-1 border-t border-border bg-muted/30 hover:bg-muted transition-colors"
