@@ -3,15 +3,11 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function DELETE(
-  _req: NextRequest,
+  request: NextRequest,
   { params }: { params: { resumeId: string } }
 ) {
   try {
-    const session = await auth();
-
-    if (!session?.user) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+    const session = JSON.parse(request.headers.get("x-session") || "{}");
 
     const { resumeId } = params;
 

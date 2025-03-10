@@ -62,6 +62,18 @@ model Resume {
   analysis  Json?
   jobRole   JobRole?
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobReviews JobReview[]
+}
+
+model JobReview {
+  id              String   @id @default(cuid())
+  resumeId        String?
+  userId          String
+  createdAt       DateTime @default(now())
+  matchScore      Int
+  missingKeywords String[]
+  suggestions     String[]
+  resume          Resume?  @relation(fields: [resumeId], references: [id])
 }
 
 model Waitlist {

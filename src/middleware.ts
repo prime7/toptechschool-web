@@ -2,18 +2,28 @@ import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const RESTRICTED_ROUTES = ["/upload", "/resume"];
+const RESTRICTED_ROUTES = [
+  "/upload",
+  "/resume",
+  "/api/job/evaluate",
+  "/api/file-upload",
+  "/api/resume/:resumeId",
+];
 const allowedOrigins = ["http://localhost:5173", "chrome-extension://"];
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const origin = req.headers.get("origin") || "";
 
+  const session = await auth();
   const response = NextResponse.next();
+  response.headers.set("x-session", JSON.stringify(session || {}));
 
-  const isAllowedOrigin = allowedOrigins.some(allowedOrigin =>
-    allowedOrigin === origin || 
-    (allowedOrigin.startsWith('chrome-extension://') && origin.startsWith('chrome-extension://'))
+  const isAllowedOrigin = allowedOrigins.some(
+    (allowedOrigin) =>
+      allowedOrigin === origin ||
+      (allowedOrigin.startsWith("chrome-extension://") &&
+        origin.startsWith("chrome-extension://"))
   );
 
   if (isAllowedOrigin) {
@@ -34,7 +44,6 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (RESTRICTED_ROUTES.some((route) => pathname.startsWith(route))) {
-    const session = await auth();
     if (!session) {
       return NextResponse.redirect(new URL("/api/auth/signin", req.url));
     }
@@ -48,5 +57,8 @@ export const config = {
     "/upload",
     "/resume",
     "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/api/job/evaluate",
+    "/api/resume/:resumeId",
+    "/api/file-upload",
   ],
 };

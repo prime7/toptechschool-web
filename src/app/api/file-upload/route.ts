@@ -1,16 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrlForUpload } from "@/lib/r2";
 
 export async function POST(request: Request) {
   try {
     const { filename, fileType, jobRole } = await request.json();
-    const session = await auth();
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const session = JSON.parse(request.headers.get("x-session") || "{}");
 
     const resume = await prisma.resume.create({
       data: {
