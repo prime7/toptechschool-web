@@ -1,5 +1,5 @@
-import { openai } from "@/lib/openai";
 import { JobRole } from "@prisma/client";
+import { OpenAIService } from "./OpenAI.service";
 
 export interface JobMatchEvaluationResult {
   matchScore: number;
@@ -16,6 +16,8 @@ export class EvaluationService {
     resumeData: string, 
     jobRole: JobRole | null
   ): Promise<JobMatchEvaluationResult> {
+    const systemPrompt = "You must respond with valid JSON only. No other text or explanation.";
+    
     const prompt = `
       Analyze the match between the following job description and the resume skills.
       Provide:
@@ -36,42 +38,26 @@ export class EvaluationService {
       }
     `;
     
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You must respond with valid JSON only. No other text or explanation.",
-        },
-        { role: "user", content: prompt },
-        { role: "user", content: `Job Description: ${jobDescription}` },
-        { role: "user", content: `Resume Data: ${resumeData}` },
-        { role: "user", content: `Job Role: ${jobRole}` },
-      ],
-      max_tokens: 10000,
-      temperature: 0.3,
-      response_format: { type: "json_object" },
-    });
-
-    let llmResult;
-    try {
-      llmResult = JSON.parse(
-        response.choices[0].message.content ||
-          '{"matchScore":0,"missingKeywords":[],"suggestions":[],"strengths":[],"gaps":[],"recommendations":""}'
-      );
-    } catch (e) {
-      console.error("Failed to parse OpenAI response:", e);
-      llmResult = { 
-        matchScore: 0, 
-        missingKeywords: [], 
-        suggestions: [],
-        strengths: [],
-        gaps: [],
-        recommendations: "Unable to generate recommendations due to an error."
-      };
-    }
-
-    return llmResult;
+    const messages = [
+      prompt,
+      `Job Description: ${jobDescription}`,
+      `Resume Data: ${resumeData}`,
+      `Job Role: ${jobRole}`,
+    ];
+    
+    const defaultResponse: JobMatchEvaluationResult = {
+      matchScore: 0,
+      missingKeywords: [],
+      suggestions: [],
+      strengths: [],
+      gaps: [],
+      recommendations: "Unable to generate recommendations due to an error."
+    };
+    
+    return OpenAIService.getJsonResponse<JobMatchEvaluationResult>(
+      systemPrompt,
+      messages,
+      defaultResponse
+    );
   }
 } 

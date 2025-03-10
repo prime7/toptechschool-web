@@ -1,32 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { JobRole } from "@prisma/client";
 import { EvaluationService } from "./Evaluation.service";
+import { ResumeService } from "./Resume.service";
 
 export class JobService {
-  /**
-   * Evaluates a job description against a resume and stores the results
-   */
   static async evaluateJobDescription(
     userId: string,
     jobDescription: string,
     jobRole: JobRole | null,
     resumeId?: string
   ) {
-    // Get resume data if resumeId is provided
     let resumeData = "";
     if (resumeId) {
-      const resume = await prisma.resume.findFirst({
-        where: {
-          id: resumeId,
-          userId: userId,
-        },
-      });
-
-      if (!resume) {
-        throw new Error("Resume not found");
-      }
-
-      resumeData = JSON.stringify(resume.content);
+      const resume = await ResumeService.getResumeById(resumeId, userId);
+      resumeData = ResumeService.getResumeContentString(resume);
     }
 
     const evaluation = await EvaluationService.evaluateJobMatch(jobDescription, resumeData, jobRole);
@@ -45,5 +32,16 @@ export class JobService {
       jobReview,
       evaluation,
     };
+  }
+
+  static async getUserJobReviews(userId: string) {
+    return prisma.jobReview.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 }
