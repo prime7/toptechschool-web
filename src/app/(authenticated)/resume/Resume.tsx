@@ -23,6 +23,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 
 type ResumeProps = {
@@ -39,6 +50,8 @@ export default function Resume({
   jobRole,
 }: ResumeProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [newFilename, setNewFilename] = useState(filename);
   const router = useRouter();
 
   const handleDelete = async () => {
@@ -51,6 +64,23 @@ export default function Resume({
     } catch (error) {
       toast({
         title: "Failed to delete resume",
+      });
+    }
+  };
+  
+  const handleUpdateFilename = async () => {
+    try {
+      await axios.patch(`/api/resume/${id}`, {
+        filename: newFilename,
+      });
+      toast({
+        title: "Resume updated successfully",
+      });
+      router.refresh();
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      toast({
+        title: "Failed to update resume",
       });
     }
   };
@@ -75,14 +105,41 @@ export default function Resume({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            size="icon"
-            className="h-8 w-8 rounded-full"
-            aria-label="Rename resume"
-          >
-            <EditIcon className="h-4 w-4 text-muted-foreground hover:text-primary" />
-          </Button>
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                aria-label="Rename resume"
+              >
+                <EditIcon className="h-4 w-4 text-muted-foreground hover:text-primary" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Rename Resume</DialogTitle>
+                <DialogDescription>
+                  Enter a new name for your resume.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="py-4">
+                <Label htmlFor="filename">Resume Name</Label>
+                <Input
+                  id="filename"
+                  value={newFilename}
+                  onChange={(e) => setNewFilename(e.target.value)}
+                  className="mt-2"
+                />
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdateFilename}>Save Changes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
               <Button
