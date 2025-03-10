@@ -8,12 +8,10 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { getUserResumes } from "@/actions/resume";
-import { ChevronRightIcon } from "lucide-react";
-import Link from "next/link";
-import { FileIcon } from "lucide-react";
+import Resume from "./Resume";
 
 export default async function UploadPage() {
-  const resumes = await getUserResumes(["id", "filename", "createdAt"]);
+  const resumes = await getUserResumes(["id", "filename", "createdAt", "jobRole"]);
 
   return (
     <div className="container mx-auto py-12 px-4">
@@ -67,33 +65,13 @@ export default async function UploadPage() {
             ) : (
               <div className="space-y-4">
                 {resumes.map((resume) => (
-                  <Link
+                  <Resume
                     key={resume.id}
-                    href={`/resume/${resume.id}`}
-                    className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/30 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-md">
-                        <FileIcon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium group-hover:text-primary transition-colors">
-                          {resume.filename}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {resume.createdAt
-                            ? new Date(resume.createdAt).toLocaleDateString()
-                            : "No date"}
-                          {resume.jobRole && (
-                            <span className="ml-2 px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs">
-                              {resume.jobRole.replace(/_/g, " ")}
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                    <ChevronRightIcon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </Link>
+                    id={resume.id || ""}
+                    filename={resume.filename || "Untitled Resume"}
+                    createdAt={resume.createdAt || new Date()}
+                    jobRole={resume.jobRole}
+                  />
                 ))}
               </div>
             )}
