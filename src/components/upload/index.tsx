@@ -214,7 +214,7 @@ const UploadComponent: React.FC = () => {
               Uploading...
             </>
           ) : (
-            "Upload Resume"
+            "Get Feedback 😎"
           )}
         </Button>
       )}

@@ -32,16 +32,38 @@ export default async function UploadPage() {
           </CardContent>
         </Card>
 
-        {/* New section for displaying resumes */}
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Your Resumes</CardTitle>
+            <CardTitle className="text-center">
+              {resumes.length === 0 ? "Why Upload Your Resume?" : "Your Resumes"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {resumes.length === 0 ? (
-              <p className="text-muted-foreground text-center">
-                No resumes uploaded yet
-              </p>
+              <div className="text-center">
+                <div className="max-w-md mx-auto shadow-sm">
+                  <ul className="space-y-4">
+                    <li className="flex items-start gap-3">
+                      <div className="mt-0.5 p-1.5 bg-primary/10 rounded-full">
+                        <span className="text-xl">⚡</span>
+                      </div>
+                      <span className="text-left">Get <strong>instant AI feedback</strong> on your resume&apos;s strengths and weaknesses</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="mt-0.5 p-1.5 bg-primary/10 rounded-full">
+                        <span className="text-xl">🔍</span>
+                      </div>
+                      <span className="text-left">Get <strong>matched with LinkedIn jobs</strong> faster based on your skills</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="mt-0.5 p-1.5 bg-primary/10 rounded-full">
+                        <span className="text-xl">✨</span>
+                      </div>
+                      <span className="text-left">Receive <strong>personalized suggestions</strong> to improve your resume</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             ) : (
               <div className="space-y-4">
                 {resumes.map((resume) => (
