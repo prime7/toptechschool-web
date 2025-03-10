@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { LeanCanvasEmail } from "./email";
+import LeanCanvasEmailTemplate from "@/email-templates/LeanCanvasEmailTemplate";
 
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -26,7 +26,7 @@ export async function sendTemplateRequestEmail(to: string): Promise<EmailResult>
       from: "Toptechschool <support@toptechschool.com>",
       to,
       subject: "Access your lean Startup Notion template",
-      react: LeanCanvasEmail({ email: to }),
+      react: LeanCanvasEmailTemplate({ to }),
     });
     
     return { 
