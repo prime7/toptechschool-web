@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   ChevronRightIcon,
@@ -8,6 +10,20 @@ import {
   CalendarIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { toast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 type ResumeProps = {
   id: string;
@@ -16,12 +32,29 @@ type ResumeProps = {
   jobRole?: string;
 };
 
-export default async function Resume({
+export default function Resume({
   id,
   filename,
   createdAt,
   jobRole,
 }: ResumeProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`/api/resume/${id}`);
+      toast({
+        title: "Resume deleted successfully",
+      });
+      router.refresh();
+    } catch (error) {
+      toast({
+        title: "Failed to delete resume",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col rounded-lg border border-border hover:bg-muted/30 transition-colors group">
       <div className="flex items-center justify-between p-4">
@@ -50,14 +83,33 @@ export default async function Resume({
           >
             <EditIcon className="h-4 w-4 text-muted-foreground hover:text-primary" />
           </Button>
-          <Button
-            variant="secondary"
-            size="icon"
-            className="h-8 w-8 rounded-full"
-            aria-label="Delete resume"
-          >
-            <Trash2Icon className="h-4 w-4 text-muted-foreground hover:text-primary" />
-          </Button>
+          <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                aria-label="Delete resume"
+              >
+                <Trash2Icon className="h-4 w-4 text-muted-foreground hover:text-primary" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete your resume &quot;{filename}
+                  &quot;. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
