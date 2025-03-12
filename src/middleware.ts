@@ -5,6 +5,7 @@ import type { NextRequest } from "next/server";
 const RESTRICTED_ROUTES = [
   "/upload",
   "/resume",
+  "/job",
   "/api/job/evaluate",
   "/api/file-upload",
   "/api/resume/:resumeId",
@@ -56,6 +57,7 @@ export const config = {
   matcher: [
     "/upload",
     "/resume",
+    "/job",
     "/((?!_next/static|_next/image|favicon.ico).*)",
     "/api/job/evaluate",
     "/api/resume/:resumeId",
