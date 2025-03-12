@@ -10,16 +10,67 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  resumes       Resume[]
-  sessions      Session[]
+  id             String           @id @default(cuid())
+  name           String?
+  email          String           @unique
+  emailVerified  DateTime?
+  image          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  title          String?
+  bio            String?
+  location       String?
+  accounts       Account[]
+  resumes        Resume[]
+  sessions       Session[]
+  socialLinks    SocialLink[]
+  workExperience WorkExperience[]
+  education      Education[]
+  skills         Skill[]
+}
+
+model SocialLink {
+  id           String   @id @default(cuid())
+  platform     Platform
+  url          String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  displayOrder Int      @default(0)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Skill {
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WorkExperience {
+  id             String         @id @default(cuid())
+  company        String
+  position       String
+  location       String
+  startDate      DateTime
+  endDate        DateTime?
+  description    String?        @db.Text
+  displayOrder   Int            @default(0)
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employmentType EmploymentType @default(FULL_TIME)
+}
+
+model Education {
+  id           String    @id @default(cuid())
+  institution  String
+  degree       Degree
+  startDate    DateTime
+  endDate      DateTime?
+  description  String?   @db.Text
+  displayOrder Int       @default(0)
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -51,17 +102,17 @@ model Session {
 }
 
 model Resume {
-  id        String        @id @default(cuid())
-  userId    String
-  filename  String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  content   Json?
-  parsed    ParsingStatus @default(NOT_STARTED)
-  fileKey   String
-  analysis  Json?
-  jobRole   JobRole?
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String        @id @default(cuid())
+  userId     String
+  filename   String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  content    Json?
+  parsed     ParsingStatus @default(NOT_STARTED)
+  fileKey    String
+  analysis   Json?
+  jobRole    JobRole?
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   jobReviews JobReview[]
 }
 
@@ -112,4 +163,60 @@ enum JobRole {
   SYSTEM_ADMINISTRATOR
   SECURITY_ENGINEER
   DATABASE_ADMINISTRATOR
+}
+
+enum Platform {
+  TWITTER
+  LINKEDIN
+  GITHUB
+  X
+  FACEBOOK
+  INSTAGRAM
+  YOUTUBE
+  MEDIUM
+  STACKOVERFLOW
+  DRIBBBLE
+  BEHANCE
+  PERSONAL_WEBSITE
+  PORTFOLIO
+  DEV_TO
+  HASHNODE
+  CODEPEN
+}
+
+enum Degree {
+  ASSOCIATE
+  BACHELORS
+  MASTERS
+  PHD
+  MBA
+  DIPLOMA
+  CERTIFICATE
+  HIGH_SCHOOL
+  BOOTCAMP
+  SELF_TAUGHT
+  OTHER
+}
+
+enum LocationType {
+  REMOTE
+  HYBRID
+  ON_SITE
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+  CONNECTIONS_ONLY
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+  INTERNSHIP
+  APPRENTICESHIP
+  VOLUNTEER
+  SELF_EMPLOYED
 }
