@@ -41,6 +41,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
           <DropdownMenuContent className="w-56 border border-border">
             <DropdownMenuLabel>Howdy! {session.user?.name}</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/profile">Profile</Link></DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer"><Link href="/dashboard">Dashboard</Link></DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer"><Link href="/resume">Resume</Link></DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer"><Link href="/job">Job</Link></DropdownMenuItem>
