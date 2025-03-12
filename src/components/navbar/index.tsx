@@ -3,10 +3,22 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {  Menu } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
+import Link from "next/link";
 import { ThemeToggle } from "./ThemeSwitch";
 import { Session } from "next-auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitialsFromName } from "@/lib/utils";
+
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const navItems = [
@@ -19,13 +31,23 @@ const Navbar = ({ session }: { session: Session | null }) => {
   const AuthButton = () => {
     if (session) {
       return (
-        <Button
-          variant="outline"
-          className="text-foreground"
-          onClick={() => signOut()}
-        >
-          Sign Out
-        </Button>
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger>
+            <Avatar className="border-2 border-border">
+              <AvatarImage src={session.user?.image || ""} alt="@shadcn" />
+              <AvatarFallback>{getInitialsFromName(session.user?.name || "")}</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 border border-border">
+            <DropdownMenuLabel>Howdy! {session.user?.name}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/dashboard">Dashboard</Link></DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/resume">Resume</Link></DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/job">Job</Link></DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">Sign Out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     } else {
       return (
