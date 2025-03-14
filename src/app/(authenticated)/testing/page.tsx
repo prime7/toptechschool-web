@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlusCircle, Trash2, Github, Linkedin, Twitter, Globe, Edit, Save } from "lucide-react";
 import { getInitialsFromName } from "@/lib/utils";
+import { Platform, Skill } from "@prisma/client";
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -84,15 +85,15 @@ export default function Profile() {
     }
   };
 
-  const removeSkill = (skill) => {
-    setSkills(skills.filter(s => s !== skill));
+  const removeSkill = (skill: Skill) => {
+    setSkills(skills.filter(s => s.id !== skill.id));
   };
 
-  const getSocialIcon = (platform) => {
+  const getSocialIcon = (platform: Platform ) => {
     switch (platform) {
-      case "github": return <Github className="h-5 w-5" />;
-      case "linkedin": return <Linkedin className="h-5 w-5" />;
-      case "twitter": return <Twitter className="h-5 w-5" />;
+      case Platform.GITHUB: return <Github className="h-5 w-5" />;
+      case Platform.LINKEDIN: return <Linkedin className="h-5 w-5" />;
+      case Platform.TWITTER: return <Twitter className="h-5 w-5" />;
       default: return <Globe className="h-5 w-5" />;
     }
   };
