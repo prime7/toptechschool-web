@@ -35,12 +35,24 @@ export default async function Profile() {
   }>): Promise<User> {
     'use server'
 
-    const { socialLinks, workExperience, ...userData } = updatedData;
+    const { workExperience, socialLinks, ...userData } = updatedData;
 
     const updatedUser = await prisma.user.update({
       where: { id: user?.id },
       data: {
         ...userData,
+        ...(socialLinks && {
+          socialLinks: {
+            deleteMany: {
+              userId: user?.id
+            },
+            create: socialLinks.map(link => ({
+              platform: link.platform,
+              url: link.url,
+              displayOrder: link.displayOrder,
+            })),
+          },
+        }),
         ...(workExperience && {
           workExperience: {
             deleteMany: {

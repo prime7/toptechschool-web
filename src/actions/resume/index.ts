@@ -2,7 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { ResumeAnalysisResult, ResumeFields } from "./types";
+import { ResumeAnalysisResult, ResumeFields, ResumeContent, ResumeAnalysis } from "./types";
+import { ParsingStatus } from "@prisma/client";
 import { cache } from "react";
 
 const checkAuthorization = async () => {
@@ -57,10 +58,10 @@ const getUserResume = cache(
       }
       
       return {
-        content: resume.content,
-        analysis: resume.analysis,
-        parsed: resume.parsed,
-      } as ResumeAnalysisResult;
+        content: resume.content as unknown as ResumeContent,
+        analysis: resume.analysis as unknown as ResumeAnalysis,
+        parsed: resume.parsed as unknown as ParsingStatus,
+      };
     } catch (error) {
       throw error;
     }

@@ -14,7 +14,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 interface ProfileWorkExperienceProps {
@@ -87,7 +86,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
     // Save immediately
     startTransition(async () => {
       try {
-        const formattedExperiences = updatedExperiences.map(({ id, userId, ...exp }) => ({
+        const formattedExperiences = updatedExperiences.map(({ ...exp }) => ({
           company: exp.company,
           position: exp.position,
           location: exp.location,
@@ -177,7 +176,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
 
     startTransition(async () => {
       try {
-        const formattedExperiences = updatedExperiences.map(({ id, userId, ...exp }) => ({
+        const formattedExperiences = updatedExperiences.map(({ ...exp }) => ({
           company: exp.company,
           position: exp.position,
           location: exp.location,
