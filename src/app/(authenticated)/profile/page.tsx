@@ -9,6 +9,7 @@ import ProfileSocialLinks from "./ProfileSocialLinks";
 import ProfileWorkExperience from "./ProfileWorkExperience";
 import ProfileEducation from "./ProfileEducation";
 import ProfileSkills from "./ProfileSkills";
+import { Separator } from "@/components/ui/separator";
 
 export default async function Profile() {
   const session = await auth();
@@ -23,9 +24,21 @@ export default async function Profile() {
     },
     include: {
       socialLinks: true,
-      workExperience: true,
-      education: true,
-      skills: true,
+      workExperience: {
+        orderBy: {
+          startDate: 'desc'
+        }
+      },
+      education: {
+        orderBy: {
+          startDate: 'desc'
+        }
+      },
+      skills: {
+        orderBy: {
+          name: 'asc'
+        }
+      },
     },
   });
 
@@ -115,14 +128,22 @@ export default async function Profile() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <div className="grid gap-8">
+    <div className="container mx-auto py-4 sm:py-6 md:py-8 px-3 sm:px-4 max-w-4xl">
+      <div className="grid gap-4 sm:gap-6 md:gap-8">
         <ProfileHeader user={user} onSave={updateUser} />
-        <ProfileAbout user={user} onSave={updateUser} />
-        <ProfileSocialLinks user={user} onSave={updateUser} />
-        <ProfileWorkExperience user={user} onSave={updateUser} />
-        <ProfileEducation user={user} onSave={updateUser} />
-        <ProfileSkills user={user} onSave={updateUser} />
+        <Separator className="my-1 sm:my-2" />
+        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 lg:grid-cols-3">
+          <div className="lg:col-span-1 space-y-4 sm:space-y-6 md:space-y-8">
+            <ProfileAbout user={user} onSave={updateUser} />
+            <ProfileSocialLinks user={user} onSave={updateUser} />
+            <ProfileSkills user={user} onSave={updateUser} />
+          </div>
+          
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6 md:space-y-8">
+            <ProfileWorkExperience user={user} onSave={updateUser} />
+            <ProfileEducation user={user} onSave={updateUser} />
+          </div>
+        </div>
       </div>
     </div>
   );

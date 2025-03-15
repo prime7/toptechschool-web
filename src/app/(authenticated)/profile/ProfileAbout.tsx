@@ -1,11 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { User } from '@prisma/client';
-import { Edit } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useState, useTransition, useOptimistic } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
+import { FormDialog } from "@/components/common/FormDialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ProfileAboutProps {
   user: User;
@@ -13,7 +14,7 @@ interface ProfileAboutProps {
 }
 
 export default function ProfileAbout({ user, onSave }: ProfileAboutProps) {
-  const [editing, setEditing] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [optimisticUser, updateOptimisticUser] = useOptimistic(
     user,
@@ -33,7 +34,7 @@ export default function ProfileAbout({ user, onSave }: ProfileAboutProps) {
     startTransition(async () => {
       try {
         await onSave(updatedFields);
-        setEditing(false);
+        setIsDialogOpen(false);
         toast({
           title: "Bio updated",
           description: "Your bio has been updated successfully.",
@@ -49,42 +50,45 @@ export default function ProfileAbout({ user, onSave }: ProfileAboutProps) {
     });
   };
 
-  const handleCancel = () => {
+  const handleOpenDialog = () => {
     setBio(user.bio || "");
-    setEditing(false);
+    setIsDialogOpen(true);
   };
 
+  const isEmpty = !optimisticUser.bio;
+
   return (
-    <div className="bg-card p-6 rounded-lg border border-border">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">About</h2>
-        {!editing && (
-          <Button variant="ghost" size="icon" onClick={() => setEditing(true)}>
-            <Edit className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-      
-      {editing ? (
-        <div>
-          <Textarea 
-            value={bio} 
-            onChange={(e) => setBio(e.target.value)}
-            className="min-h-[100px]"
-            placeholder="Tell us about yourself..."
-          />
-          <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" onClick={handleCancel} disabled={isPending}>Cancel</Button>
-            <Button onClick={handleSave} disabled={isPending}>
-              {isPending ? "Saving..." : "Save"}
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <p className="text-muted-foreground">
-          {optimisticUser.bio || "No bio provided. Click the edit button to add one."}
+    <>
+      <ProfileSection 
+        title="About" 
+        icon={<FileText className="h-5 w-5" />}
+        onEdit={isEmpty ? undefined : handleOpenDialog}
+        isEmpty={isEmpty}
+        emptyStateMessage="Add a bio to tell others about yourself."
+        emptyStateAction={handleOpenDialog}
+        emptyStateActionText="Add Bio"
+      >
+        <p className="text-muted-foreground whitespace-pre-wrap">
+          {optimisticUser.bio}
         </p>
-      )}
-    </div>
+      </ProfileSection>
+
+      <FormDialog
+        title={isEmpty ? "Add Bio" : "Edit Bio"}
+        description="Share information about yourself with others."
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSubmit={handleSave}
+        onCancel={() => setBio(user.bio || "")}
+        isSubmitting={isPending}
+      >
+        <Textarea 
+          value={bio} 
+          onChange={(e) => setBio(e.target.value)}
+          className="min-h-[200px]"
+          placeholder="Tell us about yourself..."
+        />
+      </FormDialog>
+    </>
   );
 }

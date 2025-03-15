@@ -4,7 +4,7 @@ import { useState, useTransition, useOptimistic } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit, Trash2, PlusCircle, GraduationCap } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { Degree, User, Education } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,6 +15,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
+import { TimelineItem } from "@/components/common/TimelineItem";
+import { formatDateRange, dateToMonthString } from "@/lib/date-utils";
 
 interface ProfileEducationProps {
   user: User & { education: Education[] };
@@ -218,75 +221,73 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
     const updatedEducations = educations.filter((_, i) => i !== index);
     setEducations(updatedEducations);
     updateOptimisticEducation(updatedEducations);
-  };
+    
+    // Save immediately
+    startTransition(async () => {
+      try {
+        const formattedEducations = updatedEducations.map(({ id, userId, ...edu }) => ({
+          institution: edu.institution,
+          degree: edu.degree,
+          startDate: edu.startDate,
+          endDate: edu.endDate,
+          description: edu.description,
+          displayOrder: edu.displayOrder,
+        }));
 
-  const formatDate = (date: Date | string | null) => {
-    if (!date) return "";
-    const d = new Date(date);
-    return d.toLocaleDateString('en-US', {
-      month: 'long',
-      year: 'numeric'
+        await onSave({ education: formattedEducations.map(edu => ({
+          ...edu,
+          userId: user.id,
+        })) });
+        
+        toast({
+          title: "Education removed",
+          description: "Education has been removed successfully.",
+        });
+      } catch (error) {
+        console.error("Failed to remove education:", error);
+        toast({
+          title: "Update failed",
+          description: "There was a problem removing your education. Please try again.",
+          variant: "destructive",
+        });
+      }
     });
   };
 
-  // Convert Date to YYYY-MM format for input[type="month"]
-  const dateToMonthString = (date: Date | null): string => {
-    if (!date) return "";
-    return date.toISOString().slice(0, 7);
+  const formatDegree = (degree: Degree): string => {
+    return degree.replace(/_/g, ' ').toLowerCase();
   };
 
-  return (
-    <div className="bg-card p-6 rounded-lg border border-border">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2">
-          <GraduationCap className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Education</h2>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            resetForm();
-            setIsDialogOpen(true);
-          }}
-        >
-          <PlusCircle className="h-4 w-4 mr-2" />
-          Add Education
-        </Button>
-      </div>
+  const isEmpty = optimisticEducation.length === 0;
 
-      {/* Display Education */}
+  return (
+    <ProfileSection
+      title="Education"
+      icon={<GraduationCap className="h-5 w-5" />}
+      onAdd={() => {
+        resetForm();
+        setIsDialogOpen(true);
+      }}
+      addButtonText="Add Education"
+      isEmpty={isEmpty}
+      emptyStateMessage="Add your educational background to showcase your qualifications."
+      emptyStateAction={() => {
+        resetForm();
+        setIsDialogOpen(true);
+      }}
+      emptyStateActionText="Add Education"
+    >
       <div className="space-y-8">
         {optimisticEducation.map((edu, index) => (
-          <div key={edu.id} className="relative pl-6 border-l-2 border-muted pb-6 last:pb-0">
-            <div className="absolute w-3 h-3 bg-primary rounded-full -left-[7px] top-1.5" />
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold text-lg">{edu.degree.replace(/_/g, ' ').toLowerCase()}</h3>
-                <p className="text-muted-foreground">{edu.institution}</p>
-                <p className="text-sm text-muted-foreground">
-                  {formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : "Present"}
-                </p>
-                {edu.description && <p className="mt-2">{edu.description}</p>}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleEditEducation(index)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleRemoveEducation(index)}
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </div>
-            </div>
-          </div>
+          <TimelineItem
+            key={edu.id}
+            title={formatDegree(edu.degree)}
+            subtitle={edu.institution}
+            dateRange={formatDateRange(edu.startDate, edu.endDate)}
+            description={edu.description}
+            onEdit={() => handleEditEducation(index)}
+            onDelete={() => handleRemoveEducation(index)}
+          />
         ))}
       </div>
 
@@ -326,7 +327,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
                   <SelectContent>
                     {Object.values(Degree).map((degree) => (
                       <SelectItem key={degree} value={degree}>
-                        {degree.replace(/_/g, ' ').toLowerCase()}
+                        {formatDegree(degree)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -387,6 +388,6 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </ProfileSection>
   );
 }

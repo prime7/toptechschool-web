@@ -4,7 +4,7 @@ import { useState, useTransition, useOptimistic } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit, Trash2, PlusCircle, Briefcase } from "lucide-react";
+import { Briefcase } from "lucide-react";
 import { EmploymentType, User, WorkExperience } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,6 +15,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
+import { TimelineItem } from "@/components/common/TimelineItem";
+import { formatDateRange, dateToMonthString } from "@/lib/date-utils";
 
 interface ProfileWorkExperienceProps {
   user: User & { workExperience: WorkExperience[] };
@@ -234,75 +237,83 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
     const updatedExperiences = experiences.filter((_, i) => i !== index);
     setExperiences(updatedExperiences);
     updateOptimisticExperience(updatedExperiences);
-  };
+    
+    // Save immediately
+    startTransition(async () => {
+      try {
+        const formattedExperiences = updatedExperiences.map(({ id, userId, ...exp }) => ({
+          company: exp.company,
+          position: exp.position,
+          location: exp.location,
+          employmentType: exp.employmentType,
+          startDate: exp.startDate,
+          endDate: exp.endDate,
+          description: exp.description,
+          displayOrder: exp.displayOrder,
+        }));
 
-  const formatDate = (date: Date | string | null) => {
-    if (!date) return "";
-    const d = new Date(date);
-    return d.toLocaleDateString('en-US', {
-      month: 'long',
-      year: 'numeric'
+        await onSave({ workExperience: formattedExperiences.map(exp => ({
+          ...exp,
+          userId: user.id,
+        })) });
+        
+        toast({
+          title: "Experience removed",
+          description: "Work experience has been removed successfully.",
+        });
+      } catch (error) {
+        console.error("Failed to remove work experience:", error);
+        toast({
+          title: "Update failed",
+          description: "There was a problem removing your work experience. Please try again.",
+          variant: "destructive",
+        });
+      }
     });
   };
 
-  // Convert Date to YYYY-MM format for input[type="month"]
-  const dateToMonthString = (date: Date | null): string => {
-    if (!date) return "";
-    return date.toISOString().slice(0, 7);
+  const formatEmploymentType = (type: EmploymentType): string => {
+    return type.replace(/_/g, ' ').toLowerCase();
   };
 
-  return (
-    <div className="bg-card p-6 rounded-lg border border-border">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2">
-          <Briefcase className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Work Experience</h2>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            resetForm();
-            setIsDialogOpen(true);
-          }}
-        >
-          <PlusCircle className="h-4 w-4 mr-2" />
-          Add Experience
-        </Button>
-      </div>
+  const isEmpty = optimisticExperience.length === 0;
 
-      {/* Display Experiences */}
+  return (
+    <ProfileSection
+      title="Work Experience"
+      icon={<Briefcase className="h-5 w-5" />}
+      onAdd={() => {
+        resetForm();
+        setIsDialogOpen(true);
+      }}
+      addButtonText="Add Experience"
+      isEmpty={isEmpty}
+      emptyStateMessage="Add your work experience to showcase your professional background."
+      emptyStateAction={() => {
+        resetForm();
+        setIsDialogOpen(true);
+      }}
+      emptyStateActionText="Add Experience"
+    >
       <div className="space-y-8">
         {optimisticExperience.map((exp, index) => (
-          <div key={exp.id} className="relative pl-6 border-l-2 border-muted pb-6 last:pb-0">
-            <div className="absolute w-3 h-3 bg-primary rounded-full -left-[7px] top-1.5" />
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold text-lg">{exp.position}</h3>
-                <p className="text-muted-foreground">{exp.company}</p>
-                <p className="text-sm text-muted-foreground">
-                  {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : "Present"}
-                </p>
-                {exp.description && <p className="mt-2">{exp.description}</p>}
+          <TimelineItem
+            key={exp.id}
+            title={exp.position}
+            subtitle={`${exp.company}${exp.location ? ` · ${exp.location}` : ''}`}
+            dateRange={formatDateRange(exp.startDate, exp.endDate)}
+            description={exp.description}
+            onEdit={() => handleEditExperience(index)}
+            onDelete={() => handleRemoveExperience(index)}
+          >
+            {exp.employmentType && (
+              <div className="mt-1">
+                <span className="text-xs bg-muted px-2 py-1 rounded-full">
+                  {formatEmploymentType(exp.employmentType)}
+                </span>
               </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleEditExperience(index)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleRemoveExperience(index)}
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </div>
-            </div>
-          </div>
+            )}
+          </TimelineItem>
         ))}
       </div>
 
@@ -361,7 +372,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
                   <SelectContent>
                     {Object.values(EmploymentType).map((type) => (
                       <SelectItem key={type} value={type}>
-                        {type.replace(/_/g, ' ').toLowerCase()}
+                        {formatEmploymentType(type)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -422,6 +433,6 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </ProfileSection>
   );
 }

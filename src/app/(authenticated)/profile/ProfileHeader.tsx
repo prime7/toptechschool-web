@@ -2,12 +2,13 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { getInitialsFromName } from "@/lib/utils";
 import { User } from '@prisma/client'
-import { Edit } from "lucide-react";
+import { Edit, User as UserIcon } from "lucide-react";
 import { useState, useTransition, useOptimistic } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { InputField } from "@/components/common/FormField";
+import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
 
 interface ProfileHeaderProps {
   user: User;
@@ -69,68 +70,78 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
     setEditing(false);
   };
 
+  const handleFieldChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div>
-      <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-        <Avatar className="h-24 w-24 border-2 border-border">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start">
+        <Avatar className="h-20 w-20 sm:h-24 sm:w-24 border-2 border-border">
           <AvatarImage src={optimisticUser?.image ?? ""} alt={optimisticUser?.name ?? ""} />
-          <AvatarFallback className="text-xl">{getInitialsFromName(optimisticUser?.name ?? "")}</AvatarFallback>
+          <AvatarFallback className="text-lg sm:text-xl bg-primary/10">
+            {getInitialsFromName(optimisticUser?.name ?? "")}
+          </AvatarFallback>
         </Avatar>
 
-        <div className="flex-1 text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-2">
-            <h1 className="text-3xl font-bold capitalize">{optimisticUser?.name}</h1>
+        <div className="flex-1 text-center sm:text-left">
+          <div className="flex items-center justify-center sm:justify-start gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold capitalize">{optimisticUser?.name || "Add your name"}</h1>
             {!editing && (
               <Button variant="ghost" size="icon" onClick={() => setEditing(true)}>
                 <Edit className="h-4 w-4" />
               </Button>
             )}
           </div>
-          <p className="text-xl text-muted-foreground capitalize">{optimisticUser.title}</p>
-          <p className="mt-1 capitalize">{optimisticUser?.location}</p>
-          <p className="mt-1 text-muted-foreground lowercase">{optimisticUser?.email}</p>
+          <p className="text-lg sm:text-xl text-muted-foreground capitalize">
+            {optimisticUser.title || <span className="text-muted-foreground/60 italic">Add your professional title</span>}
+          </p>
+          <p className="mt-1 capitalize">
+            {optimisticUser?.location || <span className="text-muted-foreground/60 italic">Add your location</span>}
+          </p>
+          <p className="mt-1 text-muted-foreground lowercase break-words">{optimisticUser?.email}</p>
         </div>
       </div>
       {editing && (
-        <div className="bg-card p-6 rounded-lg border border-border mt-4">
-          <h2 className="text-xl font-semibold mb-4">Edit Profile Information</h2>
+        <ProfileSection 
+          title="Edit Profile Information" 
+          icon={<UserIcon className="h-5 w-5" />}
+          className="mt-4"
+        >
           <div className="grid gap-4">
-            <div>
-              <label className="text-sm font-medium">Name</label>
-              <Input
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Title</label>
-              <Input
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Location</label>
-              <Input
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Email</label>
-              <Input
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </div>
-            <div className="flex justify-end gap-2 mt-2">
-              <Button variant="outline" onClick={handleCancel} disabled={isPending}>Cancel</Button>
-              <Button onClick={handleSave} disabled={isPending}>
+            <InputField
+              label="Name"
+              value={formData.name}
+              onChange={(value) => handleFieldChange("name", value)}
+              required
+            />
+            <InputField
+              label="Professional Title"
+              value={formData.title}
+              onChange={(value) => handleFieldChange("title", value)}
+              placeholder="e.g. Software Engineer"
+            />
+            <InputField
+              label="Location"
+              value={formData.location}
+              onChange={(value) => handleFieldChange("location", value)}
+              placeholder="e.g. San Francisco, CA"
+            />
+            <InputField
+              label="Email"
+              value={formData.email}
+              onChange={(value) => handleFieldChange("email", value)}
+              type="email"
+              required
+            />
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 mt-2">
+              <Button variant="outline" onClick={handleCancel} disabled={isPending} className="w-full sm:w-auto">Cancel</Button>
+              <Button onClick={handleSave} disabled={isPending} className="w-full sm:w-auto">
                 {isPending ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>
-        </div>
+        </ProfileSection>
       )}
     </div>
   );
