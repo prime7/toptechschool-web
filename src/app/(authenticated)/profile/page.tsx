@@ -2,11 +2,13 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ProfileHeader from "./ProfileHeader";
 import { prisma } from "@/lib/prisma";
-import { User, SocialLink, WorkExperience } from "@prisma/client";
+import { User, SocialLink, WorkExperience, Education, Skill } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import ProfileAbout from "./ProfileAbout";
 import ProfileSocialLinks from "./ProfileSocialLinks";
 import ProfileWorkExperience from "./ProfileWorkExperience";
+import ProfileEducation from "./ProfileEducation";
+import ProfileSkills from "./ProfileSkills";
 
 export default async function Profile() {
   const session = await auth();
@@ -22,6 +24,8 @@ export default async function Profile() {
     include: {
       socialLinks: true,
       workExperience: true,
+      education: true,
+      skills: true,
     },
   });
 
@@ -31,11 +35,13 @@ export default async function Profile() {
 
   async function updateUser(updatedData: Partial<User & { 
     socialLinks?: SocialLink[], 
-    workExperience?: Omit<WorkExperience, "id">[] 
+    workExperience?: Omit<WorkExperience, "id">[],
+    education?: Omit<Education, "id">[],
+    skills?: Omit<Skill, "id">[]
   }>): Promise<User> {
     'use server'
 
-    const { workExperience, socialLinks, ...userData } = updatedData;
+    const { socialLinks, workExperience, education, skills, ...userData } = updatedData;
 
     const updatedUser = await prisma.user.update({
       where: { id: user?.id },
@@ -70,10 +76,37 @@ export default async function Profile() {
             })),
           },
         }),
+        ...(education && {
+          education: {
+            deleteMany: {
+              userId: user?.id
+            },
+            create: education.map(edu => ({
+              institution: edu.institution,
+              degree: edu.degree,
+              startDate: new Date(edu.startDate),
+              endDate: edu.endDate ? new Date(edu.endDate) : null,
+              description: edu.description,
+              displayOrder: edu.displayOrder,
+            })),
+          },
+        }),
+        ...(skills && {
+          skills: {
+            deleteMany: {
+              userId: user?.id
+            },
+            create: skills.map(skill => ({
+              name: skill.name,
+            })),
+          },
+        }),
       },
       include: {
         workExperience: true,
         socialLinks: true,
+        education: true,
+        skills: true,
       },
     });
 
@@ -88,6 +121,8 @@ export default async function Profile() {
         <ProfileAbout user={user} onSave={updateUser} />
         <ProfileSocialLinks user={user} onSave={updateUser} />
         <ProfileWorkExperience user={user} onSave={updateUser} />
+        <ProfileEducation user={user} onSave={updateUser} />
+        <ProfileSkills user={user} onSave={updateUser} />
       </div>
     </div>
   );
