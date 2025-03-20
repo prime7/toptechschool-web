@@ -25,6 +25,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
     { name: "TTS", href: "/" },
     { name: "Resume", href: "/resume" },
     { name: "Startup", href: "/startup" },
+    { name: "Job", href: "/job" },
     { name: "Blog", href: "/blog" },
   ];
 
