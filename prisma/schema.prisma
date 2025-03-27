@@ -127,7 +127,7 @@ model JobReview {
   resume          Resume?  @relation(fields: [resumeId], references: [id])
 }
 
-model Waitlist {
+model Newsletter {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())

@@ -3,6 +3,9 @@
 import React, { useRef } from "react";
 import { FormSubmission } from "./Form";
 import { Hero } from "./Hero";
+import { Features } from "./Features";
+
+
 export default function Home() {
   const waitlistRef = useRef<HTMLDivElement>(null);
 
@@ -14,6 +17,7 @@ export default function Home() {
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-16">
         <Hero onJoinWaitlist={scrollToWaitlist} />
+        <Features />
         <section ref={waitlistRef} className="mb-24">
           <FormSubmission />
         </section>

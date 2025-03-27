@@ -5,95 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { submitToWaitlist } from "@/actions/waitlist";
-import { waitlistSchema, WaitlistInput } from "@/actions/waitlist";
-import { FileText, Linkedin, Sparkles, LucideIcon } from "lucide-react";
-
-interface FeatureCardProps {
-  title: string;
-  description: string;
-  features: {
-    icon: LucideIcon;
-    title: string;
-    description: string;
-  }[];
-  className?: string;
-}
-
-const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, features, className }) => {
-  return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {features.map((feature, index) => (
-          <div key={index} className="flex items-start gap-3">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mt-1">
-              <feature.icon className="h-4 w-4 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-semibold">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
-            </div>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
-  );
-};
-
-interface WaitlistFormCardProps {
-  title: string;
-  description: string;
-  onSubmit: (data: WaitlistInput) => Promise<void>;
-  submitMessage: string | null;
-  register: any;
-  handleSubmit: any;
-  errors: any;
-}
-
-const WaitlistFormCard: React.FC<WaitlistFormCardProps> = ({
-  title,
-  description,
-  onSubmit,
-  submitMessage,
-  register,
-  handleSubmit,
-  errors,
-}) => {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Input
-              type="email"
-              placeholder="Email Address"
-              {...register("email")}
-              className={errors.email ? "border-red-500" : ""}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
-          <Button type="submit" className="w-full">
-            Join Waitlist
-          </Button>
-          {submitMessage && (
-            <p className="text-center text-sm mt-2">{submitMessage}</p>
-          )}
-        </form>
-      </CardContent>
-    </Card>
-  );
-};
+import { ArrowRight } from "lucide-react";
+import { submitToNewsletter } from "@/actions/newsletter";
+import { newsletterSchema, NewsletterInput } from "@/actions/newsletter";
 
 export const FormSubmission: React.FC = () => {
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
@@ -102,57 +16,51 @@ export const FormSubmission: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<WaitlistInput>({
-    resolver: zodResolver(waitlistSchema),
+  } = useForm<NewsletterInput>({
+    resolver: zodResolver(newsletterSchema),
   });
 
-  const onSubmit = async (data: WaitlistInput) => {
-    const result = await submitToWaitlist(data);
+  const onSubmit = async (data: NewsletterInput) => {
+    const result = await submitToNewsletter(data);
     setSubmitMessage(result.message);
   };
 
-  const features = [
-    {
-      icon: FileText,
-      title: "Resume Analysis",
-      description: "Get instant AI feedback on your resume",
-    },
-    {
-      icon: Linkedin,
-      title: "LinkedIn Extension",
-      description: "One-click job validation while browsing",
-    },
-    {
-      icon: Sparkles,
-      title: "Priority Access",
-      description: "Be first to try our mentorship program",
-    },
-  ];
-
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold mb-4">Join the Future of Tech Hiring</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Be among the first to experience our AI-powered platform and get early access to our mentorship program.
-        </p>
-      </div>
-      <div className="grid md:grid-cols-2 gap-8">
-        <FeatureCard
-          title="What You'll Get"
-          description="Early access to our platform features"
-          features={features}
-          className="bg-primary/5"
-        />
-        <WaitlistFormCard
-          title="Join the Waitlist"
-          description="Get early access to our platform"
-          onSubmit={onSubmit}
-          submitMessage={submitMessage}
-          register={register}
-          handleSubmit={handleSubmit}
-          errors={errors}
-        />
+    <div className="w-full">
+      <div className="max-w-md mx-auto">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="p-1.5 flex flex-col sm:flex-row items-center gap-2 border border-gray-200 rounded-lg dark:border-neutral-700">
+            <div className="relative w-full">
+              <label htmlFor="hero-input" className="sr-only">Subscribe</label>
+              <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-3">
+                <svg className="shrink-0 size-4 text-gray-400 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+              </div>
+              <Input
+                type="email"
+                id="hero-input"
+                {...register("email")}
+                className="py-1.5 sm:py-2 ps-9 pe-3 block w-full border-transparent rounded-lg sm:text-sm focus:border-transparent focus:ring-transparent disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500"
+                placeholder="Enter your email"
+              />
+            </div>
+            <Button
+              type="submit"
+              className="w-full sm:w-auto whitespace-nowrap py-2 px-2.5 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-md border border-transparent bg-gray-800 text-white hover:bg-gray-900 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:bg-white dark:text-neutral-800 dark:hover:bg-neutral-200"
+            >
+              Join
+              <ArrowRight className="size-4" />
+            </Button>
+          </div>
+          <p className="mt-2 text-xs text-gray-500 dark:text-neutral-500">
+            No spam, unsubscribe at any time.
+          </p>
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          )}
+          {submitMessage && (
+            <p className="text-center text-sm mt-2">{submitMessage}</p>
+          )}
+        </form>
       </div>
     </div>
   );
