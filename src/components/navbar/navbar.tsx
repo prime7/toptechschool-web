@@ -23,9 +23,7 @@ import { getInitialsFromName } from "@/lib/utils";
 const Navbar = ({ session }: { session: Session | null }) => {
   const navItems = [
     { name: "TTS", href: "/" },
-    { name: "Resume", href: "/resume" },
     { name: "Startup", href: "/startup" },
-    { name: "Job", href: "/job" },
     { name: "Blog", href: "/blog" },
   ];
 

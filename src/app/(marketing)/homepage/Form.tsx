@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { submitToNewsletter } from "@/actions/newsletter";
 import { newsletterSchema, NewsletterInput } from "@/actions/newsletter";
+import { Section } from "@/components/common/Section";
+
 
 export const FormSubmission: React.FC = () => {
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
@@ -36,7 +38,7 @@ export const FormSubmission: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
+    <Section>
       <div className="max-w-md mx-auto">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold tracking-tight">Join our newsletter</h2>
@@ -80,6 +82,6 @@ export const FormSubmission: React.FC = () => {
           )}
         </form>
       </div>
-    </div>
+    </Section>
   );
 };

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { UserAvatar } from "../../../components/avatars/UserAvatar";
-
+import { Section } from "@/components/common/Section";
 export const userImages = [
   { id: 1, src: "/images/startup/user1.png", alt: "U1" },
   { id: 2, src: "/images/startup/user2.png", alt: "U2" },
@@ -28,7 +28,7 @@ export function StartupHero() {
   };
 
   return (
-    <section className="py-12 md:py-16 lg:py-20">
+    <Section>
       <div className="container px-4">
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Left Column */}
@@ -104,6 +104,6 @@ export function StartupHero() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

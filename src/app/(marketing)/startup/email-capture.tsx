@@ -14,6 +14,7 @@ import {
 import { CheckCircle2, Shield, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
+import { Section } from "@/components/common/Section";
 
 export function EmailCapture() {
   const [email, setEmail] = useState("");
@@ -66,7 +67,7 @@ export function EmailCapture() {
   };
 
   return (
-    <section id="email-capture" className="py-16 md:py-24">
+    <Section id="email-capture">
       <div className="container px-4 md:px-6">
         <div className="mx-auto max-w-3xl">
           <Card className="overflow-hidden border rounded-xl shadow-2xl">
@@ -148,6 +149,6 @@ export function EmailCapture() {
           </Card>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Section } from "@/components/common/Section";
 import {
   Card,
   CardContent,
@@ -72,7 +73,7 @@ const PrincipleCard = ({ title, description, icon }: PrincipleCardProps) => (
 
 export function LeanStartupPrinciples() {
   return (
-    <section className="bg-muted/50 p-16 md:p-24 rounded-xl shadow-2xl border border-border">
+    <Section className="bg-muted/50 p-16 md:p-24 rounded-xl shadow-2xl border border-border">
       <div className="container px-4 md:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -96,6 +97,6 @@ export function LeanStartupPrinciples() {
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

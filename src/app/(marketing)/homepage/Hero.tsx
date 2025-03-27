@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Section } from "@/components/common/Section";
 
 interface HeroProps {
   onJoinWaitlist: () => void;
@@ -8,7 +9,7 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
   return (
-    <div className="relative overflow-hidden py-40">
+    <Section>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
@@ -46,6 +47,6 @@ export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
           </div>
         </div>
       </div>
-    </div>
+    </Section>
   );
 };
