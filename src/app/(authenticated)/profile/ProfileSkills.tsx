@@ -3,7 +3,7 @@
 import { useState, useTransition, useOptimistic } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Wrench, Trash2, PlusCircle, X, BadgeCheck } from "lucide-react";
+import { PlusCircle, X, BadgeCheck } from "lucide-react";
 import { User, Skill } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
@@ -58,7 +58,7 @@ export default function ProfileSkills({ user, onSave }: ProfileSkillsProps) {
     // Save immediately
     startTransition(async () => {
       try {
-        const formattedSkills = updatedSkills.map(({ id, ...skill }) => ({
+        const formattedSkills = updatedSkills.map(({ ...skill }) => ({
           name: skill.name,
           userId: user.id,
         }));
@@ -89,7 +89,7 @@ export default function ProfileSkills({ user, onSave }: ProfileSkillsProps) {
 
     startTransition(async () => {
       try {
-        const formattedSkills = updatedSkills.map(({ id, ...skill }) => ({
+        const formattedSkills = updatedSkills.map(({ ...skill }) => ({
           name: skill.name,
           userId: user.id,
         }));

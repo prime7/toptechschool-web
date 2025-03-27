@@ -9,7 +9,6 @@ import ProfileSocialLinks from "./ProfileSocialLinks";
 import ProfileWorkExperience from "./ProfileWorkExperience";
 import ProfileEducation from "./ProfileEducation";
 import ProfileSkills from "./ProfileSkills";
-import { Separator } from "@/components/ui/separator";
 
 export default async function Profile() {
   const session = await auth();

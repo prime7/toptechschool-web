@@ -3,7 +3,7 @@
 import { useState, useTransition, useOptimistic } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash2, Link2, Globe, ExternalLink } from "lucide-react";
+import { Edit, Trash2, Globe, ExternalLink } from "lucide-react";
 import { Platform, SocialLink, User } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

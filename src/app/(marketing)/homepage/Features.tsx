@@ -69,7 +69,7 @@ export const Features: React.FC = () => {
             </div>
             <h3 className="text-xl font-semibold mb-3">Expert Mentorship</h3>
             <p className="text-muted-foreground mb-4">
-              Connect with industry veterans who've walked your path and can guide you to success in your tech career.
+              Connect with industry veterans who&apos;ve walked your path and can guide you to success in your tech career.
             </p>
             <ul className="space-y-2">
               <li className="flex items-center text-muted-foreground">

@@ -99,7 +99,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
     // Save to server
     startTransition(async () => {
       try {
-        const formattedEducations = updatedEducations.map(({ id, userId, ...edu }) => ({
+        const formattedEducations = updatedEducations.map(({ ...edu }) => ({
           institution: edu.institution,
           degree: edu.degree,
           startDate: edu.startDate,
@@ -175,7 +175,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
     // Save to server
     startTransition(async () => {
       try {
-        const formattedEducations = updatedEducations.map(({ id, userId, ...edu }) => ({
+        const formattedEducations = updatedEducations.map(({ ...edu }) => ({
           institution: edu.institution,
           degree: edu.degree,
           startDate: edu.startDate,

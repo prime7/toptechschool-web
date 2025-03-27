@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Linkedin, FileText, Brain, Rocket, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface HeroProps {
   onJoinWaitlist: () => void;
@@ -26,7 +26,7 @@ export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Leverage AI-powered insights, real-time job validation, and expert mentorship to accelerate your tech career journey. Join thousands of successful professionals who've transformed their careers with our platform.
+            Leverage AI-powered insights, real-time job validation, and expert mentorship to accelerate your tech career journey. Join thousands of successful professionals who&apos;ve transformed their careers with our platform.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
             <Button 
