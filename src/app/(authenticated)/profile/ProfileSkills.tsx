@@ -3,9 +3,10 @@
 import { useState, useTransition, useOptimistic } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Wrench, Trash2, PlusCircle } from "lucide-react";
+import { Wrench, Trash2, PlusCircle, X, BadgeCheck } from "lucide-react";
 import { User, Skill } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
+import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
 
 interface ProfileSkillsProps {
   user: User & { skills: Skill[] };
@@ -117,55 +118,70 @@ export default function ProfileSkills({ user, onSave }: ProfileSkillsProps) {
     }
   };
 
-  return (
-    <div className="bg-card p-6 rounded-lg border border-border">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2">
-          <Wrench className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Skills</h2>
-        </div>
-      </div>
+  const isEmpty = optimisticSkills.length === 0;
 
-      <div className="space-y-4">
+  return (
+    <ProfileSection
+      title="Skills"
+      icon={<BadgeCheck className="h-5 w-5" />}
+      isEmpty={isEmpty}
+      emptyStateMessage="Add skills to showcase your expertise."
+      onAdd={() => {}} // Always show skills input
+    >
+      <div className="space-y-5">
         {/* Add Skill Input */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 relative">
           <Input
             placeholder="Add a new skill"
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             disabled={isPending}
+            className="pr-10"
           />
+          {newSkill && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute right-12 top-0 h-full opacity-70 hover:opacity-100"
+              onClick={() => setNewSkill("")}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
           <Button 
             onClick={handleAddSkill}
-            disabled={isPending}
+            disabled={isPending || !newSkill.trim()}
+            size="sm"
           >
-            <PlusCircle className="h-4 w-4 mr-2" />
+            <PlusCircle className="h-4 w-4 mr-1.5" />
             Add
           </Button>
         </div>
 
         {/* Skills List */}
-        <div className="flex flex-wrap gap-2">
-          {optimisticSkills.map((skill) => (
-            <div
-              key={skill.id}
-              className="bg-muted text-muted-foreground px-3 py-1.5 rounded-full text-sm flex items-center gap-2 group"
-            >
-              {skill.name}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 p-0 opacity-50 group-hover:opacity-100 transition-opacity"
-                onClick={() => handleRemoveSkill(skill.id)}
-                disabled={isPending}
+        {!isEmpty && (
+          <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-300">
+            {optimisticSkills.map((skill) => (
+              <div
+                key={skill.id}
+                className="bg-primary/10 text-primary-foreground px-3 py-1.5 rounded-full text-sm flex items-center gap-2 group border border-primary/10 hover:border-primary/30 transition-colors"
               >
-                <Trash2 className="h-3 w-3" />
-              </Button>
-            </div>
-          ))}
-        </div>
+                <span className="font-medium">{skill.name}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 p-0 rounded-full bg-background/50 text-muted-foreground opacity-60 group-hover:opacity-100 transition-all hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => handleRemoveSkill(skill.id)}
+                  disabled={isPending}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </ProfileSection>
   );
 } 

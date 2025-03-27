@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from '@prisma/client';
-import { FileText } from "lucide-react";
+import { FileText, Quote } from "lucide-react";
 import { useState, useTransition, useOptimistic } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
@@ -69,9 +69,15 @@ export default function ProfileAbout({ user, onSave }: ProfileAboutProps) {
         isEmpty={isEmpty}
         emptyStateMessage="Add a bio to tell others about yourself."
       >
-        <p className="text-muted-foreground whitespace-pre-wrap">
-          {optimisticUser.bio}
-        </p>
+        <div className="relative">
+          <Quote className="absolute text-primary/20 h-8 w-8 -left-1 -top-2 rotate-180" />
+          <div className="pl-6 pr-2">
+            <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+              {optimisticUser.bio}
+            </p>
+          </div>
+          <Quote className="absolute text-primary/20 h-8 w-8 right-0 bottom-0" />
+        </div>
       </ProfileSection>
 
       <FormDialog
@@ -86,7 +92,7 @@ export default function ProfileAbout({ user, onSave }: ProfileAboutProps) {
         <Textarea 
           value={bio} 
           onChange={(e) => setBio(e.target.value)}
-          className="min-h-[200px]"
+          className="min-h-[200px] resize-y"
           placeholder="Tell us about yourself..."
         />
       </FormDialog>

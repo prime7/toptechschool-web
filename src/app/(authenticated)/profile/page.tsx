@@ -128,20 +128,27 @@ export default async function Profile() {
   }
 
   return (
-    <div className="container mx-auto py-4 sm:py-6 md:py-8 px-3 sm:px-4 max-w-4xl">
-      <div className="grid gap-4 sm:gap-6 md:gap-8">
-        <ProfileHeader user={user} onSave={updateUser} />
-        <Separator className="my-1 sm:my-2" />
-        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 lg:grid-cols-3">
-          <div className="lg:col-span-1 space-y-4 sm:space-y-6 md:space-y-8">
-            <ProfileAbout user={user} onSave={updateUser} />
-            <ProfileSocialLinks user={user} onSave={updateUser} />
-            <ProfileSkills user={user} onSave={updateUser} />
+    <div className="bg-background min-h-screen">
+      <div className="container mx-auto py-6 sm:py-8 md:py-12 px-4 sm:px-6 max-w-6xl">
+        <div className="grid gap-6 sm:gap-8 md:gap-10">
+          <div>
+            <ProfileHeader user={user} onSave={updateUser} />
           </div>
-          
-          <div className="lg:col-span-2 space-y-4 sm:space-y-6 md:space-y-8">
-            <ProfileWorkExperience user={user} onSave={updateUser} />
-            <ProfileEducation user={user} onSave={updateUser} />
+          <div className="grid gap-6 sm:gap-8 grid-cols-1 lg:grid-cols-12">
+            <div className="lg:col-span-4 space-y-6 sm:space-y-8">
+              <div className="grid gap-6 sm:gap-8">
+                <ProfileAbout user={user} onSave={updateUser} />
+                <ProfileSocialLinks user={user} onSave={updateUser} />
+                <ProfileSkills user={user} onSave={updateUser} />
+              </div>
+            </div>
+            
+            <div className="lg:col-span-8 space-y-6 sm:space-y-8">
+              <div className="grid gap-6 sm:gap-8">
+                <ProfileWorkExperience user={user} onSave={updateUser} />
+                <ProfileEducation user={user} onSave={updateUser} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

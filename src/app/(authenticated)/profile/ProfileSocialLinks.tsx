@@ -3,7 +3,7 @@
 import { useState, useTransition, useOptimistic } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash2, Link2 } from "lucide-react";
+import { Edit, Trash2, Link2, Globe, ExternalLink } from "lucide-react";
 import { Platform, SocialLink, User } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -150,13 +150,23 @@ export default function ProfileSocialLinks({ user, onSave }: ProfileSocialLinksP
     }
   };
 
+  // Get displayable URL without protocol prefix
+  const getDisplayUrl = (url: string) => {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname + urlObj.pathname;
+    } catch {
+      return url;
+    }
+  };
+
   const isEmpty = optimisticSocialLinks.length === 0;
 
   return (
     <>
       <ProfileSection 
         title="Social Links" 
-        icon={<Link2 className="h-5 w-5" />}
+        icon={<Globe className="h-5 w-5" />}
         onAdd={() => {
           resetForm();
           setIsDialogOpen(true);
@@ -164,24 +174,52 @@ export default function ProfileSocialLinks({ user, onSave }: ProfileSocialLinksP
         isEmpty={isEmpty}
         emptyStateMessage="Add your social media profiles to connect with others."
       >
-        <div className="space-y-3">
-          {optimisticSocialLinks.map((link, index) => (
-            <div key={index} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 group">
-              {getSocialIcon(link.platform)}
-              <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex-1 break-all">
-                {link.url}
-              </a>
-              <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon" onClick={() => handleEditSocialLink(index)}>
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleRemoveSocialLink(index)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+        {!isEmpty && (
+          <div className="space-y-3 animate-in fade-in duration-300">
+            {optimisticSocialLinks.map((link, index) => (
+              <div 
+                key={index} 
+                className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted/50 group border border-transparent hover:border-border/50 transition-all"
+              >
+                <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                  {getSocialIcon(link.platform)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm text-primary capitalize mb-0.5">
+                    {link.platform.toLowerCase()}
+                  </div>
+                  <a 
+                    href={link.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-muted-foreground hover:text-primary text-sm truncate block hover:underline transition-colors flex items-center gap-1"
+                  >
+                    {getDisplayUrl(link.url)}
+                    <ExternalLink className="h-3 w-3 inline opacity-60" />
+                  </a>
+                </div>
+                <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => handleEditSocialLink(index)}
+                    className="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                  >
+                    <Edit className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => handleRemoveSocialLink(index)}
+                    className="h-8 w-8 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </ProfileSection>
 
       <FormDialog
@@ -195,31 +233,35 @@ export default function ProfileSocialLinks({ user, onSave }: ProfileSocialLinksP
         onCancel={() => resetForm()}
         isSubmitting={isPending}
       >
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-5 py-4">
           <div>
-            <label className="text-sm font-medium">Platform *</label>
+            <label className="text-sm font-medium mb-1.5 block text-foreground">Platform *</label>
             <Select
               value={newSocialLink.platform}
               onValueChange={(value) => setNewSocialLink({ ...newSocialLink, platform: value as Platform })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a platform" />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(Platform).map((platform) => (
-                  <SelectItem key={platform} value={platform}>
-                    {platform}
+                  <SelectItem key={platform} value={platform} className="capitalize">
+                    <div className="flex items-center gap-2">
+                      <span className="text-primary">{getSocialIcon(platform as Platform)}</span>
+                      <span>{platform.toLowerCase()}</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div>
-            <label className="text-sm font-medium">URL *</label>
+            <label className="text-sm font-medium mb-1.5 block text-foreground">URL *</label>
             <Input 
               placeholder="https://example.com/profile" 
               value={newSocialLink.url} 
               onChange={(e) => setNewSocialLink({ ...newSocialLink, url: e.target.value })} 
+              className="w-full"
             />
           </div>
         </div>
