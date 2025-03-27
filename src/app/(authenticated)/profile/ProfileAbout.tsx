@@ -50,9 +50,11 @@ export default function ProfileAbout({ user, onSave }: ProfileAboutProps) {
     });
   };
 
-  const handleOpenDialog = () => {
-    setBio(user.bio || "");
-    setIsDialogOpen(true);
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      setBio(user.bio || "");
+    }
   };
 
   const isEmpty = !optimisticUser.bio;
@@ -62,11 +64,10 @@ export default function ProfileAbout({ user, onSave }: ProfileAboutProps) {
       <ProfileSection 
         title="About" 
         icon={<FileText className="h-5 w-5" />}
-        onEdit={isEmpty ? undefined : handleOpenDialog}
+        onAdd={isEmpty ? () => setIsDialogOpen(true) : undefined}
+        onEdit={isEmpty ? undefined : () => setIsDialogOpen(true)}
         isEmpty={isEmpty}
         emptyStateMessage="Add a bio to tell others about yourself."
-        emptyStateAction={handleOpenDialog}
-        emptyStateActionText="Add Bio"
       >
         <p className="text-muted-foreground whitespace-pre-wrap">
           {optimisticUser.bio}
@@ -77,7 +78,7 @@ export default function ProfileAbout({ user, onSave }: ProfileAboutProps) {
         title={isEmpty ? "Add Bio" : "Edit Bio"}
         description="Share information about yourself with others."
         open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
+        onOpenChange={handleDialogOpenChange}
         onSubmit={handleSave}
         onCancel={() => setBio(user.bio || "")}
         isSubmitting={isPending}

@@ -1,23 +1,16 @@
 "use client";
 
 import { useState, useTransition, useOptimistic } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { GraduationCap } from "lucide-react";
 import { Degree, User, Education } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
 import { TimelineItem } from "@/components/common/TimelineItem";
 import { formatDateRange, dateToMonthString } from "@/lib/date-utils";
+import { FormDialog } from "@/components/common/FormDialog";
 
 interface ProfileEducationProps {
   user: User & { education: Education[] };
@@ -43,8 +36,6 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
     user.education,
     (state, newEducation: Education[]) => newEducation
   );
-
-  const [educations, setEducations] = useState<Education[]>(user.education);
   
   const [newEducation, setNewEducation] = useState<EducationFormData>({
     institution: "",
@@ -55,7 +46,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
     displayOrder: 0,
   });
 
-  const handleAddEducation = () => {
+  const handleSave = () => {
     if (!newEducation.institution || !newEducation.startDate) {
       toast({
         title: "Missing required fields",
@@ -65,22 +56,47 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
       return;
     }
 
-    const educationToAdd: Education = {
-      id: `temp-${Date.now()}`,
-      userId: user.id,
-      institution: newEducation.institution,
-      degree: newEducation.degree,
-      startDate: new Date(newEducation.startDate),
-      endDate: newEducation.endDate ? new Date(newEducation.endDate) : null,
-      description: newEducation.description,
-      displayOrder: educations.length,
-    };
+    let updatedEducations: Education[];
+    
+    if (editingIndex !== null) {
+      // Update existing education
+      updatedEducations = [...optimisticEducation];
+      if (!updatedEducations[editingIndex]) {
+        toast({
+          title: "Update failed",
+          description: "Could not find the education to update.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      updatedEducations[editingIndex] = {
+        ...updatedEducations[editingIndex],
+        institution: newEducation.institution,
+        degree: newEducation.degree,
+        startDate: parseMonthInput(newEducation.startDate),
+        endDate: newEducation.endDate ? parseMonthInput(newEducation.endDate) : null,
+        description: newEducation.description,
+      };
+    } else {
+      // Add new education
+      const educationToAdd: Education = {
+        id: `temp-${Date.now()}`,
+        userId: user.id,
+        institution: newEducation.institution,
+        degree: newEducation.degree,
+        startDate: parseMonthInput(newEducation.startDate),
+        endDate: newEducation.endDate ? parseMonthInput(newEducation.endDate) : null,
+        description: newEducation.description,
+        displayOrder: optimisticEducation.length,
+      };
+      updatedEducations = [...optimisticEducation, educationToAdd];
+    }
 
-    const updatedEducations = [...educations, educationToAdd];
-    setEducations(updatedEducations);
+    // Update optimistic state immediately
     updateOptimisticEducation(updatedEducations);
-
-    // Save immediately
+    
+    // Save to server
     startTransition(async () => {
       try {
         const formattedEducations = updatedEducations.map(({ id, userId, ...edu }) => ({
@@ -100,15 +116,17 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
         setIsDialogOpen(false);
         toast({
           title: "Education updated",
-          description: "New education has been added successfully.",
+          description: editingIndex !== null 
+            ? "Education has been updated successfully."
+            : "New education has been added successfully.",
         });
 
         resetForm();
       } catch (error) {
-        console.error("Failed to add education:", error);
+        console.error("Failed to update education:", error);
         toast({
           title: "Update failed",
-          description: "There was a problem adding your education. Please try again.",
+          description: "There was a problem updating your education. Please try again.",
           variant: "destructive",
         });
       }
@@ -116,7 +134,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
   };
 
   const handleEditEducation = (index: number) => {
-    const edu = educations[index];
+    const edu = optimisticEducation[index];
     if (!edu) return;
     
     setEditingIndex(index);
@@ -129,73 +147,6 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
       displayOrder: edu.displayOrder,
     });
     setIsDialogOpen(true);
-  };
-
-  const handleUpdateEducation = () => {
-    if (editingIndex === null) return;
-    
-    if (!newEducation.institution || !newEducation.startDate) {
-      toast({
-        title: "Missing required fields",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const updatedEducations = [...educations];
-    if (!updatedEducations[editingIndex]) {
-      toast({
-        title: "Update failed",
-        description: "Could not find the education to update.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    updatedEducations[editingIndex] = {
-      ...updatedEducations[editingIndex],
-      institution: newEducation.institution,
-      degree: newEducation.degree,
-      startDate: new Date(newEducation.startDate),
-      endDate: newEducation.endDate ? new Date(newEducation.endDate) : null,
-      description: newEducation.description,
-    };
-
-    setEducations(updatedEducations);
-    updateOptimisticEducation(updatedEducations);
-
-    startTransition(async () => {
-      try {
-        const formattedEducations = updatedEducations.map(({ id, userId, ...edu }) => ({
-          institution: edu.institution,
-          degree: edu.degree,
-          startDate: edu.startDate,
-          endDate: edu.endDate,
-          description: edu.description,
-          displayOrder: edu.displayOrder,
-        }));
-
-        await onSave({ education: formattedEducations.map(edu => ({
-          ...edu,
-          userId: user.id,
-        })) });
-        
-        setIsDialogOpen(false);
-        toast({
-          title: "Education updated",
-          description: "Education has been updated successfully.",
-        });
-        resetForm();
-      } catch (error) {
-        console.error("Failed to update education:", error);
-        toast({
-          title: "Update failed",
-          description: "There was a problem updating your education. Please try again.",
-          variant: "destructive",
-        });
-      }
-    });
   };
 
   const resetForm = () => {
@@ -218,11 +169,10 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
   };
 
   const handleRemoveEducation = (index: number) => {
-    const updatedEducations = educations.filter((_, i) => i !== index);
-    setEducations(updatedEducations);
+    const updatedEducations = optimisticEducation.filter((_, i) => i !== index);
     updateOptimisticEducation(updatedEducations);
     
-    // Save immediately
+    // Save to server
     startTransition(async () => {
       try {
         const formattedEducations = updatedEducations.map(({ id, userId, ...edu }) => ({
@@ -254,6 +204,16 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
     });
   };
 
+  // Helper function to correctly parse month input (YYYY-MM) to avoid timezone issues
+  const parseMonthInput = (dateString: string): Date => {
+    if (!dateString) return new Date();
+    
+    const [year, month] = dateString.split('-').map(num => parseInt(num, 10));
+    // Create date with specific year and month (0-indexed)
+    // Set day to 15 to avoid end-of-month issues
+    return new Date(year, month - 1, 15, 12, 0, 0);
+  };
+
   const formatDegree = (degree: Degree): string => {
     return degree.replace(/_/g, ' ').toLowerCase();
   };
@@ -261,133 +221,109 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
   const isEmpty = optimisticEducation.length === 0;
 
   return (
-    <ProfileSection
-      title="Education"
-      icon={<GraduationCap className="h-5 w-5" />}
-      onAdd={() => {
-        resetForm();
-        setIsDialogOpen(true);
-      }}
-      addButtonText="Add Education"
-      isEmpty={isEmpty}
-      emptyStateMessage="Add your educational background to showcase your qualifications."
-      emptyStateAction={() => {
-        resetForm();
-        setIsDialogOpen(true);
-      }}
-      emptyStateActionText="Add Education"
-    >
-      <div className="space-y-8">
-        {optimisticEducation.map((edu, index) => (
-          <TimelineItem
-            key={edu.id}
-            title={formatDegree(edu.degree)}
-            subtitle={edu.institution}
-            dateRange={formatDateRange(edu.startDate, edu.endDate)}
-            description={edu.description}
-            onEdit={() => handleEditEducation(index)}
-            onDelete={() => handleRemoveEducation(index)}
-          />
-        ))}
-      </div>
+    <>
+      <ProfileSection
+        title="Education"
+        icon={<GraduationCap className="h-5 w-5" />}
+        onAdd={() => {
+          resetForm();
+          setIsDialogOpen(true);
+        }}
+        isEmpty={isEmpty}
+        emptyStateMessage="Add your educational background to showcase your qualifications."
+      >
+        <div className="space-y-8">
+          {optimisticEducation.map((edu, index) => (
+            <TimelineItem
+              key={edu.id}
+              title={formatDegree(edu.degree)}
+              subtitle={edu.institution}
+              dateRange={formatDateRange(edu.startDate, edu.endDate)}
+              description={edu.description}
+              onEdit={() => handleEditEducation(index)}
+              onDelete={() => handleRemoveEducation(index)}
+            />
+          ))}
+        </div>
+      </ProfileSection>
 
-      {/* Education Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {editingIndex !== null ? "Edit Education" : "Add New Education"}
-            </DialogTitle>
-            <DialogDescription>
-              {editingIndex !== null 
-                ? "Update your education details below." 
-                : "Add details about your education."}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Institution *</label>
-                <Input
-                  value={newEducation.institution}
-                  onChange={(e) => setNewEducation({ ...newEducation, institution: e.target.value })}
-                  placeholder="School or university name"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Degree *</label>
-                <Select
-                  value={newEducation.degree}
-                  onValueChange={(value) => setNewEducation({ ...newEducation, degree: value as Degree })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select degree" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(Degree).map((degree) => (
-                      <SelectItem key={degree} value={degree}>
-                        {formatDegree(degree)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Start Date *</label>
-                <Input
-                  type="month"
-                  value={newEducation.startDate}
-                  onChange={(e) => setNewEducation({ 
-                    ...newEducation, 
-                    startDate: e.target.value 
-                  })}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">End Date</label>
-                <Input
-                  type="month"
-                  value={newEducation.endDate || ""}
-                  onChange={(e) => setNewEducation({ 
-                    ...newEducation, 
-                    endDate: e.target.value || null
-                  })}
-                />
-              </div>
-            </div>
-
+      <FormDialog
+        title={editingIndex !== null ? "Edit Education" : "Add New Education"}
+        description={editingIndex !== null 
+          ? "Update your education details below." 
+          : "Add details about your education."}
+        open={isDialogOpen}
+        onOpenChange={handleDialogOpenChange}
+        onSubmit={handleSave}
+        onCancel={() => resetForm()}
+        isSubmitting={isPending}
+      >
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium">Description</label>
-              <Textarea
-                value={newEducation.description || ""}
-                onChange={(e) => setNewEducation({ ...newEducation, description: e.target.value })}
-                placeholder="Add any relevant details about your education"
-                className="min-h-[100px]"
+              <label className="text-sm font-medium">Institution *</label>
+              <Input
+                value={newEducation.institution}
+                onChange={(e) => setNewEducation({ ...newEducation, institution: e.target.value })}
+                placeholder="School or university name"
               />
             </div>
-
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                onClick={() => handleDialogOpenChange(false)}
-                disabled={isPending}
+            <div>
+              <label className="text-sm font-medium">Degree *</label>
+              <Select
+                value={newEducation.degree}
+                onValueChange={(value) => setNewEducation({ ...newEducation, degree: value as Degree })}
               >
-                Cancel
-              </Button>
-              <Button 
-                onClick={editingIndex !== null ? handleUpdateEducation : handleAddEducation} 
-                disabled={isPending}
-              >
-                {isPending ? "Saving..." : editingIndex !== null ? "Update Education" : "Add Education"}
-              </Button>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select degree" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(Degree).map((degree) => (
+                    <SelectItem key={degree} value={degree}>
+                      {formatDegree(degree)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
-    </ProfileSection>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium">Start Date *</label>
+              <Input
+                type="month"
+                value={newEducation.startDate}
+                onChange={(e) => setNewEducation({ 
+                  ...newEducation, 
+                  startDate: e.target.value 
+                })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">End Date</label>
+              <Input
+                type="month"
+                value={newEducation.endDate || ""}
+                onChange={(e) => setNewEducation({ 
+                  ...newEducation, 
+                  endDate: e.target.value || null
+                })}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Description</label>
+            <Textarea
+              value={newEducation.description || ""}
+              onChange={(e) => setNewEducation({ ...newEducation, description: e.target.value })}
+              placeholder="Add any relevant details about your education"
+              className="min-h-[100px]"
+            />
+          </div>
+        </div>
+      </FormDialog>
+    </>
   );
 }
