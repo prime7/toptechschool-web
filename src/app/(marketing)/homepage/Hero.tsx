@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Linkedin, FileText, Brain, Rocket, Sparkles } from "lucide-react";
 
 interface HeroProps {
   onJoinWaitlist: () => void;
@@ -8,59 +8,44 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
   return (
-    <div className="relative overflow-hidden py-20">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-              Accelerate Your{" "}
-              <span className="text-primary">Tech Career</span> With AI
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-lg">
-              Personalized career guidance, resume optimization, and interview
-              preparation powered by artificial intelligence.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" onClick={onJoinWaitlist}>
-                Join Waitlist <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button size="lg" variant="outline">
-                Learn More
-              </Button>
-            </div>
-            <div className="mt-8 flex items-center gap-4">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="h-10 w-10 rounded-full border-2 border-background bg-muted"
-                  />
-                ))}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                <span className="font-bold text-foreground">500+</span> tech
-                professionals already joined
-              </p>
-            </div>
+    <div className="relative overflow-hidden py-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            🚀 Powered by Advanced AI Technology
           </div>
-          <div className="relative">
-            <div className="relative z-10 bg-background/80 backdrop-blur-sm rounded-xl shadow-2xl p-6 border border-border">
-              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
-                    <ArrowRight className="h-8 w-8 text-primary" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Demo video placeholder
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="absolute -z-10 top-8 left-8 right-8 bottom-8 bg-primary/20 rounded-xl blur-xl"></div>
+          <h1 className="text-6xl md:text-6xl font-bold tracking-tight mb-6">
+            Land Your Dream Tech Job with
+            <span className="text-primary relative">
+              <span className="relative inline-block px-2">
+                Confidence
+                <svg className="absolute bottom-0 left-0 w-full h-2 text-primary/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M0 5 Q 25 0, 50 5 Q 75 10, 100 5" stroke="currentColor" strokeWidth="2" fill="none"/>
+                </svg>
+              </span>
+            </span>
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+            Leverage AI-powered insights, real-time job validation, and expert mentorship to accelerate your tech career journey. Join thousands of successful professionals who've transformed their careers with our platform.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
+            <Button 
+              size="lg" 
+              className="gap-2 font-semibold" 
+              onClick={onJoinWaitlist}
+            >
+              Get Started <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="font-semibold"
+            >
+              Watch Demo
+            </Button>
           </div>
         </div>
       </div>
-      <div className="absolute -z-10 top-0 left-0 right-0 h-full bg-grid-white/10 bg-[size:30px_30px] opacity-20"></div>
     </div>
   );
 };
