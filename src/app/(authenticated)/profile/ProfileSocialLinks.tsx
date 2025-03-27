@@ -192,7 +192,7 @@ export default function ProfileSocialLinks({ user, onSave }: ProfileSocialLinksP
                     href={link.url} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-muted-foreground hover:text-primary text-sm truncate block hover:underline transition-colors flex items-center gap-1"
+                    className="text-muted-foreground hover:text-primary text-sm truncate hover:underline transition-colors flex items-center gap-1"
                   >
                     {getDisplayUrl(link.url)}
                     <ExternalLink className="h-3 w-3 inline opacity-60" />
