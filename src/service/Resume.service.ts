@@ -4,27 +4,27 @@ import { getPresignedUrl, getSignedUrlForUpload } from "@/lib/r2";
 import axios from "axios";
 import pdf from "pdf-parse";
 import { EvaluationService, ResumeEvaluationResult } from "./Evaluation.service";
+import { ResumeWithJobRole } from "@/actions/resume";
 
 export class ResumeService {
   static async getUserResumes(userId: string, options?: {
     take?: number;
     orderBy?: "asc" | "desc";
     select?: string[];
-  }) {
-    return prisma.resume.findMany({
+  }): Promise<ResumeWithJobRole[]> {
+    const resumes = await prisma.resume.findMany({
       where: { userId },
-      select: options?.select 
-        ? Object.fromEntries(options.select.map(field => [field, true]))
-        : {
-            id: true,
-            filename: true,
-            jobRole: true,
-            createdAt: true,
-            updatedAt: true,
-          },
+      select: {
+        id: true,
+        filename: true,
+        jobRole: true,
+        createdAt: true,
+      },
       orderBy: options?.orderBy ? { createdAt: options.orderBy } : undefined,
       take: options?.take,
     });
+
+    return resumes;
   }
 
   static async getResumeById(resumeId: string, userId: string) {

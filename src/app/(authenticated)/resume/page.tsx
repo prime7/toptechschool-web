@@ -7,22 +7,11 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { ResumeService } from "@/service/Resume.service";
 import Resume from "./Resume";
-import { JobRole } from "@prisma/client";
-
-type ResumeData = {
-  id: string;
-  filename: string;
-  createdAt: Date;
-  jobRole: JobRole | null;
-};
+import { getUserResumes } from "@/actions/resume";
 
 export default async function UploadPage() {
-  const resumes = (await ResumeService.getUserResumes("", {
-    select: ["id", "filename", "createdAt", "jobRole"],
-  })) as unknown as ResumeData[];
-
+  const resumes = await getUserResumes();
   return (
     <div className="container mx-auto py-12 px-4">
       <div className="max-w-3xl mx-auto space-y-8">
