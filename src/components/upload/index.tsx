@@ -5,7 +5,6 @@ import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Upload, Loader2, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { analyzeResume } from "@/actions/resume/analyze";
 import {
   Select,
   SelectContent,
@@ -111,8 +110,6 @@ const UploadComponent: React.FC = () => {
       });
 
       setUploadStatus("success");
-
-      analyzeResume(data.resumeId, selectedJobRole as JobRole);
 
       router.push(`/resume/${data.resumeId}`);
     } catch (err) {

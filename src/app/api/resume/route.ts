@@ -1,26 +1,39 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { ResumeService } from "@/service/Resume.service";
 
 export async function GET(request: NextRequest) {
   try {
     const session = JSON.parse(request.headers.get("x-session") || "{}");
-
-    const resume = await prisma.resume.findMany({
-      where: {
-        userId: session.user.id,
-      },
-    });
-
-
-    if (!resume) {
-      return new NextResponse("Resume not found", { status: 404 });
-    }
-
-    return NextResponse.json(resume);
+    const resumes = await ResumeService.getUserResumes(session.user.id);
+    return NextResponse.json(resumes);
   } catch (error) {
     console.error("[RESUME_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return NextResponse.json(
+      { error: "Error fetching resumes" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = JSON.parse(request.headers.get("x-session") || "{}");
+    const { filename, fileType, jobRole } = await request.json();
+    
+    const result = await ResumeService.createResume(session.user.id, {
+      filename,
+      fileType,
+      jobRole,
+    });
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("[RESUME_CREATE]", error);
+    return NextResponse.json(
+      { error: "Error creating resume" },
+      { status: 500 }
+    );
   }
 }

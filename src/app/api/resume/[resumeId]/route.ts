@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { ResumeService } from "@/service/Resume.service";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { resumeId: string } }
+) {
+  try {
+    const session = JSON.parse(request.headers.get("x-session") || "{}");
+    const resume = await ResumeService.getResumeById(params.resumeId, session.user.id);
+    return NextResponse.json(resume);
+  } catch (error) {
+    if (error instanceof Error && error.message === "Resume not found") {
+      return NextResponse.json(
+        { error: "Resume not found" },
+        { status: 404 }
+      );
+    }
+    console.error("[RESUME_GET_BY_ID]", error);
+    return NextResponse.json(
+      { error: "Error fetching resume" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function DELETE(
   request: NextRequest,
@@ -8,80 +30,50 @@ export async function DELETE(
 ) {
   try {
     const session = JSON.parse(request.headers.get("x-session") || "{}");
-
-    const { resumeId } = params;
-
-    if (!resumeId) {
-      return new NextResponse("Resume ID is required", { status: 400 });
-    }
-
-    const resume = await prisma.resume.findUnique({
-      where: {
-        id: resumeId,
-        userId: session.user.id,
-      },
-    });
-
-    if (!resume) {
-      return new NextResponse("Resume not found", { status: 404 });
-    }
-
-    await prisma.resume.delete({
-      where: {
-        id: resumeId,
-      },
-    });
-
+    await ResumeService.deleteResume(params.resumeId, session.user.id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
+    if (error instanceof Error && error.message === "Resume not found") {
+      return NextResponse.json(
+        { error: "Resume not found" },
+        { status: 404 }
+      );
+    }
     console.error("[RESUME_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return NextResponse.json(
+      { error: "Error deleting resume" },
+      { status: 500 }
+    );
   }
 }
 
 export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ resumeId: string }> }
+  request: NextRequest,
+  { params }: { params: { resumeId: string } }
 ) {
   try {
-    const { resumeId } = await params;
-
-    if (!resumeId) {
-      return new NextResponse("Resume ID is required", { status: 400 });
-    }
-    const session = await auth();
-
-    if (!session?.user) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    const body = await req.json();
+    const session = JSON.parse(request.headers.get("x-session") || "{}");
+    const body = await request.json();
     const { filename, jobRole } = body;
 
-    const resume = await prisma.resume.findUnique({
-      where: {
-        id: resumeId,
-        userId: session.user.id,
-      },
-    });
-
-    if (!resume) {
-      return new NextResponse("Resume not found", { status: 404 });
-    }
-
-    const updatedResume = await prisma.resume.update({
-      where: {
-        id: resumeId,
-      },
-      data: {
-        filename,
-        ...(jobRole && { jobRole }),
-      },
-    });
+    const updatedResume = await ResumeService.updateResume(
+      params.resumeId,
+      session.user.id,
+      { filename, jobRole }
+    );
 
     return NextResponse.json(updatedResume);
   } catch (error) {
+    if (error instanceof Error && error.message === "Resume not found") {
+      return NextResponse.json(
+        { error: "Resume not found" },
+        { status: 404 }
+      );
+    }
     console.error("[RESUME_UPDATE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return NextResponse.json(
+      { error: "Error updating resume" },
+      { status: 500 }
+    );
   }
 }
