@@ -1,5 +1,5 @@
 import React from "react";
-import UploadComponent from "@/components/upload";
+import { Upload} from "@/components/upload";
 import {
   Card,
   CardContent,
@@ -25,7 +25,7 @@ export default async function UploadPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
-            <UploadComponent />
+            <Upload />
           </CardContent>
         </Card>
 
