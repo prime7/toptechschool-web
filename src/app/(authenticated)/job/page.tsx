@@ -14,7 +14,9 @@ export default async function JobPage() {
     redirect("/");
   }
 
-  const resumes = await ResumeService.getUserResumes(session.user.id);
+  const resumes = await ResumeService.getUserResumes(session.user.id, {
+    orderBy: "desc"
+  });
 
   if (resumes.length === 0) {
     return (
@@ -47,7 +49,7 @@ export default async function JobPage() {
           <CardTitle>Evaluate Job Fit</CardTitle>
       </CardHeader>
       <CardContent>
-          <Job resumes={resumes as Resume[]} />
+          <Job resumes={resumes as unknown as Resume[]} />
         </CardContent>
       </Card>
     </div>

@@ -30,6 +30,14 @@ export async function DELETE(
 ) {
   try {
     const session = JSON.parse(request.headers.get("x-session") || "{}");
+
+    if (!session.user.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     await ResumeService.deleteResume(params.resumeId, session.user.id);
     return new NextResponse(null, { status: 204 });
   } catch (error) {

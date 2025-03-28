@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { JobRole } from "@prisma/client";
-import { EvaluationService } from "./Evaluation.service";
+import { EvaluationService, ResumeEvaluationResult } from "./Evaluation.service";
 import { ResumeService } from "./Resume.service";
 
 export class JobService {
@@ -13,7 +13,7 @@ export class JobService {
     let resumeData = "";
     if (resumeId) {
       const resume = await ResumeService.getResumeById(resumeId, userId);
-      resumeData = ResumeService.getResumeContentString(resume);
+      resumeData = ResumeService.getResumeContentString(resume as unknown as { analysis: ResumeEvaluationResult | null });
     }
 
     const evaluation = await EvaluationService.evaluateJobMatch(jobDescription, resumeData, jobRole);

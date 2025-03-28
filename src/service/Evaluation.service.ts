@@ -50,7 +50,7 @@ export class EvaluationService {
       prompt,
       `Job Description: ${jobDescription}`,
       `Resume Data: ${resumeData}`,
-      `Job Role: ${jobRole}`,
+      ...(jobRole ? [`Job Role: ${jobRole}`] : ''),
     ];
 
     const defaultResponse: JobMatchEvaluationResult = {
@@ -92,13 +92,13 @@ export class EvaluationService {
         "strengths": ["string"],
         "gaps": ["string"],
         "recommendations": "string"
-        }
+      }
     `;
 
     const messages = [
       prompt,
       `Resume Data: ${resumeData}`,
-      `Job Role: ${jobRole}`,
+      ...(jobRole ? [`Job Role: ${jobRole}`] : ''),
     ];
 
     const defaultResponse: JobMatchEvaluationResult = {

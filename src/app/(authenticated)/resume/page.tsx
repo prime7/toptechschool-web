@@ -7,11 +7,21 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { getUserResumes } from "@/actions/resume";
+import { ResumeService } from "@/service/Resume.service";
 import Resume from "./Resume";
+import { JobRole } from "@prisma/client";
+
+type ResumeData = {
+  id: string;
+  filename: string;
+  createdAt: Date;
+  jobRole: JobRole | null;
+};
 
 export default async function UploadPage() {
-  const resumes = await getUserResumes(["id", "filename", "createdAt", "jobRole"]);
+  const resumes = (await ResumeService.getUserResumes("", {
+    select: ["id", "filename", "createdAt", "jobRole"],
+  })) as unknown as ResumeData[];
 
   return (
     <div className="container mx-auto py-12 px-4">
@@ -67,10 +77,10 @@ export default async function UploadPage() {
                 {resumes.map((resume) => (
                   <Resume
                     key={resume.id}
-                    id={resume.id || ""}
-                    filename={resume.filename || "Untitled Resume"}
-                    createdAt={resume.createdAt || new Date()}
-                    jobRole={resume.jobRole}
+                    id={resume.id}
+                    filename={resume.filename}
+                    createdAt={resume.createdAt}
+                    jobRole={resume.jobRole || undefined}
                   />
                 ))}
               </div>
