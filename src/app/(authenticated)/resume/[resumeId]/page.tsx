@@ -1,12 +1,10 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  BarChart,
   LightbulbIcon,
   Loader2,
   Star,
   AlertCircle,
-  BookOpen,
 } from "lucide-react";
 import { ResumeService } from "@/service/Resume.service";
 import { auth } from "@/lib/auth";
