@@ -22,8 +22,12 @@ export const Providers = ({ children }: Props) => {
       >
         {children}
         <Toaster />
-        <Analytics />
-        <SpeedInsights />
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </ThemeProvider>
     </SessionProvider>
   );
