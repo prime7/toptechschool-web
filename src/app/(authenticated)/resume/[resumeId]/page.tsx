@@ -10,6 +10,7 @@ import { ResumeService } from "@/service/Resume.service";
 import { auth } from "@/lib/auth";
 import { ResumeEvaluationResult } from "@/service/Evaluation.service";
 import { Progress } from "@/components/ui/progress";
+import { ParsingStatus } from "@prisma/client";
 
 
 function ResumeLoading() {
@@ -39,8 +40,27 @@ export default async function Resume({
 
   const resume = await ResumeService.getResumeById(params.resumeId, session.user.id);
   const resumeData = resume.analysis as unknown as ResumeEvaluationResult;
+ 
+  if (resume.parsed === ParsingStatus.ERROR) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+        <div className="flex flex-col items-center justify-center py-12">
+          <AlertCircle className="w-12 h-12 text-destructive mb-4" />
+          <h2 className="text-xl font-semibold mb-2">Error Processing Resume</h2>
+          <p className="text-muted-foreground text-center max-w-md">
+            We encountered an issue while analyzing your resume. This could be due to the file format or content structure.
+          </p>
+          <div className="mt-6">
+            <a href="/resume" className="text-primary hover:underline">
+              Return to resume dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  if (!resume?.parsed) {
+  if (resume.parsed === ParsingStatus.STARTED || resume.parsed === ParsingStatus.NOT_STARTED) {
     return (
       <>
         <meta httpEquiv="refresh" content="4" />
@@ -62,7 +82,7 @@ export default async function Resume({
             </CardHeader>
             <CardContent className="pt-4">
               <div className="text-sm whitespace-pre-line max-w-none">
-                {resumeData.recommendations}
+                {resumeData.recommendations ?? "No recommendations available."}
               </div>
             </CardContent>
           </Card>
@@ -74,7 +94,7 @@ export default async function Resume({
               </div>
             </CardHeader>
             <CardContent className="pt-4">
-              {resumeData.strengths.length > 0 ? (
+              {resumeData.strengths?.length > 0 ? (
                 <ul className="space-y-3">
                   {resumeData.strengths.map((strength: string, index: number) => (
                     <li key={index} className="flex items-start gap-3 p-2 rounded-md bg-muted/60">
@@ -98,7 +118,7 @@ export default async function Resume({
               </div>
             </CardHeader>
             <CardContent className="pt-4">
-              {resumeData.suggestions.length > 0 ? (
+              {resumeData.suggestions?.length > 0 ? (
                 <ul className="space-y-3">
                   {resumeData.suggestions.map((suggestion: string, index: number) => (
                     <li key={index} className="flex items-start gap-3 p-2 rounded-md bg-muted/60">
@@ -122,7 +142,7 @@ export default async function Resume({
             <CardContent className="pt-4">
               {resumeData.gaps.length > 0 ? (
                 <ul className="space-y-3">
-                  {resumeData.gaps.map((gap: string, index: number) => (
+                  {resumeData.gaps?.map((gap: string, index: number) => (
                     <li key={index} className="flex items-start gap-3 p-2 rounded-md bg-muted/60">
                       <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-red-500" />
                       <span className="text-sm">{gap}</span>
