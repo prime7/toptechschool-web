@@ -16,12 +16,12 @@ const r2Client = new S3Client({
 
  async function getSignedUrlForUpload(
   key: string,
-  fileType: string
+  // fileType: string
 ): Promise<string> {
   const command = new PutObjectCommand({
     Bucket: process.env.R2_BUCKET_NAME,
     Key: key,
-    ContentType: fileType,
+    // ContentType: fileType,
   });
   return await getSignedUrl(r2Client, command, { expiresIn: 3600 });
 }

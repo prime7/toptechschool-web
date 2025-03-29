@@ -20,7 +20,8 @@ export async function POST(request: Request) {
     const key = `resumes/${session.user.id}/${resume.id}/${crypto
       .randomUUID()
       .slice(0, 6)}.pdf`;
-    const signedUrl = await getSignedUrlForUpload(key, fileType);
+    const signedUrl = await getSignedUrlForUpload(key);
+    // const signedUrl = await getSignedUrlForUpload(key, fileType);
     const encodedKey = encodeURIComponent(key);
     await prisma.resume.update({
       where: { id: resume.id },
