@@ -8,7 +8,6 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Dashboard (WIP)</h1>
           <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <RefreshCcw className="h-4 w-4" />
-            Refresh
           </button>
         </div>
         
