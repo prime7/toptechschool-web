@@ -42,7 +42,7 @@ export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
               size="lg" 
               className="font-semibold"
             >
-              Watch Demo
+              Watch Demo(WIP)
             </Button>
           </div>
         </div>
