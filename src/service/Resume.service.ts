@@ -57,7 +57,7 @@ export class ResumeService {
     });
 
     const key = `resumes/${userId}/${resume.id}/${crypto.randomUUID().slice(0, 6)}.pdf`;
-    const signedUrl = await getSignedUrlForUpload(key, data.fileType);
+    const signedUrl = await getSignedUrlForUpload(key);
     const encodedKey = encodeURIComponent(key);
     
     await prisma.resume.update({
