@@ -52,8 +52,9 @@
     "@react-email/components": "^0.0.33",
     "@types/mdx": "^2.0.13",
     "@types/pdf-parse": "^1.1.4",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.7.7",
-    "canvas": "^2.11.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "crypto": "^1.0.1",
@@ -89,9 +90,9 @@
     "eslint-config-next": "14.2.9",
     "postcss": "^8",
     "prisma": "^5.19.1",
+    "react-email": "^3.0.7",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
-    "vercel": "^37.4.2",
-    "react-email": "^3.0.7"
+    "vercel": "^37.4.2"
   }
 }
