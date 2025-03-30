@@ -117,7 +117,7 @@ export class ResumeService {
 
       const presignedUrl = await getPresignedUrl(resume.fileKey);
       const response = await axios.get(presignedUrl, {
-        timeout: 5000,
+        timeout: 30000,
         responseType: "arraybuffer",
       });
 
