@@ -2,8 +2,6 @@
 
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "next-themes";
 
 interface Props {
@@ -22,12 +20,6 @@ export const Providers = ({ children }: Props) => {
       >
         {children}
         <Toaster />
-        {process.env.NODE_ENV === 'production' && (
-          <>
-            <Analytics />
-            <SpeedInsights />
-          </>
-        )}
       </ThemeProvider>
     </SessionProvider>
   );
