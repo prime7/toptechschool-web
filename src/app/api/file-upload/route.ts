@@ -5,7 +5,7 @@ import { ResumeService } from "@/service/Resume.service";
 
 export async function POST(request: Request) {
   try {
-    const { filename, fileType, jobRole } = await request.json();
+    const { filename, jobRole } = await request.json();
     const session = JSON.parse(request.headers.get("x-session") || "{}");
 
     const resume = await prisma.resume.create({
