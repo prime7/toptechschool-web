@@ -81,9 +81,17 @@ export default async function Resume({
               </div>
             </CardHeader>
             <CardContent className="pt-4">
-              <div className="text-sm whitespace-pre-line max-w-none">
-                {resumeData.recommendations ?? "No recommendations available."}
-              </div>
+              {resumeData.recommendations?.length > 0 ? (
+                <ul className="space-y-3">
+                  {resumeData.recommendations.map((recommendation: string, index: number) => (
+                    <li key={index} className="flex items-start gap-3 p-2 rounded-md bg-muted/60">
+                      <span className="text-sm">{recommendation}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">No recommendations available.</p>
+              )}
             </CardContent>
           </Card>
 

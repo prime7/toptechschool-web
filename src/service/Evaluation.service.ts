@@ -17,18 +17,27 @@ export interface ResumeEvaluationResult {
   suggestions: string[];
   strengths: string[];
   gaps: string[];
-  recommendations: string;
+  recommendations: string[];
 }
 
 export class EvaluationService extends BaseService {
-  private static readonly SYSTEM_PROMPT = "You must respond with valid JSON only. No other text or explanation.";
-  private static readonly DEFAULT_RESPONSE: JobMatchEvaluationResult = {
+  private static readonly SYSTEM_PROMPT_JOB_MATCH = "You must respond with valid JSON only. No other text or explanation.";
+  private static readonly SYSTEM_PROMPT_RESUME = "You are an expert resume analyzer with deep knowledge of hiring practices. Analyze the match between the provided job description and resume, then provide a detailed assessment.";
+  private static readonly DEFAULT_RESPONSE_JOB_MATCH: JobMatchEvaluationResult = {
     matchScore: 0,
     missingKeywords: [],
     suggestions: [],
     strengths: [],
     gaps: [],
     recommendations: "Unable to generate recommendations due to an error."
+  };
+  private static readonly DEFAULT_RESPONSE_RESUME: ResumeEvaluationResult = {
+    matchScore: 0,
+    missingKeywords: [],
+    suggestions: [],
+    strengths: [],
+    gaps: [], 
+    recommendations: ["Unable to generate recommendations due to an error."]
   };
 
   static async evaluateJobMatch(
@@ -40,9 +49,9 @@ export class EvaluationService extends BaseService {
       async () => {
         const prompt = this.buildEvaluationPrompt(jobDescription, resumeData, jobRole);
         return OpenAIService.getJsonResponse<JobMatchEvaluationResult>(
-          this.SYSTEM_PROMPT,
+          this.SYSTEM_PROMPT_JOB_MATCH,
           prompt,
-          this.DEFAULT_RESPONSE
+          this.DEFAULT_RESPONSE_JOB_MATCH
         );
       },
       "Failed to evaluate job match"
@@ -52,14 +61,14 @@ export class EvaluationService extends BaseService {
   static async evaluateResume(
     resumeData: string,
     jobRole: JobRole | null
-  ): Promise<JobMatchEvaluationResult> {
+  ): Promise<ResumeEvaluationResult> {
     return this.handleError(
       async () => {
         const prompt = this.buildEvaluationPrompt("", resumeData, jobRole);
-        return OpenAIService.getJsonResponse<JobMatchEvaluationResult>(
-          this.SYSTEM_PROMPT,
+        return OpenAIService.getJsonResponse<ResumeEvaluationResult>(
+          this.SYSTEM_PROMPT_RESUME,
           prompt,
-          this.DEFAULT_RESPONSE
+          this.DEFAULT_RESPONSE_RESUME
         );
       },
       "Failed to evaluate resume"
@@ -72,22 +81,51 @@ export class EvaluationService extends BaseService {
     jobRole: JobRole | null
   ): string[] {
     const prompt = `
-      Analyze the match between the following job description and the resume skills.
-      Provide:
-      1. A match score (percentage 0-100).
-      2. Missing keywords in the resume.
-      3. Suggestions for improvement if the match score exceeds 50%.
-      4. Strengths from the resume that match the job description.
-      5. A detailed recommendation paragraph.
+      Analyze the provided resume and job details to generate a comprehensive evaluation:
 
-      Format your response as a valid JSON object with the following structure:
+      1. Calculate a detailed match score (0-100%) considering:
+        - Technical Alignment (70%): Evaluate hard skills, technical qualifications, tools/technologies, certifications
+        - Professional Skills (20%): Assess communication, leadership, problem-solving, teamwork abilities
+        - Experience Match (10%): Compare years of experience, industry exposure, role responsibilities
+
+      2. Identify key missing elements:
+        - Required technical skills/tools not mentioned
+        - Essential qualifications or certifications
+        - Critical professional competencies
+        - Industry-specific keywords
+
+      3. For match scores >50%, provide actionable improvement suggestions:
+        - Skill development recommendations
+        - Certification opportunities
+        - Experience gaps to address
+        - Resume presentation improvements
+
+      4. Highlight resume strengths:
+        - Notable achievements
+        - Valuable skills/expertise
+        - Relevant experience
+        - Unique qualifications
+
+      5. Detail qualification gaps:
+        - Missing required skills
+        - Experience shortfalls
+        - Education/certification needs
+        - Industry knowledge gaps
+
+      6. Provide prioritized recommendations:
+        - Immediate action items
+        - Medium-term development goals
+        - Long-term career suggestions
+        - Resume enhancement tips
+
+      Return a JSON response with:
       {
-        "matchScore": number,
-        "missingKeywords": ["string"],
-        "suggestions": ["string"],
-        "strengths": ["string"],
-        "gaps": ["string"],
-        "recommendations": "string"
+        "matchScore": number (0-100),
+        "missingKeywords": [string] (key missing elements),
+        "suggestions": [string] (actionable improvements),
+        "strengths": [string] (notable positives),
+        "gaps": [string] (qualification gaps),
+        "recommendations": [string] (prioritized next steps)
       }
     `;
 
