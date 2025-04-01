@@ -1,10 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { JobRole } from "@prisma/client";
-import { getPresignedUrl, getSignedUrlForUpload } from "@/lib/r2";
-import axios from "axios";
-import pdf from "pdf-parse";
-import { EvaluationService, ResumeEvaluationResult } from "./Evaluation.service";
+import { getSignedUrlForUpload } from "@/lib/r2";
 import { ResumeWithJobRole } from "@/actions/resume";
+import { ResumeEvaluationResult } from "./Evaluation.service";
 
 export class ResumeService {
   static async getUserResumes(userId: string, options?: {
@@ -29,10 +27,7 @@ export class ResumeService {
 
   static async getResumeById(resumeId: string, userId: string) {
     const resume = await prisma.resume.findFirst({
-      where: {
-        id: resumeId,
-        userId,
-      },
+      where: { id: resumeId, userId },
     });
 
     if (!resume) {
@@ -100,60 +95,5 @@ export class ResumeService {
       ...(Array.isArray(analysis.gaps) ? analysis.gaps : []),
       typeof analysis.recommendations === 'string' ? analysis.recommendations : ""
     ].filter(Boolean).join(" ");
-  }
-
-  static async analyzeResume(resumeId: string, userId: string, jobRole?: JobRole): Promise<ResumeEvaluationResult> {
-    const resume = await this.getResumeById(resumeId, userId);
-
-    if (!resume.fileKey) {
-      throw new Error("Resume file not found");
-    }
-
-    try {
-      await prisma.resume.update({
-        where: { id: resumeId },
-        data: { parsed: "STARTED" },
-      });
-
-      const presignedUrl = await getPresignedUrl(resume.fileKey);
-      const response = await axios.get(presignedUrl, {
-        timeout: 30000,
-        responseType: "arraybuffer",
-      });
-
-      if (response.status !== 200) {
-        throw new Error(`Failed to fetch resume. Status: ${response.status}`);
-      }
-
-      const pdfData = await pdf(response.data);
-      const text = pdfData.text;
-
-      if (!text || text.trim().length === 0) {
-        throw new Error("No text content found in the PDF");
-      }
-
-      const result = await EvaluationService.evaluateResume(text, jobRole ?? null);
-
-      await prisma.resume.update({
-        where: { id: resumeId },
-        data: {
-          analysis: JSON.parse(JSON.stringify(result)),
-          parsed: "PARSED",
-        },
-      });
-
-      return result;
-    } catch (error) {
-      await prisma.resume.update({
-        where: { id: resumeId },
-        data: { 
-          parsed: "ERROR",
-          content: {
-            error: error instanceof Error ? error.message : "Unknown error occurred"
-          }
-        },
-      });
-      throw error;
-    }
   }
 } 

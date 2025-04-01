@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSignedUrlForUpload } from "@/lib/r2";
-import { ResumeService } from "@/service/Resume.service";
+import { inngest } from "@/lib/ingest/client";
 
 export async function POST(request: Request) {
   try {
@@ -29,7 +29,10 @@ export async function POST(request: Request) {
       },
     });
 
-    ResumeService.analyzeResume(resume.id, session.user.id, jobRole).catch(console.error);
+    inngest.send({
+      name: "resume/analyze",
+      data: { resumeId: resume.id, userId: session.user.id, jobRole },
+    });
 
     return NextResponse.json({ signedUrl, resumeId: resume.id });
   } catch (error) {
