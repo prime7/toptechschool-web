@@ -5,12 +5,16 @@ import {
   Loader2,
   Star,
   AlertCircle,
+  ArrowLeft,
 } from "lucide-react";
 import { ResumeService } from "@/service/Resume.service";
 import { auth } from "@/lib/auth";
 import { ResumeEvaluationResult } from "@/service/Evaluation.service";
 import { Progress } from "@/components/ui/progress";
 import { ParsingStatus } from "@prisma/client";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 
 function ResumeLoading() {
@@ -51,9 +55,12 @@ export default async function Resume({
             We encountered an issue while analyzing your resume. This could be due to the file format or content structure.
           </p>
           <div className="mt-6">
-            <a href="/resume" className="text-primary hover:underline">
-              Return to resume dashboard
-            </a>
+            <Button asChild variant="default">
+              <Link href="/resume">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Return to resume dashboard
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -72,6 +79,23 @@ export default async function Resume({
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-4">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/resume">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back
+            </Link>
+          </Button>
+          <h1 className="text-2xl font-bold">{resume.filename || "Resume Analysis"}</h1>
+          {resumeData.matchScore && (
+            <Badge variant={resumeData.matchScore > 70 ? "default" : resumeData.matchScore > 50 ? "secondary" : "destructive"} className="ml-2">
+              {resumeData.matchScore}% Match
+            </Badge>
+          )}
+        </div>
+      </div>
+      
       <div className="flex flex-col md:flex-row justify-between items-start gap-6">
         <div className="w-full md:w-2/3 space-y-6">
           <Card className="shadow-md hover:shadow-lg transition-shadow">
@@ -82,13 +106,13 @@ export default async function Resume({
             </CardHeader>
             <CardContent className="pt-4">
               {resumeData.recommendations?.length > 0 ? (
-                <ul className="space-y-3">
+                <div className="space-y-3">
                   {resumeData.recommendations.map((recommendation: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 p-2 rounded-md bg-muted/60">
-                      <span className="text-sm">{recommendation}</span>
-                    </li>
+                    <div key={index} className="p-3 hover:bg-muted/30 transition-colors">
+                      <p className="text-sm pl-4">{recommendation}</p>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground">No recommendations available.</p>
               )}
@@ -105,7 +129,7 @@ export default async function Resume({
               {resumeData.strengths?.length > 0 ? (
                 <ul className="space-y-3">
                   {resumeData.strengths.map((strength: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 p-2 rounded-md bg-muted/60">
+                    <li key={index} className="flex items-start gap-3 p-3 rounded-md hover:bg-muted/80 transition-colors">
                       <Star className="w-5 h-5 mt-0.5 flex-shrink-0 text-amber-500" />
                       <span className="text-sm">{strength}</span>
                     </li>
@@ -129,7 +153,7 @@ export default async function Resume({
               {resumeData.suggestions?.length > 0 ? (
                 <ul className="space-y-3">
                   {resumeData.suggestions.map((suggestion: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 p-2 rounded-md bg-muted/60">
+                    <li key={index} className="flex items-start gap-3 p-3 hover:bg-muted/80 transition-colors">
                       <LightbulbIcon className="w-5 h-5 mt-0.5 flex-shrink-0 text-yellow-500" />
                       <span className="text-sm">{suggestion}</span>
                     </li>
@@ -148,10 +172,10 @@ export default async function Resume({
               </div>
             </CardHeader>
             <CardContent className="pt-4">
-              {resumeData.gaps.length > 0 ? (
+              {resumeData.gaps?.length > 0 ? (
                 <ul className="space-y-3">
-                  {resumeData.gaps?.map((gap: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 p-2 rounded-md bg-muted/60">
+                  {resumeData.gaps.map((gap: string, index: number) => (
+                    <li key={index} className="flex items-start gap-3 p-3 hover:bg-muted/80 transition-colors">
                       <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-red-500" />
                       <span className="text-sm">{gap}</span>
                     </li>
