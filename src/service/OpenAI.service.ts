@@ -1,6 +1,10 @@
 import { openai } from "@/lib/openai";
+import { BaseService } from "./Base.service";
+import { OPENAI_CONFIG } from "@/lib/constants";
 
-export class OpenAIService {
+export class OpenAIService extends BaseService {
+  private static readonly SYSTEM_PROMPT = "You must respond with valid JSON only. No other text or explanation.";
+
   /**
    * Sends a request to OpenAI and returns the parsed JSON response
    * @param systemPrompt - The system prompt to guide the AI
@@ -13,35 +17,35 @@ export class OpenAIService {
     messages: string[],
     defaultResponse: T
   ): Promise<T> {
-    try {
-      const formattedMessages = [
-        {
-          role: "system" as const,
-          content: systemPrompt,
-        },
-        ...messages.map(message => ({
-          role: "user" as const,
-          content: message,
-        })),
-      ];
+    return this.handleError(
+      async () => {
+        const formattedMessages = [
+          {
+            role: "system" as const,
+            content: systemPrompt,
+          },
+          ...messages.map(message => ({
+            role: "user" as const,
+            content: message,
+          })),
+        ];
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: formattedMessages,
-        max_tokens: 10000,
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      });
+        const response = await openai.chat.completions.create({
+          model: OPENAI_CONFIG.MODEL,
+          messages: formattedMessages,
+          max_tokens: OPENAI_CONFIG.MAX_TOKENS,
+          temperature: OPENAI_CONFIG.TEMPERATURE,
+          response_format: { type: "json_object" },
+        });
 
-      const content = response.choices[0].message.content;
-      if (!content) {
-        return defaultResponse;
-      }
+        const content = response.choices[0].message.content;
+        if (!content) {
+          return defaultResponse;
+        }
 
-      return JSON.parse(content) as T;
-    } catch (e) {
-      console.error("Failed to get or parse OpenAI response:", e);
-      return defaultResponse;
-    }
+        return JSON.parse(content) as T;
+      },
+      "Failed to get or parse OpenAI response"
+    );
   }
 } 

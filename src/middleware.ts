@@ -1,16 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const RESTRICTED_ROUTES = [
-  "/upload",
-  "/resume",
-  "/job",
-  "/api/job/evaluate",
-  "/api/file-upload",
-  "/api/resume/:resumeId",
-];
-const allowedOrigins = ["http://localhost:5173", "chrome-extension://"];
+import { RESTRICTED_ROUTES, ALLOWED_ORIGINS } from "@/lib/constants";
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -20,7 +11,7 @@ export default async function middleware(req: NextRequest) {
   const response = NextResponse.next();
   response.headers.set("x-session", JSON.stringify(session || {}));
 
-  const isAllowedOrigin = allowedOrigins.some(
+  const isAllowedOrigin = ALLOWED_ORIGINS.some(
     (allowedOrigin) =>
       allowedOrigin === origin ||
       (allowedOrigin.startsWith("chrome-extension://") &&
