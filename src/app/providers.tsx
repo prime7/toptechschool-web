@@ -9,7 +9,7 @@ import ReactGA from "react-ga4";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
-ReactGA.initialize(process.env.GOOGLE_ANALYTICS_ID || "");
+ReactGA.initialize(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || "");
 interface Props {
   children?: React.ReactNode;
 }
