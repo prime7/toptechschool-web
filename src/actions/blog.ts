@@ -16,7 +16,8 @@ interface Frontmatter {
   description: string;
   author: string;
   tags: string[];
-  [key: string]: string | number | string[] | boolean;
+  status?: string;
+  [key: string]: string | number | string[] | boolean | undefined;
 }
 
 interface PostData {
@@ -35,15 +36,49 @@ const parsePostData = (fileName: string, content: string): PostData => {
   return { slug, frontmatter };
 };
 
-const getPosts = async (): Promise<PostData[]> => {
+const getPosts = async (options?: { 
+  includeDrafts?: boolean, 
+  category?: string,
+  filter?: string
+}): Promise<PostData[]> => {
+  const { includeDrafts = false, category, filter } = options || {};
+  
   const files = await fs.readdir(postDirectory);
-  const posts = await Promise.all(
+  let posts = await Promise.all(
     files.map(async (fileName) => {
       const content = await readFileContent(path.join(postDirectory, fileName));
       return parsePostData(fileName, content);
     })
   );
-  return posts;
+  
+  if (!includeDrafts) {
+    posts = posts.filter(post => post.frontmatter.status !== "draft");
+  }
+  
+  if (category && category !== "all") {
+    posts = posts.filter(post => post.frontmatter.category === category);
+  }
+  
+  const sortByDate = (a: PostData, b: PostData) =>
+    new Date(b.frontmatter.date).getTime() -
+    new Date(a.frontmatter.date).getTime();
+    
+  // Apply sorting based on filter
+  if (filter) {
+    switch (filter) {
+      case "popular":
+        return posts.sort((a, b) => b.frontmatter.views - a.frontmatter.views);
+      case "latest":
+        const currentYear = new Date().getFullYear();
+        return posts
+          .filter(post => new Date(post.frontmatter.date).getFullYear() === currentYear)
+          .sort(sortByDate);
+      default:
+        return posts.sort(sortByDate);
+    }
+  }
+  
+  return posts.sort(sortByDate);
 };
 
 const getPost = async (
@@ -58,28 +93,16 @@ const getPost = async (
 };
 
 const getAllCategories = async (): Promise<string[]> => {
-  const files = await fs.readdir(postDirectory);
-  const categories = await Promise.all(
-    files.map(async (fileName) => {
-      const content = await readFileContent(path.join(postDirectory, fileName));
-      const { data } = matter(content);
-      return (data as Frontmatter).category;
-    })
-  );
+  const posts = await getPosts({ includeDrafts: false });
+  const categories = posts.map(post => post.frontmatter.category);
   return Array.from(new Set(categories));
 };
 
 const getPostCountByCategory = async (): Promise<Record<string, number>> => {
-  const files = await fs.readdir(postDirectory);
-  const categories = await Promise.all(
-    files.map(async (fileName) => {
-      const content = await readFileContent(path.join(postDirectory, fileName));
-      const { data } = matter(content);
-      return (data as Frontmatter).category;
-    })
-  );
-
-  return categories.reduce((acc, category) => {
+  const posts = await getPosts({ includeDrafts: false });
+  
+  return posts.reduce((acc, post) => {
+    const category = post.frontmatter.category;
     acc[category] = (acc[category] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
@@ -89,36 +112,7 @@ const getPostsByCategory = async (
   category: string,
   filter: string
 ): Promise<PostData[]> => {
-  const files = await fs.readdir(postDirectory);
-  let posts = await Promise.all(
-    files.map(async (fileName) => {
-      const content = await readFileContent(path.join(postDirectory, fileName));
-      return parsePostData(fileName, content);
-    })
-  );
-
-  if (category !== "all") {
-    posts = posts.filter((post) => post.frontmatter.category === category);
-  }
-
-  const sortByDate = (a: PostData, b: PostData) =>
-    new Date(b.frontmatter.date).getTime() -
-    new Date(a.frontmatter.date).getTime();
-
-  switch (filter) {
-    case "popular":
-      return posts.sort((a, b) => b.frontmatter.views - a.frontmatter.views);
-    case "latest":
-      const currentYear = new Date().getFullYear();
-      return posts
-        .filter(
-          (post) =>
-            new Date(post.frontmatter.date).getFullYear() === currentYear
-        )
-        .sort(sortByDate);
-    default:
-      return posts.sort(sortByDate);
-  }
+  return getPosts({ category, filter, includeDrafts: false });
 };
 
 export {
