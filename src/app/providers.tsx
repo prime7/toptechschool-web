@@ -3,7 +3,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
-import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ReactGA from "react-ga4";
 import { useEffect } from "react";
@@ -35,9 +34,8 @@ export const Providers = ({ children }: Props) => {
         {children}
         <Toaster />
 
-        {process.env.NODE_ENV === 'production' && (
+        {process.env.NODE_ENV === "production" && (
           <>
-            <Analytics />
             <SpeedInsights />
           </>
         )}
