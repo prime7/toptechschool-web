@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Input } from "@/components/ui/input";
 import { Upload, Loader2, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -117,11 +117,10 @@ const UploadComponent: React.FC = () => {
       });
 
       router.push(`/resume/${data.resumeId}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Upload error:", err);
       setUploadStatus("error");
-      
-      if (err.response?.status === 429) {
+      if (err instanceof AxiosError && err.response?.status === 429) {
         toast({
           title: "Rate limit exceeded",
           description: err.response.data.error,
