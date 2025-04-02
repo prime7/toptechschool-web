@@ -25,7 +25,7 @@ export const Providers = ({ children }: Props) => {
         {process.env.NODE_ENV === "production" && (
           <>
             <SpeedInsights />
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID!!} />
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
           </>
         )}
       </ThemeProvider>
