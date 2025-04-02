@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { JobRole } from "@prisma/client";
+import { toast } from "@/hooks/use-toast";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -110,12 +111,29 @@ const UploadComponent: React.FC = () => {
       });
 
       setUploadStatus("success");
+      toast({
+        title: "Resume uploaded successfully",
+        description: "Your resume is being analyzed. This may take a few minutes.",
+      });
 
       router.push(`/resume/${data.resumeId}`);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Upload error:", err);
-      setErrorMessage("Failed to upload file. Please try again.");
       setUploadStatus("error");
+      
+      if (err.response?.status === 429) {
+        toast({
+          title: "Rate limit exceeded",
+          description: err.response.data.error,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Upload failed",
+          description: "Failed to upload file. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 

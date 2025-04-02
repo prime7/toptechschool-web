@@ -13,7 +13,8 @@
     "ggg": "yarn install --registry https://registry.yarnpkg.com/",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
-    "email": "email dev --dir src/email-templates"
+    "email": "email dev --dir src/email-templates",
+    "inngest:dev": "inngest-cli dev"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.2",
@@ -53,6 +54,8 @@
     "@react-email/components": "^0.0.33",
     "@types/mdx": "^2.0.13",
     "@types/pdf-parse": "^1.1.4",
+    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/redis": "^1.34.6",
     "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
