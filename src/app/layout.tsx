@@ -17,8 +17,22 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Toptechschool",
+  title: {
+    default: "Toptechschool",
+    template: "%s | Toptechschool",
+  },
   description: "AI-powered career development platform for tech professionals",
+  twitter: {
+    card: "summary_large_image",
+    title: "Toptechschool",
+    description: "AI-powered career development platform for tech professionals",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Toptechschool",
+  },
+  category: "technology",
 };
 
 export default async function RootLayout({
