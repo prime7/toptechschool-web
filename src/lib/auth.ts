@@ -1,11 +1,27 @@
-import NextAuth from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      emailVerified: Date | null;
+      isEmailVerified: boolean;
+    } & DefaultSession["user"];
+  }
+
+  interface User {
+    emailVerified: Date | null;
+    isEmailVerified: boolean;
+  }
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   trustHost: true,
+  secret: process.env.AUTH_SECRET,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID as string,

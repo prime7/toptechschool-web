@@ -10,23 +10,24 @@ datasource db {
 }
 
 model User {
-  id             String           @id @default(cuid())
-  name           String?
-  email          String           @unique
-  emailVerified  DateTime?
-  image          String?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  title          String?
-  bio            String?
-  location       String?
-  accounts       Account[]
-  resumes        Resume[]
-  sessions       Session[]
-  socialLinks    SocialLink[]
-  workExperience WorkExperience[]
-  education      Education[]
-  skills         Skill[]
+  id              String           @id @default(cuid())
+  name            String?
+  email           String           @unique
+  emailVerified   DateTime?
+  isEmailVerified Boolean          @default(false)
+  image           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  title           String?
+  bio             String?
+  location        String?
+  accounts        Account[]
+  resumes         Resume[]
+  sessions        Session[]
+  socialLinks     SocialLink[]
+  workExperience  WorkExperience[]
+  education       Education[]
+  skills          Skill[]
 }
 
 model SocialLink {
@@ -137,6 +138,14 @@ model TemplateRequests {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
 }
 
 enum ParsingStatus {
