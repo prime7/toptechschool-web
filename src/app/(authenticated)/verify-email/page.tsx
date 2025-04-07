@@ -15,7 +15,7 @@ export default function EmailVerificationPage() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
   const { execute, isLoading, isError, isSuccess, error } = useApi<VerificationResponse>()
-  const { execute: executeVerifyEmail, isLoading: isLoadingVerifyEmail, isError: isErrorVerifyEmail, isSuccess: isSuccessVerifyEmail, error: errorVerifyEmail } = useApi<VerificationResponse>()
+  const { execute: executeVerifyEmail, isLoading: isLoadingVerifyEmail, isSuccess: isSuccessVerifyEmail, error: errorVerifyEmail } = useApi<VerificationResponse>()
 
   const handleSendVerificationEmail = async () => {
     try {
@@ -43,6 +43,7 @@ export default function EmailVerificationPage() {
     if (token) {
       handleVerifyEmail()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (token) {

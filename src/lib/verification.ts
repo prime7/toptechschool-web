@@ -1,12 +1,12 @@
 import crypto from "crypto";
 import { prisma } from "./prisma";
 
-export function generateVerificationToken(email: string): string {
+export function generateVerificationToken(): string {
     return crypto.randomBytes(32).toString("hex");
 }
 
 export async function generateVerificationUrl(email: string): Promise<string> {
-    const token = generateVerificationToken(email);
+    const token = generateVerificationToken();
 
     await prisma.verificationToken.create({
         data: {

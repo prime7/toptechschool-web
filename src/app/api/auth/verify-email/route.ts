@@ -5,7 +5,7 @@ import { sendEmailVerificationEmail } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
 import { withRateLimit, RateLimitKey, RateLimitError } from "@/lib/redis/rate-limit";
 
-export async function POST(req: Request) {
+export async function POST() {
   const session = await auth();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
