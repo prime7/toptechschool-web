@@ -140,14 +140,6 @@ model TemplateRequests {
   createdAt DateTime @default(now())
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@id([identifier, token])
-}
-
 enum ParsingStatus {
   NOT_STARTED
   STARTED

@@ -1,0 +1,394 @@
+---
+title: "How to Add Email Verification Using Next.js"
+date: "2025-03-06"
+description: "Learn how to implement secure email verification in your Next.js application using NextAuth.js and Resend"
+metaTitle: "How to Add Email Verification Using Next.js"
+metaDesc: "Learn how to implement secure email verification in your Next.js application using NextAuth.js and Resend"
+coverImage: "/images/image1.png"
+coverImageWidth: 640
+coverImageHeight: 260
+author:
+  - name: Tarek Ahmed
+  - title: Software engineer
+category: nextjs
+---
+
+# How to Add Email Verification Using Next.js
+
+## Table of Contents
+- [What You'll Learn](#what-youll-learn)
+- [Prerequisites](#prerequisites)
+- [Implementation Steps](#implementation-steps)
+- [Testing Your Implementation](#testing-your-implementation)
+- [Troubleshooting](#troubleshooting)
+- [Conclusion](#conclusion)
+
+## What You'll Learn
+- 🔐 Secure email verification implementation
+- 📧 Email template creation with React Email
+- 🔑 JWT-based verification system
+- 🛡️ Protected route implementation
+- 🧪 Testing and debugging tips
+
+## Prerequisites
+
+Before we begin, make sure you have:
+
+1. A Next.js project set up
+2. Node.js installed
+3. A Resend account for sending emails
+4. A database (we'll use Prisma with PostgreSQL)
+
+> 💡 **Pro Tip**: If you don't have a Resend account yet, you can sign up for free at [resend.com](https://resend.com)
+
+## Implementation Steps
+
+### Step 1: Install Required Dependencies
+
+```bash
+npm install next-auth@beta @prisma/client @auth/prisma-adapter resend zod jose
+npm install -D prisma
+```
+
+### Step 2: Set Up Environment Variables
+
+Create a `.env` file in your project root:
+
+```env
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-key
+RESEND_API_KEY=your-resend-api-key
+DATABASE_URL=your-database-url
+JWT_SECRET=your-jwt-secret
+```
+
+> ⚠️ **Security Note**: Never commit your `.env` file to version control. Add it to your `.gitignore` file.
+
+### Step 3: Configure Prisma Schema
+
+Create a `prisma/schema.prisma` file:
+
+```prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+```
+
+### Step 4: Create JWT Helper Functions
+
+Create `src/lib/jwt.ts`:
+
+```tsx
+import { SignJWT, jwtVerify } from "jose"
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+
+export const createVerificationToken = async (email: string) => {
+  const token = await new SignJWT({ email })
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("24h")
+    .sign(secret)
+
+  return token
+}
+
+export const verifyToken = async (token: string) => {
+  try {
+    const { payload } = await jwtVerify(token, secret)
+    return payload.email as string
+  } catch {
+    return null
+  }
+}
+```
+
+### Step 5: Create Email Templates
+
+Create an email template in `src/email-templates/verification-email.tsx`:
+
+```tsx
+import {
+  Body,
+  Button,
+  Container,
+  Head,
+  Html,
+  Preview,
+  Section,
+  Text,
+} from "@react-email/components"
+
+export const VerificationEmail = ({
+  verificationUrl,
+}: {
+  verificationUrl: string
+}) => (
+  <Html>
+    <Head />
+    <Preview>Verify your email address</Preview>
+    <Body>
+      <Container>
+        <Section>
+          <Text>Click the button below to verify your email address:</Text>
+          <Button href={verificationUrl}>Verify Email</Button>
+        </Section>
+      </Container>
+    </Body>
+  </Html>
+)
+```
+
+### Step 6: Set Up NextAuth.js Configuration
+
+Create `src/app/api/auth/[...nextauth]/route.ts`:
+
+```tsx
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import { NextAuthOptions } from "next-auth"
+import { Resend } from "resend"
+import { VerificationEmail } from "@/email-templates/verification-email"
+import { PrismaClient } from "@prisma/client"
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { z } from "zod"
+import { createVerificationToken } from "@/lib/jwt"
+
+const prisma = new PrismaClient()
+const resend = new Resend(process.env.RESEND_API_KEY)
+
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const { email, password } = z
+          .object({
+            email: z.string().email(),
+            password: z.string().min(6),
+          })
+          .parse(credentials)
+
+        const user = await prisma.user.findUnique({
+          where: { email },
+        })
+
+        if (!user) return null
+
+        const isValid = await verifyPassword(password, user.password!)
+
+        if (!isValid) return null
+
+        if (!user.emailVerified) {
+          const token = await createVerificationToken(email)
+
+          await resend.emails.send({
+            from: "noreply@yourdomain.com",
+            to: user.email,
+            subject: "Verify your email",
+            react: VerificationEmail({
+              verificationUrl: `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`,
+            }),
+          })
+
+          return null
+        }
+
+        return user
+      },
+    }),
+  ],
+  callbacks: {
+    async session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id
+      }
+      return session
+    },
+  },
+  pages: {
+    signIn: "/auth/signin",
+    verifyRequest: "/auth/verify-request",
+  },
+}
+
+const handler = NextAuth(authOptions)
+export { handler as GET, handler as POST }
+```
+
+### Step 7: Create Verification Pages
+
+Create `src/app/auth/verify-request/page.tsx`:
+
+```tsx
+export default function VerifyRequest() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold">Check your email</h1>
+        <p className="mt-2">
+          We sent you a verification link. Please check your email to continue.
+        </p>
+      </div>
+    </div>
+  )
+}
+```
+
+Create `src/app/verify-email/page.tsx`:
+
+```tsx
+import { prisma } from "@/lib/prisma"
+import { redirect } from "next/navigation"
+import { verifyToken } from "@/lib/jwt"
+
+export default async function VerifyEmail({
+  searchParams,
+}: {
+  searchParams: { token: string }
+}) {
+  const { token } = searchParams
+
+  if (!token) {
+    redirect("/auth/signin")
+  }
+
+  const email = await verifyToken(token)
+
+  if (!email) {
+    redirect("/auth/signin?error=Invalid or expired token")
+  }
+
+  await prisma.user.update({
+    where: { email },
+    data: { emailVerified: new Date() },
+  })
+
+  redirect("/auth/signin?verified=true")
+}
+```
+
+### Step 8: Add Helper Functions
+
+Create `src/lib/auth.ts`:
+
+```tsx
+import { hash, compare } from "bcryptjs"
+
+export const hashPassword = async (password: string) => {
+  return await hash(password, 12)
+}
+
+export const verifyPassword = async (password: string, hashedPassword: string) => {
+  return await compare(password, hashedPassword)
+}
+```
+
+### Step 9: Protect Routes
+
+Create a middleware to protect routes that require email verification:
+
+```tsx
+import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "./api/auth/[...nextauth]/route"
+
+export async function middleware(request) {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.emailVerified) {
+    return NextResponse.redirect(new URL("/auth/verify-request", request.url))
+  }
+
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*"],
+}
+```
+
+## Testing Your Implementation
+
+To ensure your email verification system works correctly, follow these testing steps:
+
+1. **Local Testing**:
+   ```bash
+   npm run dev
+   ```
+   - Create a new user account
+   - Check your email for the verification link
+   - Click the link and verify it redirects correctly
+
+2. **Email Testing**:
+   - Use Resend's test email address: `delivered@resend.dev`
+   - Verify the email template renders correctly
+   - Check all links are working
+
+3. **Security Testing**:
+   - Try accessing protected routes without verification
+   - Test expired tokens
+   - Verify JWT signature validation
+
+## Troubleshooting
+
+Common issues and their solutions:
+
+1. **Emails not being sent**:
+   - Check your Resend API key
+   - Verify your domain is properly configured
+   - Check the email sending logs
+
+2. **Verification link not working**:
+   - Ensure `NEXTAUTH_URL` is set correctly
+   - Check JWT secret configuration
+   - Verify token expiration time
+
+3. **Protected routes not working**:
+   - Check middleware configuration
+   - Verify session handling
+   - Ensure proper redirects
+
+## Conclusion
+
+You've now implemented a secure email verification system in your Next.js application using JWT tokens. The system includes:
+
+- 🔐 JWT-based verification tokens
+- 📧 Custom email templates
+- 🛡️ Protected routes
+- 🔑 Secure password handling
+- ⚡ Error handling
+
+Remember to:
+1. Keep your environment variables secure
+2. Use HTTPS in production
+3. Implement rate limiting for verification attempts
+4. Add proper error handling and user feedback
+5. Test the verification flow thoroughly
+
+> 🚀 **Next Steps**: Consider implementing:
+> - Password reset functionality
+> - Two-factor authentication
+> - Account recovery options
+
+Happy coding!

@@ -35,6 +35,10 @@ export default async function middleware(req: NextRequest) {
     return response;
   }
 
+  if (pathname === "/verify-email" && session?.user?.isEmailVerified) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   if (RESTRICTED_ROUTES.some((route) => pathname.startsWith(route))) {
     if (!session) {
       return NextResponse.redirect(new URL("/api/auth/signin", req.url));
@@ -56,5 +60,6 @@ export const config = {
     "/api/job/evaluate",
     "/api/resume/:resumeId",
     "/api/file-upload",
+    "/verify-email",
   ],
 };
