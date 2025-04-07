@@ -39,6 +39,9 @@ export default async function middleware(req: NextRequest) {
     if (!session) {
       return NextResponse.redirect(new URL("/api/auth/signin", req.url));
     }
+    if (!session.user.isEmailVerified) {
+      return NextResponse.redirect(new URL("/verify-email", req.url));
+    }
   }
 
   return response;

@@ -49,6 +49,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.accessToken = account.access_token;
         if (user) {
           token.id = user.id;
+          token.isEmailVerified = user.isEmailVerified;
+          token.emailVerified = user.emailVerified;
+        }
+      }
+
+      if (trigger === "update" && session?.isEmailVerified !== undefined) {
+        token.isEmailVerified = session.isEmailVerified;
+      }
+
+      if (token.sub && !token.isEmailVerified) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.sub },
+            select: { isEmailVerified: true, emailVerified: true }
+          });
+
+          if (dbUser) {
+            token.isEmailVerified = dbUser.isEmailVerified;
+            token.emailVerified = dbUser.emailVerified;
+          }
+        } catch (error) {
+          console.error("Error fetching user data in JWT callback:", error);
         }
       }
       return token;
@@ -56,11 +78,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
+        session.user.isEmailVerified = Boolean(token.isEmailVerified);
+        session.user.emailVerified = token.emailVerified as Date | null;
       }
       return session;
     },
   },
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60,
   },
 });
