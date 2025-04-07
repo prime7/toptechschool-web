@@ -4,6 +4,7 @@ import { redis } from './client';
 export enum RateLimitKey {
   ResumeUpload = 'resume_upload',
   JobAnalyze = 'job_analyze',
+  EmailVerification = 'email_verification',
 }
 
 type Duration = '1m' | '5m' | '15m' | '1h' | '1d';
@@ -24,6 +25,11 @@ const rateLimitConfig: Record<RateLimitKey, RateLimitConfig> = {
     limit: 3,
     duration: '1h',
     errorMessage: 'You can analyze 3 jobs per hour'
+  },
+  [RateLimitKey.EmailVerification]: {
+    limit: 3,
+    duration: '1h',
+    errorMessage: 'You can request email verification 3 times per hour'
   }
 }
 
