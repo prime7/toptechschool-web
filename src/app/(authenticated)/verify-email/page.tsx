@@ -3,48 +3,22 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Mail, CheckCircle, Loader2 } from "lucide-react"
-import { useApi } from "@/hooks/use-api"
+import { useEmailVerify } from "@/hooks/use-email-verify"
 import { useSearchParams } from "next/navigation"
-import { useEffect } from "react"
-
-interface VerificationResponse {
-  message: string
-}
+import { useEffect, useRef } from "react"
 
 export default function EmailVerificationPage() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
-  const { execute, isLoading, isError, isSuccess, error } = useApi<VerificationResponse>()
-  const { execute: executeVerifyEmail, isLoading: isLoadingVerifyEmail, isSuccess: isSuccessVerifyEmail, error: errorVerifyEmail } = useApi<VerificationResponse>()
-
-  const handleSendVerificationEmail = async () => {
-    try {
-      await execute({
-        url: "/api/auth/verify-email",
-        method: "POST"
-      })
-    } catch (err) {
-      console.error("Failed to send verification email:", err)
-    }
-  }
-
-  const handleVerifyEmail = async () => {
-    try {
-      await executeVerifyEmail({
-        url: `/api/auth/verify-email?token=${token}`,
-        method: "GET"
-      })
-    } catch (err) {
-      console.error("Failed to verify email:", err)
-    }
-  }
+  const { sendVerificationEmail, verifyEmail, isVerifying, verificationError, isVerified } = useEmailVerify()
+  const verificationAttempted = useRef(false)
 
   useEffect(() => {
-    if (token) {
-      handleVerifyEmail()
+    if (token && !verificationAttempted.current && !isVerified) {
+      verificationAttempted.current = true
+      verifyEmail(token)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [token, verifyEmail, isVerified])
 
   if (token) {
     return (
@@ -53,25 +27,25 @@ export default function EmailVerificationPage() {
           <Card className="shadow-lg border-muted/20">
             <CardHeader className="space-y-2">
               <div className="flex items-center justify-center gap-2">
-                {isLoadingVerifyEmail ? (
+                {isVerifying ? (
                   <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                ) : isSuccessVerifyEmail ? (
+                ) : isVerified ? (
                   <CheckCircle className="h-6 w-6 text-green-500" />
                 ) : (
                   <Mail className="h-6 w-6 text-primary" />
                 )}
                 <CardTitle className="text-2xl font-bold">
-                  {isLoadingVerifyEmail ? "Verifying email..." : isSuccessVerifyEmail ? "Email Verified!" : "Verification Failed"}
+                  {isVerifying ? "Verifying email..." : isVerified ? "Email Verified!" : "Verification Failed"}
                 </CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <p className="text-muted-foreground leading-relaxed text-center">
-                {isLoadingVerifyEmail 
+                {isVerifying 
                   ? "Please wait while we verify your email address."
-                  : isSuccessVerifyEmail 
+                  : isVerified 
                     ? "Your email has been successfully verified!"
-                    : errorVerifyEmail || "Failed to verify email. Please try again."
+                    : verificationError || "Failed to verify email. Please try again."
                 }
               </p>
             </CardContent>
@@ -99,16 +73,16 @@ export default function EmailVerificationPage() {
               <Button
                 className="w-full sm:w-auto"
                 size="lg"
-                onClick={handleSendVerificationEmail}
-                disabled={isLoading}
+                onClick={sendVerificationEmail}
+                disabled={isVerifying}
               >
-                {isLoading ? "Sending..." : "Send Verification Email"}
+                {isVerifying ? "Sending..." : "Send Verification Email"}
               </Button>
-              {isSuccess && (
+              {isVerified && (
                 <p className="text-green-500">Verification email sent successfully!</p>
               )}
-              {isError && (
-                <p className="text-red-500">{error || "Failed to send verification email. Please try again."}</p>
+              {verificationError && (
+                <p className="text-red-500">{verificationError}</p>
               )}
             </div>
           </CardContent>

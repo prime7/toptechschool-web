@@ -16,6 +16,7 @@ export const RESTRICTED_ROUTES = [
   "/upload",
   "/resume",
   "/job",
+  "/practice/:id/start",
   "/api/job/evaluate",
   "/api/file-upload",
   "/api/resume/:resumeId",
