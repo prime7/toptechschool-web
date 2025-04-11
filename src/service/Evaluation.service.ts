@@ -1,6 +1,7 @@
 import { JobRole } from "@prisma/client";
 import { OpenAIService } from "./OpenAI.service";
 import { BaseService } from "./Base.service";
+import { getPracticeSet } from "@/actions/practice";
 
 export interface JobMatchEvaluationResult {
   matchScore: number;
@@ -15,6 +16,13 @@ export interface ResumeEvaluationResult {
   matchScore: number;
   missingKeywords: string[];
   suggestions: string[];
+  strengths: string[];
+  gaps: string[];
+  recommendations: string[];
+}
+
+export interface PracticeTestAnalysisResult {
+  overallScore: number;
   strengths: string[];
   gaps: string[];
   recommendations: string[];
@@ -36,8 +44,14 @@ export class EvaluationService extends BaseService {
     missingKeywords: [],
     suggestions: [],
     strengths: [],
-    gaps: [], 
+    gaps: [],
     recommendations: ["Unable to generate recommendations due to an error."]
+  };
+  private static readonly DEFAULT_RESPONSE_PRACTICE: PracticeTestAnalysisResult = {
+    overallScore: 0,
+    strengths: [],
+    gaps: [],
+    recommendations: []
   };
 
   static async evaluateJobMatch(
@@ -135,5 +149,33 @@ export class EvaluationService extends BaseService {
       `Resume Data: ${resumeData}`,
       ...(jobRole ? [`Job Role: ${jobRole}`] : []),
     ];
+  }
+
+  static async analyzePracticeTest(practiceTestId: string, items: { question: string, answer: string }[], totalTime: number): Promise<PracticeTestAnalysisResult> {
+    return this.handleError(
+      async () => {
+        const practiceSet = await getPracticeSet(practiceTestId);
+        if (!practiceSet) {
+          throw new Error("Practice set not found");
+        }
+
+        const prompt = `
+          ${practiceSet.prompt}
+          Return a JSON response with:
+          {
+            "overallScore": number (0-100),
+            "strengths": [string] (notable positives),
+            "gaps": [string] (qualification gaps),
+            "recommendations": [string] (prioritized next steps)
+          }
+        `;
+        return OpenAIService.getJsonResponse<PracticeTestAnalysisResult>(
+          prompt,
+          items.map((item) => `${item.question}\n${item.answer}`),
+          this.DEFAULT_RESPONSE_PRACTICE
+        );
+      },
+      "Failed to analyze practice test"
+    );
   }
 } 

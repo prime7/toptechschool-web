@@ -1,6 +1,7 @@
 export type PracticeSet = {
   id: string
   title: string
+  prompt: string
   description: string
   category: string
   difficulty: 'beginner' | 'intermediate' | 'advanced'
@@ -11,7 +12,7 @@ export type PracticeSet = {
 }
 
 export type PracticeQuestion = {
-  id: string
+  id: number
   question: string
   type: 'multiple_choice' | 'text'
   options?: string[]

@@ -1,26 +1,25 @@
 import { Textarea } from "@/components/ui/textarea"
-import { useRef } from "react"
 
 interface AnswerInputProps {
   question: any
   textAnswer: string
   onAnswerChange: (value: string) => void
   onSubmit: () => void
+  nextInputRef: React.RefObject<HTMLTextAreaElement>
 }
 
-export const AnswerInput = ({ textAnswer, onAnswerChange, onSubmit }: AnswerInputProps) => {
-  const textInputRef = useRef<HTMLTextAreaElement>(null)
-
+export const AnswerInput = ({ textAnswer, onAnswerChange, onSubmit, nextInputRef }: AnswerInputProps) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault()
       onSubmit()
     }
   }
+
   return (
     <div className="mt-6 space-y-4">
       <Textarea
-        ref={textInputRef}
+        ref={nextInputRef}
         value={textAnswer}
         rows={5}
         onChange={(e) => onAnswerChange(e.target.value)}

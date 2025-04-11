@@ -11,6 +11,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner"
 
 export default function PracticeStartPage({ params }: { params: { id: string } }) {
   const {
+    result,
     practiceSet,
     isLoading,
     currentQuestionIndex,
@@ -25,6 +26,7 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
   const [selectedAnswer, setSelectedAnswer] = useState("")
   const [textAnswer, setTextAnswer] = useState("")
   const currentQuestionRef = useRef<HTMLDivElement>(null)
+  const nextInputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -42,6 +44,7 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
         behavior: 'smooth',
         block: 'center'
       })
+      nextInputRef.current?.focus()
     }
   }, [currentQuestionIndex])
 
@@ -53,6 +56,48 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
     return null
   }
 
+  if (result) {
+    return (
+      <div className="min-h-[calc(100vh-5rem)] py-12">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white dark:bg-gray-800 rounded-sm shadow-xl p-6 space-y-8">
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Overall Score</h2>
+              <div className="text-4xl font-bold">{result.overallScore}%</div>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mb-3">Strengths</h2>
+              <ul className="list-disc pl-5 space-y-2">
+                {result.strengths.map((strength, i) => (
+                  <li key={i} className="text-green-600 dark:text-green-400">{strength}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mb-3">Areas for Improvement</h2>
+              <ul className="list-disc pl-5 space-y-2">
+                {result.gaps.map((gap, i) => (
+                  <li key={i} className="text-red-600 dark:text-red-400">{gap}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mb-3">Recommendations</h2>
+              <ul className="list-disc pl-5 space-y-2">
+                {result.recommendations.map((rec, i) => (
+                  <li key={i} className="text-blue-600 dark:text-blue-400">{rec}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const handleAnswerSubmit = () => {
     const currentQuestion = practiceSet.questions[currentQuestionIndex]
     const answer = currentQuestion.type === 'text' ? textAnswer : selectedAnswer
@@ -62,7 +107,7 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
     handleNext()
   }
 
-  const progress = ((currentQuestionIndex + 1) / practiceSet.questions.length) * 100
+  const progress = ((currentQuestionIndex) / practiceSet.questions.length) * 100
 
   return (
     <div className="min-h-[calc(100vh-5rem)] py-12">
@@ -88,6 +133,7 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
                 <QuestionCard
                   question={question}
                   index={index}
+                  hints={question.hints}
                   isCurrentQuestion={index === currentQuestionIndex}
                   answer={answers[question.id]}
                 >
@@ -97,6 +143,7 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
                       textAnswer={textAnswer}
                       onAnswerChange={value => question.type === 'text' ? setTextAnswer(value) : setSelectedAnswer(value)}
                       onSubmit={handleAnswerSubmit}
+                      nextInputRef={nextInputRef}
                     />
                   )}
                 </QuestionCard>
@@ -104,10 +151,10 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
             ))}
           </div>
           <SubmitButton
-            isLastQuestion={currentQuestionIndex === practiceSet.questions.length}
+            isLastQuestion={currentQuestionIndex === practiceSet.questions.length - 1}
             isSubmitting={isSubmitting}
             disabled={!selectedAnswer && !textAnswer}
-            onClick={currentQuestionIndex === practiceSet.questions.length ? handleSubmit : handleAnswerSubmit}
+            onClick={currentQuestionIndex === practiceSet.questions.length - 1 ? handleSubmit : handleAnswerSubmit}
           />
         </div>
       </div>

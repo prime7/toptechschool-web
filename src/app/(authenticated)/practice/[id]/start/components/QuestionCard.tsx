@@ -1,17 +1,35 @@
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
+
 interface QuestionCardProps {
   question: any
   index: number
   isCurrentQuestion: boolean
   answer?: string
+  hints?: string[]
   children?: React.ReactNode
 }
 
-export const QuestionCard = ({ question, index, isCurrentQuestion, answer, children }: QuestionCardProps) => {
+export const QuestionCard = ({ question, index, isCurrentQuestion, answer, hints, children }: QuestionCardProps) => {
   return (
-    <div className={isCurrentQuestion ? 'card-active' : 'card'}>
+    <div key={index} className={isCurrentQuestion ? 'card-active' : 'card'}>
       <div className="card-content">
-        <div className="header">
+        <div className="header flex items-center gap-2">
           <h3 className="title">{question.question}</h3>
+          {hints && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="h-4 w-4 text-gray-500" />
+              </TooltipTrigger>
+              <TooltipContent className="space-y-1">
+                {hints.map((hint, i) => (
+                  <li key={i} className="text-sm list-[lower-roman] ml-4">{hint}</li>
+                ))}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
         {children}
       </div>
@@ -22,4 +40,4 @@ export const QuestionCard = ({ question, index, isCurrentQuestion, answer, child
       )}
     </div>
   )
-} 
+}

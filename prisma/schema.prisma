@@ -28,6 +28,7 @@ model User {
   workExperience  WorkExperience[]
   education       Education[]
   skills          Skill[]
+  practiceTests   PracticeTest[]
 }
 
 model SocialLink {
@@ -138,6 +139,17 @@ model TemplateRequests {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
+}
+
+model PracticeTest {
+  id            String   @id @default(cuid())
+  userId        String
+  practiceSetId String
+  items         Json[]
+  totalTime     Int
+  createdAt     DateTime @default(now())
+  aiAnalysis    Json?
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum ParsingStatus {

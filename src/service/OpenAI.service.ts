@@ -3,8 +3,6 @@ import { BaseService } from "./Base.service";
 import { OPENAI_CONFIG } from "@/lib/constants";
 
 export class OpenAIService extends BaseService {
-  private static readonly SYSTEM_PROMPT = "You must respond with valid JSON only. No other text or explanation.";
-
   /**
    * Sends a request to OpenAI and returns the parsed JSON response
    * @param systemPrompt - The system prompt to guide the AI
