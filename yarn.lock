@@ -15,6 +15,19 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
+"@anthropic-ai/sdk@^0.39.0":
+  version "0.39.0"
+  resolved "https://registry.npmjs.org/@anthropic-ai/sdk/-/sdk-0.39.0.tgz"
+  integrity sha512-eMyDIPRZbt1CCLErRCi3exlAvNkBtRe+kW5vvJyef93PmNr/clstYgHhtvmkxN82nlKgzyGPCyGxrm0JQ1ZIdg==
+  dependencies:
+    "@types/node" "^18.11.18"
+    "@types/node-fetch" "^2.6.4"
+    abort-controller "^3.0.0"
+    agentkeepalive "^4.2.1"
+    form-data-encoder "1.7.2"
+    formdata-node "^4.3.2"
+    node-fetch "^2.6.7"
+
 "@auth/core@0.34.2":
   version "0.34.2"
   resolved "https://registry.npmjs.org/@auth/core/-/core-0.34.2.tgz"
@@ -2635,9 +2648,9 @@
     undici-types "~6.19.2"
 
 "@types/node@^18.11.18":
-  version "18.19.74"
-  resolved "https://registry.npmjs.org/@types/node/-/node-18.19.74.tgz"
-  integrity sha512-HMwEkkifei3L605gFdV+/UwtpxP6JSzM+xFk2Ia6DNFSwSVBRh9qp5Tgf4lNFOMfPVuU0WnkcWpXZpgn5ufO4A==
+  version "18.19.86"
+  resolved "https://registry.npmjs.org/@types/node/-/node-18.19.86.tgz"
+  integrity sha512-fifKayi175wLyKyc5qUfyENhQ1dCNI1UNjp653d8kuYcPQN5JhX3dGuP/XmvPTg/xRBn1VTLpbmi+H/Mr7tLfQ==
   dependencies:
     undici-types "~5.26.4"
 
@@ -7167,10 +7180,10 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-openai@^4.80.1:
-  version "4.80.1"
-  resolved "https://registry.npmjs.org/openai/-/openai-4.80.1.tgz"
-  integrity sha512-+6+bbXFwbIE88foZsBEt36bPkgZPdyFN82clAXG61gnHb2gXdZApDyRrcAHqEtpYICywpqaNo57kOm9dtnb7Cw==
+openai@^4.93.0:
+  version "4.93.0"
+  resolved "https://registry.npmjs.org/openai/-/openai-4.93.0.tgz"
+  integrity sha512-2kONcISbThKLfm7T9paVzg+QCE1FOZtNMMUfXyXckUAoXRRS/mTP89JSDHPMp8uM5s0bz28RISbvQjArD6mgUQ==
   dependencies:
     "@types/node" "^18.11.18"
     "@types/node-fetch" "^2.6.4"

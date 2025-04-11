@@ -3,12 +3,14 @@ import { prisma } from "@/lib/prisma"
 import { EvaluationService } from "@/service/Evaluation.service"
 import { NextRequest, NextResponse } from "next/server"
 
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { practiceSetId, items, totalTime } = await request.json()
-  const result = await EvaluationService.analyzePracticeTest(practiceSetId, items)
+  const result = await EvaluationService.analyzePracticeTest(practiceSetId, items, session.user.id)
   await prisma.practiceTest.create({
     data: {
       practiceSetId: practiceSetId,

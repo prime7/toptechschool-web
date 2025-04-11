@@ -18,7 +18,12 @@ export class JobService extends BaseService {
           resumeData = ResumeService.getResumeContentString(resume as unknown as { analysis: ResumeEvaluationResult | null });
         }
 
-        const evaluation = await EvaluationService.evaluateJobMatch(jobDescription, resumeData, jobRole);
+        const evaluation = await EvaluationService.evaluateJobMatch(
+          jobDescription,
+          resumeData,
+          jobRole,
+          userId
+        );
 
         const jobReview = await this.prisma.jobReview.create({
           data: {

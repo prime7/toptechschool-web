@@ -29,9 +29,21 @@ export const ALLOWED_ORIGINS = [
 
 export const OPENAI_CONFIG = {
   MODEL: "gpt-4o-mini",
-  MAX_TOKENS: 10000,
+  MAX_TOKENS: 16384,
   TEMPERATURE: 0.3,
+  INPUT_COST_PER_1K_TOKENS: 0.00015,
+  OUTPUT_COST_PER_1K_TOKENS: 0.0006
 } as const;
+
+
+export const ANTHROPIC_CONFIG = {
+  MODEL: "claude-3-haiku-20240307",
+  MAX_TOKENS: 4096,
+  TEMPERATURE: 0.7,
+  INPUT_COST_PER_1K_TOKENS: 0.0008,
+  OUTPUT_COST_PER_1K_TOKENS: 0.004
+} as const;
+
 
 export const R2_CONFIG = {
   REGION: "auto",

@@ -29,6 +29,7 @@ model User {
   education       Education[]
   skills          Skill[]
   practiceTests   PracticeTest[]
+  ai         AI[]
 }
 
 model SocialLink {
@@ -150,6 +151,25 @@ model PracticeTest {
   createdAt     DateTime @default(now())
   aiAnalysis    Json?
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AI {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  provider        String
+  model           String
+  promptTokens    Int
+  completionTokens Int
+  totalTokens     Int
+  cost            Float
+  requestType     String
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([requestType])
+  @@index([provider])
 }
 
 enum ParsingStatus {

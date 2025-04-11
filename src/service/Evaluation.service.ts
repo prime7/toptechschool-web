@@ -1,8 +1,7 @@
 import { JobRole } from "@prisma/client";
-import { OpenAIService } from "./OpenAI.service";
 import { BaseService } from "./Base.service";
 import { getPracticeSet } from "@/actions/practice";
-
+import { AI } from "./AI.service";
 export interface JobMatchEvaluationResult {
   matchScore: number;
   missingKeywords: string[];
@@ -57,15 +56,18 @@ export class EvaluationService extends BaseService {
   static async evaluateJobMatch(
     jobDescription: string,
     resumeData: string,
-    jobRole: JobRole | null
+    jobRole: JobRole | null,
+    userId: string
   ): Promise<JobMatchEvaluationResult> {
     return this.handleError(
       async () => {
         const prompt = this.buildEvaluationPrompt(jobDescription, resumeData, jobRole);
-        return OpenAIService.getJsonResponse<JobMatchEvaluationResult>(
+        return AI.generateResponse<JobMatchEvaluationResult>(
           this.SYSTEM_PROMPT_JOB_MATCH,
           prompt,
-          this.DEFAULT_RESPONSE_JOB_MATCH
+          this.DEFAULT_RESPONSE_JOB_MATCH,
+          "job_evaluation",
+          userId
         );
       },
       "Failed to evaluate job match"
@@ -74,18 +76,57 @@ export class EvaluationService extends BaseService {
 
   static async evaluateResume(
     resumeData: string,
-    jobRole: JobRole | null
+    jobRole: JobRole | null,
+    userId: string
   ): Promise<ResumeEvaluationResult> {
     return this.handleError(
       async () => {
         const prompt = this.buildEvaluationPrompt("", resumeData, jobRole);
-        return OpenAIService.getJsonResponse<ResumeEvaluationResult>(
+        return AI.generateResponse<ResumeEvaluationResult>(
           this.SYSTEM_PROMPT_RESUME,
           prompt,
-          this.DEFAULT_RESPONSE_RESUME
+          this.DEFAULT_RESPONSE_RESUME,
+          "resume_review",
+          userId
         );
       },
       "Failed to evaluate resume"
+    );
+  }
+
+  static async analyzePracticeTest(
+    practiceTestId: string,
+    items: { question: string; answer: string }[],
+    userId: string
+  ): Promise<PracticeTestAnalysisResult> {
+    return this.handleError(
+      async () => {
+        const practiceSet = await getPracticeSet(practiceTestId);
+        if (!practiceSet) {
+          throw new Error("Practice set not found");
+        }
+
+        const prompt = `
+          ${practiceSet.prompt}
+          Return a JSON response with:
+          {
+            "overallScore": number (0-100),
+            "strengths": [string] (notable positives),
+            "gaps": [string] (qualification gaps),
+            "recommendations": [string] (prioritized next steps)
+          }
+        `;
+        
+        return AI.generateResponse<PracticeTestAnalysisResult>(
+          prompt,
+          items.map((item) => `${item.question}\n${item.answer}`),
+          this.DEFAULT_RESPONSE_PRACTICE,
+          "practice_evaluation",
+          userId,
+          "anthropic"
+        );
+      },
+      "Failed to analyze practice test"
     );
   }
 
@@ -149,33 +190,5 @@ export class EvaluationService extends BaseService {
       `Resume Data: ${resumeData}`,
       ...(jobRole ? [`Job Role: ${jobRole}`] : []),
     ];
-  }
-
-  static async analyzePracticeTest(practiceTestId: string, items: { question: string, answer: string }[]): Promise<PracticeTestAnalysisResult> {
-    return this.handleError(
-      async () => {
-        const practiceSet = await getPracticeSet(practiceTestId);
-        if (!practiceSet) {
-          throw new Error("Practice set not found");
-        }
-
-        const prompt = `
-          ${practiceSet.prompt}
-          Return a JSON response with:
-          {
-            "overallScore": number (0-100),
-            "strengths": [string] (notable positives),
-            "gaps": [string] (qualification gaps),
-            "recommendations": [string] (prioritized next steps)
-          }
-        `;
-        return OpenAIService.getJsonResponse<PracticeTestAnalysisResult>(
-          prompt,
-          items.map((item) => `${item.question}\n${item.answer}`),
-          this.DEFAULT_RESPONSE_PRACTICE
-        );
-      },
-      "Failed to analyze practice test"
-    );
   }
 } 

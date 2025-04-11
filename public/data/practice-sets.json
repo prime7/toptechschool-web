@@ -2,7 +2,7 @@
   "practiceSets": [
     {
       "id": "behavioral-interview-A7f3K9b",
-      "prompt": "You are an expert behavioral interviewer. Analyze the practice test, then provide a detailed assessment.",
+      "prompt": "You are an expert behavioral interviewer. Analyze the practice test responses",
       "title": "Behavioral Interview Practice",
       "description": "Practice common behavioral interview questions to improve your interview skills",
       "category": "Interview",
