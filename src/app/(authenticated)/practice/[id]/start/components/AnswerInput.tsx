@@ -1,7 +1,7 @@
 import { Textarea } from "@/components/ui/textarea"
-
+import { PracticeQuestion } from "@/app/(authenticated)/practice/types"
 interface AnswerInputProps {
-  question: any
+  question: PracticeQuestion
   textAnswer: string
   onAnswerChange: (value: string) => void
   onSubmit: () => void

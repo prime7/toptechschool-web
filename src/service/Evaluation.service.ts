@@ -151,7 +151,7 @@ export class EvaluationService extends BaseService {
     ];
   }
 
-  static async analyzePracticeTest(practiceTestId: string, items: { question: string, answer: string }[], totalTime: number): Promise<PracticeTestAnalysisResult> {
+  static async analyzePracticeTest(practiceTestId: string, items: { question: string, answer: string }[]): Promise<PracticeTestAnalysisResult> {
     return this.handleError(
       async () => {
         const practiceSet = await getPracticeSet(practiceTestId);

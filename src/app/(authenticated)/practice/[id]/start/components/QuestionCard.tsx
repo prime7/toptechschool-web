@@ -1,8 +1,8 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Info } from "lucide-react"
-
+import { PracticeQuestion } from "@/app/(authenticated)/practice/types"
 interface QuestionCardProps {
-  question: any
+  question: PracticeQuestion
   index: number
   isCurrentQuestion: boolean
   answer?: string

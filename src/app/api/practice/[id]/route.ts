@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { practiceSetId, items, totalTime } = await request.json()
-  const result = await EvaluationService.analyzePracticeTest(practiceSetId, items, totalTime)
+  const result = await EvaluationService.analyzePracticeTest(practiceSetId, items)
   await prisma.practiceTest.create({
     data: {
       practiceSetId: practiceSetId,
