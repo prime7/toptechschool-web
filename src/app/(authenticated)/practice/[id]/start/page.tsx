@@ -1,9 +1,13 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { usePractice } from "@/hooks/use-practice"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import { Timer } from "lucide-react"
+import { Progress } from '@/components/ui/progress'
+import { QuestionCard } from "./components/QuestionCard"
+import { AnswerInput } from "./components/AnswerInput"
+import { SubmitButton } from "./components/SubmitButton"
+import { LoadingSpinner } from "@/components/common/LoadingSpinner"
 
 export default function PracticeStartPage({ params }: { params: { id: string } }) {
   const {
@@ -18,10 +22,31 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
     handleSubmit
   } = usePractice(params.id)
 
-  const [currentAnswer, setCurrentAnswer] = useState("")
+  const [selectedAnswer, setSelectedAnswer] = useState("")
+  const [textAnswer, setTextAnswer] = useState("")
+  const currentQuestionRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && e.shiftKey && (selectedAnswer || textAnswer)) {
+        handleAnswerSubmit()
+      }
+    }
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [selectedAnswer, textAnswer])
+
+  useEffect(() => {
+    if (currentQuestionRef.current) {
+      currentQuestionRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      })
+    }
+  }, [currentQuestionIndex])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <LoadingSpinner />
   }
 
   if (!practiceSet) {
@@ -29,71 +54,62 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
   }
 
   const handleAnswerSubmit = () => {
-    handleAnswerChange(practiceSet.questions[currentQuestionIndex].id, currentAnswer)
-    setCurrentAnswer("")
+    const currentQuestion = practiceSet.questions[currentQuestionIndex]
+    const answer = currentQuestion.type === 'text' ? textAnswer : selectedAnswer
+    handleAnswerChange(currentQuestion.id, answer)
+    setSelectedAnswer("")
+    setTextAnswer("")
     handleNext()
   }
 
+  const progress = ((currentQuestionIndex + 1) / practiceSet.questions.length) * 100
+
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex flex-col h-[80vh]">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">
-            Question {currentQuestionIndex + 1} of {practiceSet.questions.length}
-          </h2>
-          <div className="text-sm font-medium">
-            Time: {Math.floor(totalTimeSpent / 60)}:{(totalTimeSpent % 60).toString().padStart(2, '0')}
+    <div className="min-h-[calc(100vh-5rem)] py-12">
+      <div className="max-w-4xl mx-auto px-4">
+        <Progress value={progress} className="h-1" />
+        <div className="bg-white dark:bg-gray-800 rounded-sm shadow-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="rounded-full font-semibold flex items-center gap-2">
+              {currentQuestionIndex + 1} / {practiceSet.questions.length}
+            </span>
+            <span className="rounded-full font-mono flex items-center gap-2">
+              <Timer size={18} />
+              {Math.floor(totalTimeSpent / 60)}:{(totalTimeSpent % 60).toString().padStart(2, '0')}
+            </span>
           </div>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto space-y-4 mb-4">
-          {practiceSet.questions.slice(0, currentQuestionIndex + 1).map((question, index) => (
-            <div key={question.id} className="space-y-2">
-              <div className="bg-primary/10 p-4 rounded-lg">
-                <p className="font-medium">Question {index + 1}:</p>
-                <p>{question.question}</p>
-              </div>
-              {answers[question.id] && (
-                <div className="bg-secondary/10 p-4 rounded-lg ml-8">
-                  <p className="font-medium">Your Answer:</p>
-                  <p>{answers[question.id]}</p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
 
-        {currentQuestionIndex < practiceSet.questions.length && (
-          <div className="border-t pt-4">
-            <div className="flex gap-2">
-              <Textarea
-                value={currentAnswer}
-                onChange={(e) => setCurrentAnswer(e.target.value)}
-                placeholder="Type your answer here..."
-                className="flex-1"
-              />
-              <Button 
-                onClick={handleAnswerSubmit}
-                disabled={!currentAnswer.trim()}
-                className="bg-primary hover:bg-primary/90"
+          <div className="space-y-6">
+            {practiceSet.questions.slice(0, currentQuestionIndex + 1).map((question, index) => (
+              <div
+                key={question.id}
+                ref={index === currentQuestionIndex ? currentQuestionRef : null}
               >
-                Send
-              </Button>
-            </div>
+                <QuestionCard
+                  question={question}
+                  index={index}
+                  isCurrentQuestion={index === currentQuestionIndex}
+                  answer={answers[question.id]}
+                >
+                  {index === currentQuestionIndex && (
+                    <AnswerInput
+                      question={question}
+                      textAnswer={textAnswer}
+                      onAnswerChange={value => question.type === 'text' ? setTextAnswer(value) : setSelectedAnswer(value)}
+                      onSubmit={handleAnswerSubmit}
+                    />
+                  )}
+                </QuestionCard>
+              </div>
+            ))}
           </div>
-        )}
-
-        {currentQuestionIndex === practiceSet.questions.length && (
-          <div className="flex justify-end mt-4">
-            <Button 
-              onClick={handleSubmit} 
-              disabled={isSubmitting}
-              className="bg-primary hover:bg-primary/90"
-            >
-              {isSubmitting ? "Submitting..." : "Submit All Answers"}
-            </Button>
-          </div>
-        )}
+          <SubmitButton
+            isLastQuestion={currentQuestionIndex === practiceSet.questions.length}
+            isSubmitting={isSubmitting}
+            disabled={!selectedAnswer && !textAnswer}
+            onClick={currentQuestionIndex === practiceSet.questions.length ? handleSubmit : handleAnswerSubmit}
+          />
+        </div>
       </div>
     </div>
   )
