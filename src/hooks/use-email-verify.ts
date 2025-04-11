@@ -14,7 +14,7 @@ export const useEmailVerify = () => {
       .then(() => {})
       .catch((err) => {
         setVerificationError("Failed to send verification email")
-        console.error("Failed to send verification email:", err)
+        console.error("Failed to send verification email: ", err)
       })
       .finally(() => setIsVerifying(false))
   }, [])
