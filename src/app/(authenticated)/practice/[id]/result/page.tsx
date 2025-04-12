@@ -5,6 +5,12 @@ import { getPracticeSet, getPracticeAttempt } from "@/actions/practice"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { revalidatePath } from "next/cache"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 interface QuestionAnalysis {
   questionText: string
@@ -57,47 +63,47 @@ export default async function PracticeResultPage({ params }: { params: { id: str
           )}
         </div>
 
-        <div className="space-y-6">
+        <Accordion type="single" collapsible className="space-y-6">
           {analysis.questionAnalysis.map((item, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <span className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center font-semibold">
-                    {index + 1}
-                  </span>
-                  <CardTitle>Question {index + 1}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="grid gap-6">
-                <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-                  <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                    <span className="text-primary">Question</span>
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-300">{item.questionText}</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-                  <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                    <span className="text-blue-600 dark:text-blue-400">Your Answer</span>
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-300">{item.answer}</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-                  <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                    <span className="text-green-600 dark:text-green-400">Feedback</span>
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{item.feedback}</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-                  <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                    <span className="text-purple-600 dark:text-purple-400">Improvement Suggestions</span>
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{item.improvement}</p>
-                </div>
-              </CardContent>
-            </Card>
+            <AccordionItem key={index} value={`question-${index}`}>
+              <Card>
+                <CardHeader>
+                  <AccordionTrigger>
+                    <div className="flex items-center gap-3">
+                      <span className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center font-semibold">
+                        {index + 1}
+                      </span>
+                      <p>{item.questionText}</p>
+                    </div>
+                  </AccordionTrigger>
+                </CardHeader>
+                <AccordionContent>
+                  <CardContent className="space-y-6">
+                    <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                        <span className="text-blue-600 dark:text-blue-400">Your Answer</span>
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-300">{item.answer}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                        <span className="text-green-600 dark:text-green-400">Feedback</span>
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{item.feedback}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                        <span className="text-green-600 dark:text-green-400">Improvement Suggestions</span>
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{item.improvement}</p>
+                    </div>
+                  </CardContent>
+                </AccordionContent>
+              </Card>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </div>
   )
-} 
+}
