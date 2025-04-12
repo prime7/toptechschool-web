@@ -4,11 +4,9 @@ import { getPracticeSet } from "@/actions/practice"
 import { PracticeSet } from "@/app/(authenticated)/practice/types"
 import { useTimer } from "./use-timer"
 import axios from "axios"
-import { PracticeTestAnalysisResult } from "@/service/Evaluation.service"
 
 
 export const usePractice = (id: string) => {
-  const [result, setResult] = useState<PracticeTestAnalysisResult | null>(null)
   const router = useRouter()
   const [practiceSet, setPracticeSet] = useState<PracticeSet | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -53,14 +51,8 @@ export const usePractice = (id: string) => {
   }
 
   const handleSubmit = async () => {
-    // If no practice set, return
     if (!practiceSet) return
-
-    // If any answer is empty, return
-    if (Object.values(answers).some(answer => !answer)) {
-      return
-    }
-
+    if (Object.values(answers).some(answer => !answer)) return
 
     setIsSubmitting(true)
     try {
@@ -73,10 +65,9 @@ export const usePractice = (id: string) => {
         totalTime: totalTimeSpent
       }
 
-      const { data } = await axios.post(`/api/practice/${id}`, practiceTest)
-      setResult(data.data)
+      await axios.post(`/api/practice/${id}`, practiceTest)
+      router.push(`/practice/${id}/result`)
     } catch (error) {
-      setResult(null)
       console.error("Error submitting practice test:", error)
     } finally {
       setIsSubmitting(false)
@@ -84,7 +75,6 @@ export const usePractice = (id: string) => {
   }
 
   return {
-    result,
     practiceSet,
     isLoading,
     currentQuestionIndex,

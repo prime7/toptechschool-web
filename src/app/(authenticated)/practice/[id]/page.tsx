@@ -2,28 +2,48 @@ import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { getPracticeSet } from "@/actions/practice"
+import { getPracticeSet, getPracticeAttempt } from "@/actions/practice"
 import Link from "next/link"
-import { ArrowLeft, Play, List, Timer, Save } from "lucide-react"
+import { ArrowLeft, Play, List, Timer, Save, CheckCircle2 } from "lucide-react"
 import { getDifficultyColor } from "../utils"
 
+interface QuestionAnalysis {
+  questionText: string
+  answer: string
+  feedback: string
+  improvement: string
+}
+
+interface PracticeAnalysis {
+  questionAnalysis: QuestionAnalysis[]
+}
 
 export default async function PracticeSetPage({ params }: { params: { id: string } }) {
   const practiceSet = await getPracticeSet(params.id)
   if (!practiceSet) {
     redirect("/practice")
   }
+  const practiceAttempt = await getPracticeAttempt(params.id)
+  const hasAttempted = !!practiceAttempt.practiceTest
 
   return (
     <div className="container mx-auto py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card className="shadow-lg">
           <CardHeader className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-sm">{practiceSet.category}</Badge>
-              <Badge className={`${getDifficultyColor(practiceSet.difficulty)} text-white`}>
-                {practiceSet.difficulty}
-              </Badge>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-sm">{practiceSet.category}</Badge>
+                <Badge className={`${getDifficultyColor(practiceSet.difficulty)} text-white`}>
+                  {practiceSet.difficulty}
+                </Badge>
+              </div>
+              {hasAttempted && (
+                <div className="flex items-center gap-2 text-green-500">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span className="text-sm font-medium">Completed</span>
+                </div>
+              )}
             </div>
             <CardTitle className="text-3xl font-bold">{practiceSet.title}</CardTitle>
             <CardDescription className="text-lg">{practiceSet.description}</CardDescription>
@@ -54,16 +74,15 @@ export default async function PracticeSetPage({ params }: { params: { id: string
                   Back
                 </Button>
               </Link>
-              <Link href={`/practice/${params.id}/start`}>
+              <Link href={hasAttempted ? `/practice/${params.id}/result` : `/practice/${params.id}/start`}>
                 <Button className="gap-2">
                   <Play className="w-4 h-4" />
-                  Start Practice
+                  {hasAttempted ? "View Results" : "Start Practice"}
                 </Button>
               </Link>
             </div>
           </CardContent>
         </Card>
-
         <Card className="shadow-lg">
           <CardContent className="space-y-8 pt-4">
             <div className="space-y-4">
