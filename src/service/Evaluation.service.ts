@@ -2,6 +2,7 @@ import { JobRole } from "@prisma/client";
 import { BaseService } from "./Base.service";
 import { getPracticeSet } from "@/actions/practice";
 import { AI } from "./AI.service";
+
 export interface JobMatchEvaluationResult {
   matchScore: number;
   missingKeywords: string[];
@@ -20,11 +21,15 @@ export interface ResumeEvaluationResult {
   recommendations: string[];
 }
 
+export interface QuestionAnalysis {
+  questionText: string;
+  answer: string;
+  feedback: string;
+  improvement: string;
+}
+
 export interface PracticeTestAnalysisResult {
-  overallScore: number;
-  strengths: string[];
-  gaps: string[];
-  recommendations: string[];
+  questionAnalysis: QuestionAnalysis[];
 }
 
 export class EvaluationService extends BaseService {
@@ -47,10 +52,7 @@ export class EvaluationService extends BaseService {
     recommendations: ["Unable to generate recommendations due to an error."]
   };
   private static readonly DEFAULT_RESPONSE_PRACTICE: PracticeTestAnalysisResult = {
-    overallScore: 0,
-    strengths: [],
-    gaps: [],
-    recommendations: []
+    questionAnalysis: []
   };
 
   static async evaluateJobMatch(
@@ -87,7 +89,8 @@ export class EvaluationService extends BaseService {
           prompt,
           this.DEFAULT_RESPONSE_RESUME,
           "resume_review",
-          userId
+          userId,
+          "anthropic"
         );
       },
       "Failed to evaluate resume"
@@ -108,12 +111,21 @@ export class EvaluationService extends BaseService {
 
         const prompt = `
           ${practiceSet.prompt}
+          Analyze each question and answer pair provided.
+          For each question, provide:
+          - Detailed feedback on the answer's correctness, completeness, and clarity
+          - Specific suggestions for improvement
+
           Return a JSON response with:
           {
-            "overallScore": number (0-100),
-            "strengths": [string] (notable positives),
-            "gaps": [string] (qualification gaps),
-            "recommendations": [string] (prioritized next steps)
+            "questionAnalysis": [
+              {
+                "questionText": string (the original question),
+                "answer": string (the provided answer),
+                "feedback": string (detailed analysis of the answer),
+                "improvement": string (specific suggestions to improve)
+              }
+            ]
           }
         `;
         

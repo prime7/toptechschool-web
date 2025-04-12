@@ -58,39 +58,47 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
 
   if (result) {
     return (
-      <div className="min-h-[calc(100vh-5rem)] py-12">
+      <div className="min-h-[calc(100vh-5rem)] py-12 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-white dark:bg-gray-800 rounded-sm shadow-xl p-6 space-y-8">
-            <div>
-              <h2 className="text-2xl font-semibold mb-4">Overall Score</h2>
-              <div className="text-4xl font-bold">{result.overallScore}%</div>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-semibold mb-3">Strengths</h2>
-              <ul className="list-disc pl-5 space-y-2">
-                {result.strengths.map((strength, i) => (
-                  <li key={i} className="text-green-600 dark:text-green-400">{strength}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-semibold mb-3">Areas for Improvement</h2>
-              <ul className="list-disc pl-5 space-y-2">
-                {result.gaps.map((gap, i) => (
-                  <li key={i} className="text-red-600 dark:text-red-400">{gap}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-semibold mb-3">Recommendations</h2>
-              <ul className="list-disc pl-5 space-y-2">
-                {result.recommendations.map((rec, i) => (
-                  <li key={i} className="text-blue-600 dark:text-blue-400">{rec}</li>
-                ))}
-              </ul>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
+            <h1 className="text-3xl font-bold mb-8 text-center">Practice Results</h1>
+            <div className="space-y-12">
+              {result.questionAnalysis.map((analysis, i) => (
+                <div key={i} className="border-b border-gray-200 dark:border-gray-700 pb-8 last:border-0">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center font-semibold">
+                      {i + 1}
+                    </span>
+                    <h2 className="text-2xl font-semibold">Question {i + 1}</h2>
+                  </div>
+                  <div className="grid gap-6">
+                    <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                        <span className="text-primary">Question</span>
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-300">{analysis.questionText}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                        <span className="text-blue-600 dark:text-blue-400">Your Answer</span>
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-300">{analysis.answer}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                        <span className="text-green-600 dark:text-green-400">Feedback</span>
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{analysis.feedback}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                        <span className="text-purple-600 dark:text-purple-400">Improvement Suggestions</span>
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{analysis.improvement}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -62,7 +62,7 @@ export class AI extends BaseService {
             messages: [{ role: "user", content: messages.join("\n") }],
             max_tokens: ANTHROPIC_CONFIG.MAX_TOKENS,
             temperature: ANTHROPIC_CONFIG.TEMPERATURE,
-            system: systemPrompt,
+            system: `${systemPrompt} You must respond with valid JSON only.`,
           });
           const inputTokens = anthropicResponse.usage?.input_tokens || 0;
           const outputTokens = anthropicResponse.usage?.output_tokens || 0;

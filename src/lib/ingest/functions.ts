@@ -42,7 +42,7 @@ export const analyzeResume = inngest.createFunction(
     });
 
     const result = await step.run("analyze-and-save", async () => {
-      const evaluation = await EvaluationService.evaluateResume(text, jobRole ?? null);
+      const evaluation = await EvaluationService.evaluateResume(text, jobRole ?? null, userId);
       
       await prisma.resume.update({
         where: { id: resumeId },
