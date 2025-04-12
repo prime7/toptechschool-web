@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useRef } from "react";
-import { FormSubmission } from "./Form";
+import dynamic from 'next/dynamic'
 import { Hero } from "./Hero";
-import { Features } from "./Features";
 
+const Features = dynamic(() => import('./Features').then(mod => mod.Features), { ssr: false })
+const FormSubmission = dynamic(() => import('./Form').then(mod => mod.FormSubmission), { ssr: false })
 
 export default function Home() {
   const waitlistRef = useRef<HTMLDivElement>(null);
