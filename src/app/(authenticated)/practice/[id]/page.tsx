@@ -7,16 +7,6 @@ import Link from "next/link"
 import { ArrowLeft, Play, List, Timer, Save, CheckCircle2 } from "lucide-react"
 import { getDifficultyColor } from "../utils"
 
-interface QuestionAnalysis {
-  questionText: string
-  answer: string
-  feedback: string
-  improvement: string
-}
-
-interface PracticeAnalysis {
-  questionAnalysis: QuestionAnalysis[]
-}
 
 export default async function PracticeSetPage({ params }: { params: { id: string } }) {
   const practiceSet = await getPracticeSet(params.id)
