@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getPracticeSet, getPracticeAttempt } from "@/actions/practice"
 import Link from "next/link"

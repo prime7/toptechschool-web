@@ -5,13 +5,12 @@ import { PracticeSet } from "@/app/(authenticated)/practice/types"
 import { useTimer } from "./use-timer"
 import axios from "axios"
 
-
 export const usePractice = (id: string) => {
   const router = useRouter()
   const [practiceSet, setPracticeSet] = useState<PracticeSet | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [answers, setAnswers] = useState<Record<number, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [startTime, setStartTime] = useState<number | null>(null)
   const totalTimeSpent = useTimer(startTime)
@@ -37,40 +36,34 @@ export const usePractice = (id: string) => {
     fetchPracticeSet()
   }, [id, router])
 
-  const handleAnswerChange = (questionId: number, answer: string) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: answer,
-    }))
-  }
+  const isLastQuestion = practiceSet ? currentQuestionIndex === practiceSet.questions.length - 1 : false
 
-  const handleNext = () => {
-    if (practiceSet && currentQuestionIndex < practiceSet.questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1)
-    }
-  }
-
-  const handleSubmit = async () => {
+  const handleAnswer = async (questionId: number, answer: string) => {
     if (!practiceSet) return
-    if (Object.values(answers).some(answer => !answer)) return
 
-    setIsSubmitting(true)
-    try {
-      const practiceTest = {
-        practiceSetId: practiceSet.id,
-        items: Object.entries(answers).map(([id, answer]) => ({
-          question: practiceSet.questions[parseInt(id)].question,
-          answer,
-        })),
-        totalTime: totalTimeSpent
+    const newAnswers = { ...answers, [questionId]: answer }
+    setAnswers(newAnswers)
+
+    if (isLastQuestion && Object.keys(newAnswers).length === practiceSet.questions.length) {
+      setIsSubmitting(true)
+      try {
+        const practiceTest = {
+          practiceSetId: practiceSet.id,
+          items: practiceSet.questions.map((question) => ({
+            question: question.question,
+            answer: newAnswers[question.id]
+          })),
+          totalTime: totalTimeSpent
+        }
+        await axios.post(`/api/practice/${id}`, practiceTest)
+        router.push(`/practice/${id}/result`)
+      } catch (error) {
+        console.error("Error submitting practice test:", error)
+      } finally {
+        setIsSubmitting(false)
       }
-
-      await axios.post(`/api/practice/${id}`, practiceTest)
-      router.push(`/practice/${id}/result`)
-    } catch (error) {
-      console.error("Error submitting practice test:", error)
-    } finally {
-      setIsSubmitting(false)
+    } else if (!isLastQuestion) {
+      setCurrentQuestionIndex(prev => prev + 1)
     }
   }
 
@@ -81,8 +74,7 @@ export const usePractice = (id: string) => {
     answers,
     isSubmitting,
     totalTimeSpent,
-    handleAnswerChange,
-    handleNext,
-    handleSubmit
+    isLastQuestion,
+    handleAnswer
   }
-} 
+}

@@ -17,25 +17,25 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
     answers,
     isSubmitting,
     totalTimeSpent,
-    handleAnswerChange,
-    handleNext,
-    handleSubmit
+    isLastQuestion,
+    handleAnswer
   } = usePractice(params.id)
 
-  const [selectedAnswer, setSelectedAnswer] = useState("")
-  const [textAnswer, setTextAnswer] = useState("")
+  const [currentAnswer, setCurrentAnswer] = useState("")
+  const [lastAnswerSubmitted, setLastAnswerSubmitted] = useState(false)
   const currentQuestionRef = useRef<HTMLDivElement>(null)
   const nextInputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && e.shiftKey && (selectedAnswer || textAnswer)) {
+      if (e.key === 'Enter' && e.shiftKey && currentAnswer.trim()) {
         handleAnswerSubmit()
       }
     }
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [selectedAnswer, textAnswer])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentAnswer])
 
   useEffect(() => {
     if (currentQuestionRef.current) {
@@ -45,6 +45,11 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
       })
       nextInputRef.current?.focus()
     }
+  }, [currentQuestionIndex])
+
+  useEffect(() => {
+    setCurrentAnswer("")
+    setLastAnswerSubmitted(false)
   }, [currentQuestionIndex])
 
   if (isLoading) {
@@ -57,11 +62,12 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
 
   const handleAnswerSubmit = () => {
     const currentQuestion = practiceSet.questions[currentQuestionIndex]
-    const answer = currentQuestion.type === 'text' ? textAnswer : selectedAnswer
-    handleAnswerChange(currentQuestion.id, answer)
-    setSelectedAnswer("")
-    setTextAnswer("")
-    handleNext()
+    handleAnswer(currentQuestion.id, currentAnswer.trim())
+    if (isLastQuestion) {
+      setLastAnswerSubmitted(true)
+    } else {
+      setCurrentAnswer("")
+    }
   }
 
   const progress = ((currentQuestionIndex) / practiceSet.questions.length) * 100
@@ -92,13 +98,13 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
                   index={index}
                   hints={question.hints}
                   isCurrentQuestion={index === currentQuestionIndex}
-                  answer={answers[question.id]}
+                  answer={answers[question.id] || (index === currentQuestionIndex && lastAnswerSubmitted ? currentAnswer : undefined)}
                 >
-                  {index === currentQuestionIndex && (
+                  {index === currentQuestionIndex && !lastAnswerSubmitted && (
                     <AnswerInput
                       question={question}
-                      textAnswer={textAnswer}
-                      onAnswerChange={value => question.type === 'text' ? setTextAnswer(value) : setSelectedAnswer(value)}
+                      answer={currentAnswer}
+                      onAnswerChange={setCurrentAnswer}
                       onSubmit={handleAnswerSubmit}
                       nextInputRef={nextInputRef}
                     />
@@ -108,10 +114,10 @@ export default function PracticeStartPage({ params }: { params: { id: string } }
             ))}
           </div>
           <SubmitButton
-            isLastQuestion={currentQuestionIndex === practiceSet.questions.length - 1}
+            isLastQuestion={isLastQuestion}
             isSubmitting={isSubmitting}
-            disabled={!selectedAnswer && !textAnswer}
-            onClick={currentQuestionIndex === practiceSet.questions.length - 1 ? handleSubmit : handleAnswerSubmit}
+            disabled={!currentAnswer.trim() || lastAnswerSubmitted}
+            onClick={handleAnswerSubmit}
           />
         </div>
       </div>
