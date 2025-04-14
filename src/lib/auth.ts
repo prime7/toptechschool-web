@@ -37,12 +37,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account, user, trigger, session }) {
-      if (trigger === "update" && session?.name && token.sub) {
-        token.name = session.name;
-        await prisma.user.update({
+      if (trigger === "update" && token.sub) {
+        const dbUser = await prisma.user.findFirst({
           where: { id: token.sub },
-          data: { name: session.name },
+          select: { isEmailVerified: true, emailVerified: true, name: true }
         });
+        token.name = session.name;
+        if (dbUser) {
+          token.isEmailVerified = dbUser.isEmailVerified;
+          token.emailVerified = dbUser.emailVerified;
+          token.name = dbUser.name;
+        }
       }
 
       if (account) {
@@ -54,25 +59,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       }
 
-      if (trigger === "update" && session?.isEmailVerified !== undefined) {
-        token.isEmailVerified = session.isEmailVerified;
-      }
-
-      if (token.sub && !token.isEmailVerified) {
-        try {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: token.sub },
-            select: { isEmailVerified: true, emailVerified: true }
-          });
-
-          if (dbUser) {
-            token.isEmailVerified = dbUser.isEmailVerified;
-            token.emailVerified = dbUser.emailVerified;
-          }
-        } catch (error) {
-          console.error("Error fetching user data in JWT callback:", error);
-        }
-      }
       return token;
     },
     async session({ token, session }) {
