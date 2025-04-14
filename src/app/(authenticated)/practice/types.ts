@@ -1,5 +1,7 @@
 export type PracticeSet = {
   id: string
+  createdAt: string
+  updatedAt: string
   title: string
   prompt: string
   description: string
