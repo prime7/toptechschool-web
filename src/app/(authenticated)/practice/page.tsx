@@ -6,6 +6,51 @@ import { PracticeSet } from "./types"
 import { getPracticeSets, getPracticeAttempts } from "@/actions/practice"
 import { getDifficultyColor } from "./utils"
 import { CheckCircle2 } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Practice before your interview",
+  description: "Practice before your interview with Top Tech School's comprehensive practice sets. Get hands-on experience with real-world scenarios, detailed AI explanations, and instant feedback.",
+  keywords: "IT certification practice, AWS certification prep, Azure practice tests, CompTIA exam prep, cloud certification, tech certification practice, Top Tech School",
+  openGraph: {
+    title: "Practice before your interview",
+    description: "Practice before your interview with Top Tech School's comprehensive practice sets. Get hands-on experience with real-world scenarios, detailed AI explanations, and instant feedback.",
+    type: "website",
+    locale: "en_US",
+    url: "https://toptechschool.com/practice",
+    siteName: "Top Tech School"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Practice before your interview",
+    description: "Practice before your interview with Top Tech School's comprehensive practice sets. Get hands-on experience with real-world scenarios, detailed AI explanations, and instant feedback.",
+    site: "@toptechschool",
+    creator: "@toptechschool"
+  },
+  alternates: {
+    canonical: "https://toptechschool.com/practice",
+    languages: {
+      'en-US': 'https://toptechschool.com/practice',
+    }
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    }
+  },
+  verification: {
+    google: "your-google-verification-code",
+    yandex: "your-yandex-verification-code",
+    yahoo: "your-yahoo-verification-code"
+  }
+}
+
 
 export default async function PracticePage() {
   const practiceSets = await getPracticeSets()

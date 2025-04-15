@@ -7,6 +7,39 @@ import Link from "next/link"
 import { ArrowLeft, Play, List, Timer, Save, CheckCircle2 } from "lucide-react"
 import { getDifficultyColor } from "../utils"
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const practiceSet = await getPracticeSet(params.id)
+  if (!practiceSet) {
+    return {
+      title: "Practice Set Not Found",
+      description: "The requested practice set could not be found"
+    }
+  }
+
+  return {
+    title: practiceSet.title,
+    description: practiceSet.description,
+    openGraph: {
+      title: practiceSet.title,
+      description: practiceSet.description,
+      type: "website",
+      locale: "en_US",
+      url: `https://toptechschool.com/practice/${params.id}`,
+      siteName: "Top Tech School",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: practiceSet.title,
+      description: practiceSet.description,
+    },
+    alternates: {
+      canonical: `https://toptechschool.com/practice/${params.id}`,
+      languages: {
+        'en-US': `https://toptechschool.com/practice/${params.id}`,
+      }
+    }
+  }
+}
 
 export default async function PracticeSetPage({ params }: { params: { id: string } }) {
   const practiceSet = await getPracticeSet(params.id)
