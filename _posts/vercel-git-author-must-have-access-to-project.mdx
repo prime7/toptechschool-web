@@ -1,0 +1,48 @@
+---
+title: "Vercel Deployment Error: Git Author Must Have Access to Project"
+metaTitle: "Vercel Deployment Error: Git Author Must Have Access to Project"
+metaDesc: "How to fix the Vercel deployment error where the git author doesn't have access to the project"
+date: "2025-04-15"
+coverImage: "/images/image1.png"
+coverImageWidth: 640
+coverImageHeight: 260
+author:
+  - name: Tarek Ahmed
+  - title: Software engineer
+category: deployment
+---
+
+If you're encountering a Vercel deployment error stating that the git author must have access to the project, here's how to fix it step by step.
+
+## The Problem
+
+When deploying to Vercel, you might see an error message indicating that the git author doesn't have access to the project. This typically happens when:
+
+- Your Vercel account is not properly connected to your GitHub account
+- The GitHub account you're using doesn't have the necessary permissions for the project
+
+## The Solution
+
+Follow these steps to resolve the issue:
+
+1. Click on your user profile icon in the top right corner of the Vercel dashboard
+2. Select "Account Settings" from the dropdown menu
+3. Navigate to the "Authentication" section
+4. Add your GitHub account as an authentication method
+5. Log out of your Vercel account
+6. Log back in to Vercel using your GitHub account
+7. Try deploying your project again
+
+After completing these steps, your deployment should work correctly as Vercel will now recognize your GitHub account and its associated permissions.
+
+## Why This Works
+
+This solution works because it ensures that:
+- Your Vercel account is properly linked to your GitHub account
+- The authentication flow is using the correct GitHub credentials
+- Vercel can properly verify your access to the project repository
+
+If you continue to experience issues after following these steps, make sure that:
+- Your GitHub account has the necessary permissions for the repository
+- You're using the correct GitHub account that has access to the project
+- The repository is properly connected to your Vercel project
