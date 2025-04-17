@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth, updateSession } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { sendEmailVerificationEmail } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
@@ -50,15 +50,19 @@ export async function GET(req: Request) {
     if (!email || email !== session.user.email) {
         return NextResponse.json({ error: "Invalid or expired token" }, { status: 400 });
     }
+    await updateSession({
+        ...session,
+        user: {
+            ...session.user,
+            isEmailVerified: true,
+            emailVerified: new Date()
+        }
+    })
 
     const updatedUser = await prisma.user.update({
         where: { id: session.user.id },
         data: { isEmailVerified: true }
     });
-
-    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const host = req.headers.get('host') || 'localhost:3000';
-    const callbackUrl = `${protocol}://${host}/resume`;
 
     return NextResponse.json({
         success: true,
@@ -68,6 +72,5 @@ export async function GET(req: Request) {
             email: updatedUser.email,
             isEmailVerified: updatedUser.isEmailVerified
         },
-        redirectTo: `/api/auth/session?callbackUrl=${encodeURIComponent(callbackUrl)}`
     });
 }

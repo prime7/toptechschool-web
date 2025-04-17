@@ -18,7 +18,7 @@ declare module "next-auth" {
   }
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut, unstable_update: updateSession } = NextAuth({
   adapter: PrismaAdapter(prisma),
   trustHost: true,
   secret: process.env.AUTH_SECRET,
@@ -37,17 +37,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account, user, trigger, session }) {
-      if (trigger === "update" && token.sub) {
-        const dbUser = await prisma.user.findFirst({
+      if (trigger === "update" && session.user.isEmailVerified) {
+        const date = new Date();
+        await prisma.user.update({
           where: { id: token.sub },
-          select: { isEmailVerified: true, emailVerified: true, name: true }
+          data: { isEmailVerified: true, emailVerified: date }
         });
-        token.name = session.name;
-        if (dbUser) {
-          token.isEmailVerified = dbUser.isEmailVerified;
-          token.emailVerified = dbUser.emailVerified;
-          token.name = dbUser.name;
-        }
+        token.isEmailVerified = true;
+        token.emailVerified = date;
       }
 
       if (account) {

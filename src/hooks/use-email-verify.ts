@@ -27,10 +27,10 @@ export const useEmailVerify = () => {
     setVerificationError(null)
 
     await axios.get(`/api/auth/verify-email?token=${token}`)
-      .then((data) => {
+      .then(async (data) => {
         if (data.data.success) {
           setIsVerified(true)
-          update({
+          await update({
             user: {
               isEmailVerified: true,
             }
