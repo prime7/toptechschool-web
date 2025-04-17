@@ -11,14 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {  Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeSwitch";
 import { Session } from "next-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitialsFromName } from "@/lib/utils";
-
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const navItems = [
@@ -28,9 +27,35 @@ const Navbar = ({ session }: { session: Session | null }) => {
     { name: "Blog", href: "/blog" },
   ];
 
-  const AuthButton = () => {
+  const profileItems = [
+    { name: "Profile", href: "/profile" },
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Practice", href: "/practice" },
+    { name: "Resume", href: "/resume" },
+    { name: "Job", href: "/job" },
+  ];
+
+  const AuthButton = ({ isMobile = false }) => {
     if (session) {
-      return (
+      return isMobile ? (
+        <div className="flex flex-col space-y-4">
+          {profileItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              {item.name}
+            </Link>
+          ))}
+          <button
+            onClick={() => signOut()}
+            className="text-sm font-medium text-muted-foreground hover:text-foreground text-left"
+          >
+            Sign Out
+          </button>
+        </div>
+      ) : (
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger>
             <Avatar className="border-2 border-border">
@@ -41,27 +66,27 @@ const Navbar = ({ session }: { session: Session | null }) => {
           <DropdownMenuContent className="w-56 border border-border">
             <DropdownMenuLabel>Howdy! {session.user?.name}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/profile">Profile</Link></DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/dashboard">Dashboard</Link></DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/practice">Practice</Link></DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/resume">Resume</Link></DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer"><Link href="/job">Job</Link></DropdownMenuItem>
+            {profileItems.map((item) => (
+              <DropdownMenuItem key={item.name} asChild className="cursor-pointer">
+                <Link href={item.href}>{item.name}</Link>
+              </DropdownMenuItem>
+            ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">Sign Out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
-    } else {
-      return (
-        <Button
-          variant="outline"
-          className="text-foreground"
-          onClick={() => signIn()}
-        >
-          Sign In
-        </Button>
-      );
     }
+
+    return (
+      <Button
+        variant="outline"
+        className="text-foreground"
+        onClick={() => signIn()}
+      >
+        Sign In
+      </Button>
+    );
   };
 
   return (
@@ -94,19 +119,26 @@ const Navbar = ({ session }: { session: Session | null }) => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="bg-background">
-                <nav className="flex flex-col space-y-4">
-                  {navItems.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="text-sm font-medium text-muted-foreground hover:text-foreground"
-                    >
-                      {item.name}
-                    </a>
-                  ))}
-                  <div className="flex items-center space-x-4">
+                <nav className="flex flex-col h-full">
+                  {session && (
+                    <div className="mb-6 pb-4 border-b border-border">
+                      <span className="text-sm font-medium">Howdy! {session.user?.name}</span>
+                    </div>
+                  )}
+                  <div className="flex flex-col space-y-4 flex-grow">
+                    {navItems.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                      >
+                        {item.name}
+                      </a>
+                    ))}
+                    <AuthButton isMobile={true} />
+                  </div>
+                  <div className="pt-4 mt-auto border-t border-border">
                     <ThemeToggle />
-                    <AuthButton />
                   </div>
                 </nav>
               </SheetContent>
