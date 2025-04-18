@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { RESTRICTED_ROUTES, ALLOWED_ORIGINS } from "@/lib/constants";
+import { RESTRICTED_API_ROUTES, RESTRICTED_PAGES, ALLOWED_ORIGINS } from "@/lib/constants";
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -37,14 +37,18 @@ export default async function middleware(req: NextRequest) {
 
   if (pathname === "/verify-email" && session?.user?.isEmailVerified) {
     return NextResponse.redirect(new URL("/", req.url));
-  }
-
-  if (RESTRICTED_ROUTES.some((route) => pathname.startsWith(route))) {
+  } else if (pathname === '/verify-email' && !session?.user) {
+    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
+  } else if (RESTRICTED_PAGES.some((route) => pathname.startsWith(route))) {
     if (!session) {
       return NextResponse.redirect(new URL("/api/auth/signin", req.url));
     }
     if (!session.user.isEmailVerified) {
       return NextResponse.redirect(new URL("/verify-email", req.url));
+    }
+  } else if (RESTRICTED_API_ROUTES.some((route) => pathname.startsWith(route))) {
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
 
@@ -53,13 +57,8 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/upload",
-    "/resume",
-    "/job",
+    ...RESTRICTED_PAGES,
+    ...RESTRICTED_API_ROUTES,
     "/((?!_next/static|_next/image|favicon.ico).*)",
-    "/api/job/evaluate",
-    "/api/resume/:resumeId",
-    "/api/file-upload",
-    "/verify-email",
   ],
 };

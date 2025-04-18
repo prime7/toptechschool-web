@@ -12,11 +12,15 @@ export const API_ENDPOINTS = {
   },
 } as const;
 
-export const RESTRICTED_ROUTES = [
+export const RESTRICTED_PAGES = [
   "/upload",
   "/resume",
   "/job",
   "/practice/:id/start",
+] as const;
+
+export const RESTRICTED_API_ROUTES = [
+  "/api/resume",
   "/api/job/evaluate",
   "/api/file-upload",
   "/api/resume/:resumeId",
