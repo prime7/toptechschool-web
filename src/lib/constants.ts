@@ -21,7 +21,7 @@ export const RESTRICTED_PAGES = [
 
 export const RESTRICTED_API_ROUTES = [
   "/api/resume",
-  "/api/job/evaluate",
+  "/api/evaluate/job",
   "/api/file-upload",
   "/api/resume/:resumeId",
 ] as const;
