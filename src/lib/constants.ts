@@ -31,21 +31,21 @@ export const ALLOWED_ORIGINS = [
   "chrome-extension://",
 ] as const;
 
-export const OPENAI_CONFIG = {
-  MODEL: "gpt-4o-mini",
-  MAX_TOKENS: 16384,
-  TEMPERATURE: 0.3,
-  INPUT_COST_PER_1K_TOKENS: 0.00015,
-  OUTPUT_COST_PER_1K_TOKENS: 0.0006
-} as const;
-
-
-export const ANTHROPIC_CONFIG = {
-  MODEL: "claude-3-haiku-20240307",
-  MAX_TOKENS: 4096,
-  TEMPERATURE: 0.7,
-  INPUT_COST_PER_1K_TOKENS: 0.0008,
-  OUTPUT_COST_PER_1K_TOKENS: 0.004
+export const AI_CONFIGS = {
+  "gpt-4o-mini": {
+    model: "gpt-4o-mini", 
+    maxTokens: 16384,
+    temperature: 0.3,
+    inputCostPer1kTokens: 0.00015,
+    outputCostPer1kTokens: 0.0006
+  },
+  "claude-3-haiku-20240307": {
+    model: "claude-3-haiku-20240307",
+    maxTokens: 4096,
+    temperature: 0.7,
+    inputCostPer1kTokens: 0.0008,
+    outputCostPer1kTokens: 0.004
+  }
 } as const;
 
 

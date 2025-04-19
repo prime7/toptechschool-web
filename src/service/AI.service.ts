@@ -1,7 +1,7 @@
 import { openai } from "@/lib/openai";
 import { anthropic } from "@/lib/anthropic";
 import { BaseService } from "./Base.service";
-import { OPENAI_CONFIG, ANTHROPIC_CONFIG } from "@/lib/constants";
+import { AI_CONFIGS } from "@/lib/constants";
 import { type ChatCompletionSystemMessageParam, type ChatCompletionUserMessageParam } from "openai/resources/chat/completions";
 
 export type AIProvider = "openai" | "anthropic";
@@ -37,10 +37,10 @@ export class AI extends BaseService {
 
         if (provider === "openai") {
           const openaiResponse = await openai.chat.completions.create({
-            model: OPENAI_CONFIG.MODEL,
+            model: AI_CONFIGS["gpt-4o-mini"].model,
             messages: formattedMessages,
-            max_tokens: OPENAI_CONFIG.MAX_TOKENS,
-            temperature: OPENAI_CONFIG.TEMPERATURE,
+            max_tokens: AI_CONFIGS["gpt-4o-mini"].maxTokens,
+            temperature: AI_CONFIGS["gpt-4o-mini"].temperature,
             response_format: { type: "json_object" }
           });
 
@@ -50,7 +50,7 @@ export class AI extends BaseService {
           response = openaiResponse.choices[0].message.content;
           usage = {
             provider,
-            model: OPENAI_CONFIG.MODEL,
+            model: AI_CONFIGS["gpt-4o-mini"].model,
             promptTokens,
             completionTokens,
             totalTokens: promptTokens + completionTokens,
@@ -58,10 +58,10 @@ export class AI extends BaseService {
           };
         } else {
           const anthropicResponse = await anthropic.messages.create({
-            model: ANTHROPIC_CONFIG.MODEL,
+            model: AI_CONFIGS["claude-3-haiku-20240307"].model,
             messages: [{ role: "user", content: messages.join("\n") }],
-            max_tokens: ANTHROPIC_CONFIG.MAX_TOKENS,
-            temperature: ANTHROPIC_CONFIG.TEMPERATURE,
+            max_tokens: AI_CONFIGS["claude-3-haiku-20240307"].maxTokens,
+            temperature: AI_CONFIGS["claude-3-haiku-20240307"].temperature,
             system: `${systemPrompt} You must respond with valid JSON only.`,
           });
           const inputTokens = anthropicResponse.usage?.input_tokens || 0;
@@ -70,7 +70,7 @@ export class AI extends BaseService {
           response = anthropicResponse.content[0].type === 'text' ? anthropicResponse.content[0].text : '';
           usage = {
             provider,
-            model: ANTHROPIC_CONFIG.MODEL,
+            model: AI_CONFIGS["claude-3-haiku-20240307"].model,
             promptTokens: inputTokens,
             completionTokens: outputTokens,
             totalTokens: inputTokens + outputTokens,
@@ -98,10 +98,10 @@ export class AI extends BaseService {
   }
 
   private static calculateOpenAICost(promptTokens: number, completionTokens: number): number {
-    return (promptTokens / 1000) * OPENAI_CONFIG.INPUT_COST_PER_1K_TOKENS + (completionTokens / 1000) * OPENAI_CONFIG.OUTPUT_COST_PER_1K_TOKENS;
+    return (promptTokens / 1000) * AI_CONFIGS["gpt-4o-mini"].inputCostPer1kTokens + (completionTokens / 1000) * AI_CONFIGS["gpt-4o-mini"].outputCostPer1kTokens;
   }
 
   private static calculateAnthropicCost(inputTokens: number, outputTokens: number): number {
-    return (inputTokens / 1000) * ANTHROPIC_CONFIG.INPUT_COST_PER_1K_TOKENS + (outputTokens / 1000) * ANTHROPIC_CONFIG.OUTPUT_COST_PER_1K_TOKENS;
+    return (inputTokens / 1000) * AI_CONFIGS["claude-3-haiku-20240307"].inputCostPer1kTokens + (outputTokens / 1000) * AI_CONFIGS["claude-3-haiku-20240307"].outputCostPer1kTokens;
   }
 } 
