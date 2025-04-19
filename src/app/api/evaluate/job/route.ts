@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { JobService } from "@/service/Job.service";
+import { RateLimitKey } from "@/lib/redis/rate-limit";
+import { withRateLimit } from "@/lib/redis/rate-limit";
 
 export async function POST(request: NextRequest) {
   const session = JSON.parse(request.headers.get("x-session") || "{}");
@@ -10,11 +12,17 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const result = await JobService.evaluateJobDescription(
+    const result = await withRateLimit(
+      RateLimitKey.JobAnalyze,
       session.user.id,
-      jobDescription,
-      jobRole,
-      resumeId
+      async () => {
+        return await JobService.evaluateJobDescription(
+          session.user.id,
+          jobDescription,
+          jobRole,
+          resumeId
+        );
+      }
     );
 
     return NextResponse.json({

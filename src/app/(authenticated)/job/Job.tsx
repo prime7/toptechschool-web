@@ -57,7 +57,7 @@ export default function Job({ resumes }: JobProps) {
   async function onSubmit(values: FormValues) {
     setIsLoading(true);
     try {
-      const response = await axios.post("/api/job/evaluate", {
+      const response = await axios.post("/api/evaluate/job", {
         jobDescription: values.jobDescription,
         resumeId: values.resumeId,
         jobRole: values.jobRole,
