@@ -17,17 +17,17 @@ interface RateLimitConfig {
 
 const rateLimitConfig: Record<RateLimitKey, RateLimitConfig> = {
   [RateLimitKey.ResumeUpload]: {
-    limit: 2,
+    limit: 20, // 2  
     duration: '1d',
     errorMessage: 'You can only upload 2 resumes per day'
   },
   [RateLimitKey.JobAnalyze]: {
-    limit: 3,
+    limit: 30, // 3 jobs per hour
     duration: '1h',
     errorMessage: 'You can analyze 3 jobs per hour'
   },
   [RateLimitKey.EmailVerification]: {
-    limit: 3,
+    limit: 30, // 3 times per hour
     duration: '1h',
     errorMessage: 'You can request email verification 3 times per hour'
   }

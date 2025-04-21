@@ -1,15 +1,18 @@
-import { OpenAIProvider } from "./providers/openai";
-import { AnthropicProvider } from "./providers/anthropic";
+import { OpenAIProvider, OpenAIModels } from "./providers/openai";
+import { AnthropicProvider, AnthropicModels } from "./providers/anthropic";
 import { AIProvider, AIConfig } from "./types";
 import { prisma } from "../prisma";
 
+export type ProviderType = 'openai' | 'anthropic';
+export type ModelType = OpenAIModels | AnthropicModels;
+
 export class AI {
-  private providers: Map<string, AIProvider> = new Map();
-  private defaultProvider: string;
+  private providers: Map<ProviderType, AIProvider> = new Map();
+  private defaultProvider: ProviderType;
 
   constructor(configs: {
-    providers: { type: 'openai' | 'anthropic'; config: AIConfig }[];
-    defaultProvider: string;
+    providers: { type: ProviderType; config: AIConfig }[];
+    defaultProvider: ProviderType;
   }) {
     for (const { type, config } of configs.providers) {
       if (type === 'openai') {
@@ -23,8 +26,8 @@ export class AI {
 
   async generateResponse(params: {
     prompt: string;
-    model: string;
-    provider?: string;
+    model: ModelType;
+    provider?: ProviderType;
     maxTokens?: number;
     temperature?: number;
     requestType: 'job_evaluation' | 'resume_review' | 'practice_evaluation';
@@ -43,7 +46,6 @@ export class AI {
       throw new Error(`Provider ${providerName} not found`);
     }
 
-    
     const result = await provider.generateResponse({
       prompt: params.prompt,
       model: params.model,
@@ -51,23 +53,35 @@ export class AI {
       temperature: params.temperature
     });
 
-    await prisma.aI.create({
-      data: {
-        provider: providerName,
-        model: params.model,
-        promptTokens: result.promptTokens,
-        completionTokens: result.completionTokens,
-        totalTokens: result.promptTokens + result.completionTokens,
-        cost: result.cost,
-        requestType: params.requestType,
-        userId: params.userId
+
+    const createAIRecord = async () => {
+      try {
+        console.log(`Creating AI record for ${params.userId}`);
+        console.log(result);
+        await prisma.aI.create({
+          data: {
+            provider: providerName,
+            model: params.model,
+            promptTokens: result.promptTokens,
+            completionTokens: result.completionTokens,
+            totalTokens: result.promptTokens + result.completionTokens,
+            cost: result.cost,
+            requestType: params.requestType,
+            userId: params.userId,
+            time: result.time / 1000
+          }
+        });
+      } catch (error) {
+        console.error(error);
       }
-    })
+    };
+
+    await createAIRecord();
 
     return result;
   }
 
-  getAvailableProviders(): string[] {
+  getAvailableProviders(): ProviderType[] {
     return Array.from(this.providers.keys());
   }
 }
