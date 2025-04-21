@@ -36,7 +36,7 @@ export class OpenAIProvider implements AIProvider {
     cost: number;
     time: number;
   }> {
-    const start = Date.now();
+    const start = performance.now();
     const response = await this.client.chat.completions.create({
       model: params.model,
       messages: [{ role: "user", content: params.prompt }],
@@ -44,7 +44,7 @@ export class OpenAIProvider implements AIProvider {
       temperature: params.temperature,
     });
 
-    const responseTime = Date.now() - start;
+    const responseTime = performance.now() - start;
     const cost = this.calculateCost(
       response.usage?.prompt_tokens ?? 0,
       response.usage?.completion_tokens ?? 0,
@@ -56,7 +56,7 @@ export class OpenAIProvider implements AIProvider {
       promptTokens: response.usage?.prompt_tokens ?? 0,
       completionTokens: response.usage?.completion_tokens ?? 0,
       cost,
-      time: responseTime
+      time: Number((responseTime / 1000).toFixed(2))
     };
   }
 

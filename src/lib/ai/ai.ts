@@ -68,7 +68,7 @@ export class AI {
             cost: result.cost,
             requestType: params.requestType,
             userId: params.userId,
-            time: result.time / 1000
+            time: Math.round(result.time / 1000)
           }
         });
       } catch (error) {
