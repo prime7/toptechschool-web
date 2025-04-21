@@ -1,7 +1,7 @@
 import { JobRole } from "@prisma/client";
 import { BaseService } from "./Base.service";
 import { getPracticeSet } from "@/actions/practice";
-import { AI } from "./AI.service";
+import { ai, generateJobMatchPrompt, generateResumeReviewPrompt, generatePracticePrompt } from "@/lib/ai/index";
 
 export interface JobMatchEvaluationResult {
   matchScore: number;
@@ -33,26 +33,28 @@ export interface PracticeTestAnalysisResult {
 }
 
 export class EvaluationService extends BaseService {
-  private static readonly SYSTEM_PROMPT_JOB_MATCH = "You must respond with valid JSON only. No other text or explanation.";
-  private static readonly SYSTEM_PROMPT_RESUME = "You are an expert resume analyzer with deep knowledge of hiring practices. Analyze the match between the provided job description and resume, then provide a detailed assessment.";
-  private static readonly DEFAULT_RESPONSE_JOB_MATCH: JobMatchEvaluationResult = {
-    matchScore: 0,
-    missingKeywords: [],
-    suggestions: [],
-    strengths: [],
-    gaps: [],
-    recommendations: "Unable to generate recommendations due to an error."
-  };
-  private static readonly DEFAULT_RESPONSE_RESUME: ResumeEvaluationResult = {
-    matchScore: 0,
-    missingKeywords: [],
-    suggestions: [],
-    strengths: [],
-    gaps: [],
-    recommendations: ["Unable to generate recommendations due to an error."]
-  };
-  private static readonly DEFAULT_RESPONSE_PRACTICE: PracticeTestAnalysisResult = {
-    questionAnalysis: []
+  private static readonly DEFAULT_RESPONSES = {
+    jobMatch: {
+      matchScore: 0,
+      missingKeywords: [],
+      suggestions: [],
+      strengths: [],
+      gaps: [],
+      recommendations: "Unable to generate recommendations due to an error."
+    } as JobMatchEvaluationResult,
+
+    resume: {
+      matchScore: 0,
+      missingKeywords: [],
+      suggestions: [],
+      strengths: [],
+      gaps: [],
+      recommendations: ["Unable to generate recommendations due to an error."]
+    } as ResumeEvaluationResult,
+
+    practice: {
+      questionAnalysis: []
+    } as PracticeTestAnalysisResult
   };
 
   static async evaluateJobMatch(
@@ -63,14 +65,18 @@ export class EvaluationService extends BaseService {
   ): Promise<JobMatchEvaluationResult> {
     return this.handleError(
       async () => {
-        const prompt = this.buildEvaluationPrompt(jobDescription, resumeData, jobRole);
-        return AI.generateResponse<JobMatchEvaluationResult>(
-          this.SYSTEM_PROMPT_JOB_MATCH,
-          prompt,
-          this.DEFAULT_RESPONSE_JOB_MATCH,
-          "job_evaluation",
-          userId
-        );
+        try {
+          const prompt = generateJobMatchPrompt(jobDescription, resumeData, jobRole);
+          const response = await ai.generateResponse({
+            prompt,
+            model: "claude-3-haiku-20240307",
+            requestType: "job_evaluation",
+            userId
+          });
+          return JSON.parse(response.text) as JobMatchEvaluationResult;
+        } catch {
+          return this.DEFAULT_RESPONSES.jobMatch;
+        }
       },
       "Failed to evaluate job match"
     );
@@ -83,15 +89,19 @@ export class EvaluationService extends BaseService {
   ): Promise<ResumeEvaluationResult> {
     return this.handleError(
       async () => {
-        const prompt = this.buildEvaluationPrompt("", resumeData, jobRole);
-        return AI.generateResponse<ResumeEvaluationResult>(
-          this.SYSTEM_PROMPT_RESUME,
-          prompt,
-          this.DEFAULT_RESPONSE_RESUME,
-          "resume_review",
-          userId,
-          "anthropic"
-        );
+        try {
+          const prompt = generateResumeReviewPrompt(resumeData, jobRole);
+          const response = await ai.generateResponse({
+            prompt: prompt,
+            model: "claude-3-haiku-20240307",
+            requestType: "resume_review",
+            userId,
+            provider: "anthropic"
+          });
+          return JSON.parse(response.text) as ResumeEvaluationResult;
+        } catch {
+          return this.DEFAULT_RESPONSES.resume;
+        }
       },
       "Failed to evaluate resume"
     );
@@ -104,103 +114,25 @@ export class EvaluationService extends BaseService {
   ): Promise<PracticeTestAnalysisResult> {
     return this.handleError(
       async () => {
-        const practiceSet = await getPracticeSet(practiceTestId);
-        if (!practiceSet) {
-          throw new Error("Practice set not found");
-        }
-
-        const prompt = `
-          ${practiceSet.prompt}
-          Analyze each question and answer pair provided.
-          For each question, provide:
-          - Detailed feedback on the answer's correctness, completeness, and clarity
-          - Specific suggestions for improvement
-
-          Return a JSON response with:
-          {
-            "questionAnalysis": [
-              {
-                "questionText": string (the original question),
-                "answer": string (the provided answer),
-                "feedback": string (detailed analysis of the answer),
-                "improvement": string (specific suggestions to improve)
-              }
-            ]
+        try {
+          const practiceSet = await getPracticeSet(practiceTestId);
+          if (!practiceSet) {
+            throw new Error("Practice set not found");
           }
-        `;
-        
-        return AI.generateResponse<PracticeTestAnalysisResult>(
-          prompt,
-          items.map((item) => `${item.question}\n${item.answer}`),
-          this.DEFAULT_RESPONSE_PRACTICE,
-          "practice_evaluation",
-          userId,
-          "anthropic"
-        );
+
+          const prompt = generatePracticePrompt(practiceSet.prompt, items);
+          const response = await ai.generateResponse({
+            prompt,
+            model: "claude-3-haiku-20240307",
+            requestType: "practice_evaluation",
+            userId
+          });
+          return JSON.parse(response.text) as PracticeTestAnalysisResult;
+        } catch {
+          return this.DEFAULT_RESPONSES.practice;
+        }
       },
       "Failed to analyze practice test"
     );
-  }
-
-  private static buildEvaluationPrompt(
-    jobDescription: string,
-    resumeData: string,
-    jobRole: JobRole | null
-  ): string[] {
-    const prompt = `
-      Analyze the provided resume and job details to generate a comprehensive evaluation:
-
-      1. Calculate a detailed match score (0-100%) considering:
-        - Technical Alignment (70%): Evaluate hard skills, technical qualifications, tools/technologies, certifications
-        - Professional Skills (20%): Assess communication, leadership, problem-solving, teamwork abilities
-        - Experience Match (10%): Compare years of experience, industry exposure, role responsibilities
-
-      2. Identify key missing elements:
-        - Required technical skills/tools not mentioned
-        - Essential qualifications or certifications
-        - Critical professional competencies
-        - Industry-specific keywords
-
-      3. For match scores >50%, provide actionable improvement suggestions:
-        - Skill development recommendations
-        - Certification opportunities
-        - Experience gaps to address
-        - Resume presentation improvements
-
-      4. Highlight resume strengths:
-        - Notable achievements
-        - Valuable skills/expertise
-        - Relevant experience
-        - Unique qualifications
-
-      5. Detail qualification gaps:
-        - Missing required skills
-        - Experience shortfalls
-        - Education/certification needs
-        - Industry knowledge gaps
-
-      6. Provide prioritized recommendations:
-        - Immediate action items
-        - Medium-term development goals
-        - Long-term career suggestions
-        - Resume enhancement tips
-
-      Return a JSON response with:
-      {
-        "matchScore": number (0-100),
-        "missingKeywords": [string] (key missing elements),
-        "suggestions": [string] (actionable improvements),
-        "strengths": [string] (notable positives),
-        "gaps": [string] (qualification gaps),
-        "recommendations": [string] (prioritized next steps)
-      }
-    `;
-
-    return [
-      prompt,
-      ...(jobDescription ? [`Job Description: ${jobDescription}`] : []),
-      `Resume Data: ${resumeData}`,
-      ...(jobRole ? [`Job Role: ${jobRole}`] : []),
-    ];
   }
 } 

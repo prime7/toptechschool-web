@@ -8,6 +8,8 @@ const MODEL_COST_PER_TOKEN = {
   }
 } as const;
 
+export type AnthropicModels = keyof typeof MODEL_COST_PER_TOKEN;
+
 export class AnthropicProvider implements AIProvider {
   private client: Anthropic;
 

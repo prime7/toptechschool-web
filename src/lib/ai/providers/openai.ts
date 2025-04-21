@@ -12,6 +12,8 @@ const MODEL_COST_PER_TOKEN = {
   },
 } as const;
 
+export type OpenAIModels = keyof typeof MODEL_COST_PER_TOKEN;
+
 export class OpenAIProvider implements AIProvider {
   private client: OpenAI;
 

@@ -31,24 +31,6 @@ export const ALLOWED_ORIGINS = [
   "chrome-extension://",
 ] as const;
 
-export const AI_CONFIGS = {
-  "gpt-4o-mini": {
-    model: "gpt-4o-mini", 
-    maxTokens: 16384,
-    temperature: 0.3,
-    inputCostPer1kTokens: 0.00015,
-    outputCostPer1kTokens: 0.0006
-  },
-  "claude-3-haiku-20240307": {
-    model: "claude-3-haiku-20240307",
-    maxTokens: 4096,
-    temperature: 0.7,
-    inputCostPer1kTokens: 0.0008,
-    outputCostPer1kTokens: 0.004
-  }
-} as const;
-
-
 export const R2_CONFIG = {
   REGION: "auto",
   DEFAULT_EXPIRY: 3600,

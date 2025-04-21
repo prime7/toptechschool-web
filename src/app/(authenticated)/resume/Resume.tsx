@@ -97,7 +97,7 @@ export default function Resume({
               <div className="flex items-center text-sm text-muted-foreground">
                 <CalendarIcon className="h-3.5 w-3.5 mr-1" />
                 {createdAt
-                  ? new Date(createdAt).toLocaleDateString()
+                  ? new Date(createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
                   : "No date"}
               </div>
             </div>
