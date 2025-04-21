@@ -29,7 +29,7 @@ model User {
   education       Education[]
   skills          Skill[]
   practiceTests   PracticeTest[]
-  ai         AI[]
+  ai              AI[]
 }
 
 model SocialLink {
@@ -154,18 +154,19 @@ model PracticeTest {
 }
 
 model AI {
-  id              String   @id @default(cuid())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  provider        String
-  model           String
-  promptTokens    Int
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  provider         String
+  model            String
+  promptTokens     Int
   completionTokens Int
-  totalTokens     Int
-  cost            Float
-  requestType     String
-  userId          String
-  user            User     @relation(fields: [userId], references: [id])
+  totalTokens      Int
+  cost             Float
+  requestType      String
+  time             Float?
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([requestType])
