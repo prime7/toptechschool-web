@@ -6,6 +6,7 @@ import {
   Star,
   AlertCircle,
   ArrowLeft,
+  ListChecks,
 } from "lucide-react";
 import { ResumeService } from "@/service/Resume.service";
 import { auth } from "@/lib/auth";
@@ -96,20 +97,22 @@ export default async function Resume({
         </div>
       </div>
       
-      <div className="flex flex-col md:flex-row justify-between items-start gap-6">
-        <div className="w-full md:w-2/3 space-y-6">
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader className="bg-muted/50 border-b">
-              <div className="flex items-center gap-2">
-                <CardTitle className="font-semibold">Key Recommendations</CardTitle>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 space-y-6">
+          <Card>
+            <CardHeader className="bg-muted/50">
+              <CardTitle className="flex items-center gap-2">
+                <ListChecks className="w-5 h-5" />
+                Key Recommendations
+              </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent>
               {resumeData.recommendations?.length > 0 ? (
-                <div className="space-y-3">
-                  {resumeData.recommendations.map((recommendation: string, index: number) => (
-                    <div key={index} className="p-3 hover:bg-muted/30 transition-colors">
-                      <p className="text-sm pl-4">{recommendation}</p>
+                <div className="space-y-2">
+                  {resumeData.recommendations.map((recommendation, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50">
+                      <ListChecks className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-500" />
+                      <p className="text-sm">{recommendation}</p>
                     </div>
                   ))}
                 </div>
@@ -119,22 +122,23 @@ export default async function Resume({
             </CardContent>
           </Card>
 
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader className="bg-muted/50 border-b">
-              <div className="flex items-center gap-2">
-                <CardTitle className="font-semibold">Resume Strengths</CardTitle>
-              </div>
+          <Card>
+            <CardHeader className="bg-muted/50">
+              <CardTitle className="flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                Resume Strengths
+              </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent>
               {resumeData.strengths?.length > 0 ? (
-                <ul className="space-y-3">
-                  {resumeData.strengths.map((strength: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 p-3 rounded-md hover:bg-muted/80 transition-colors">
+                <div className="space-y-2">
+                  {resumeData.strengths.map((strength, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50">
                       <Star className="w-5 h-5 mt-0.5 flex-shrink-0 text-amber-500" />
-                      <span className="text-sm">{strength}</span>
-                    </li>
+                      <p className="text-sm">{strength}</p>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground">No strengths identified yet.</p>
               )}
@@ -142,45 +146,47 @@ export default async function Resume({
           </Card>
         </div>
 
-        <div className="w-full md:w-1/3 space-y-6">
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader className="bg-muted/50 border-b">
-              <div className="flex items-center gap-2">
-                <CardTitle className="font-semibold">Improvement Suggestions</CardTitle>
-              </div>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader className="bg-muted/50">
+              <CardTitle className="flex items-center gap-2">
+                <LightbulbIcon className="w-5 h-5" />
+                Improvement Suggestions
+              </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent>
               {resumeData.suggestions?.length > 0 ? (
-                <ul className="space-y-3">
-                  {resumeData.suggestions.map((suggestion: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 p-3 hover:bg-muted/80 transition-colors">
+                <div className="space-y-2">
+                  {resumeData.suggestions.map((suggestion, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50">
                       <LightbulbIcon className="w-5 h-5 mt-0.5 flex-shrink-0 text-yellow-500" />
-                      <span className="text-sm">{suggestion}</span>
-                    </li>
+                      <p className="text-sm">{suggestion}</p>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground">No suggestions available.</p>
               )}
             </CardContent>
           </Card>
 
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader className="bg-muted/50 border-b">
-              <div className="flex items-center gap-2">
-                <CardTitle className="font-semibold">Identified Gaps</CardTitle>
-              </div>
+          <Card>
+            <CardHeader className="bg-muted/50">
+              <CardTitle className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5" />
+                Identified Gaps
+              </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent>
               {resumeData.gaps?.length > 0 ? (
-                <ul className="space-y-3">
-                  {resumeData.gaps.map((gap: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 p-3 hover:bg-muted/80 transition-colors">
+                <div className="space-y-2">
+                  {resumeData.gaps.map((gap, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50">
                       <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-red-500" />
-                      <span className="text-sm">{gap}</span>
-                    </li>
+                      <p className="text-sm">{gap}</p>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground">No gaps identified.</p>
               )}
