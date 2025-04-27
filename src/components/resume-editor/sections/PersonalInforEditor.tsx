@@ -22,7 +22,7 @@ const PersonalInfoEditor: React.FC = () => {
   };
 
   return (
-    <Card className="space-y-6">
+    <Card>
       <CardHeader>
         <CardTitle className="text-xl">Personal Information</CardTitle>
         <p className="text-sm text-muted-foreground">
