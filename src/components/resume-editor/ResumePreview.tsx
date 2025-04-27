@@ -277,7 +277,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({ template: overrideTemplat
 
   return (
     <div className={cn(
-      "max-w-2xl mx-auto px-6 py-8 shadow-sm print:shadow-none",
+      "max-w-2xl mx-auto px-6 py-8 shadow-sm print:shadow-none flex-1",
       currentStyle.fontFamily,
       currentStyle.background,
     )}>

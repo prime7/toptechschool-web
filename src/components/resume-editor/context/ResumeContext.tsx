@@ -70,6 +70,29 @@ const initialResumeData: ResumeData = {
   template: 'professional'
 };
 
+const blankResumeData: ResumeData = {
+  personal: {
+    fullName: '',
+    email: '',
+    phone: '',
+    location: '',
+    title: '',
+    website: '',
+    linkedin: '',
+    github: ''
+  },
+  summary: '',
+  experience: [],
+  education: [],
+  skills: [],
+  projects: [],
+  certifications: [],
+  languages: [],
+  references: [],
+  activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
+  template: 'professional'
+};
+
 const ResumeContext = createContext<{
   state: ResumeData;
   dispatch: React.Dispatch<ResumeAction>;
@@ -233,7 +256,7 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
 }
 
 export function ResumeProvider({ children, initialState }: { children: React.ReactNode, initialState?: ResumeData }) {
-  const [state, dispatch] = useReducer(resumeReducer, initialState || initialResumeData);
+  const [state, dispatch] = useReducer(resumeReducer, initialState || blankResumeData);
   return (
     <ResumeContext.Provider value={{ state, dispatch }}>
       {children}
