@@ -11,6 +11,7 @@ import ProjectsEditor from "./sections/ProjectsEditor";
 import CertificationsEditor from "./sections/CertificationsEditor";
 import LanguagesEditor from "./sections/LanguagesEditor";
 import ReferencesEditor from "./sections/ReferencesEditor";
+import { ResumeProvider } from "./context/ResumeContext";
 
 export default function ResumeEditor() {
   const [activeSection, setActiveSection] = useState<SectionType>('personal');
@@ -40,13 +41,15 @@ export default function ResumeEditor() {
     }
   };
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
-      <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
-      <div className="flex-1 p-8">
-        {renderSectionEditor()}
+    <ResumeProvider>
+      <div className="flex min-h-[calc(100vh-4rem)]">
+        <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
+        <div className="flex-1 p-8">
+          {renderSectionEditor()}
+        </div>
+        <ResumePreview />
       </div>
-      <ResumePreview />
-    </div>
+    </ResumeProvider>
   );
 }
 
