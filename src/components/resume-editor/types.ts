@@ -107,6 +107,7 @@ export type ResumeAction =
   | { type: 'ADD_EXPERIENCE', payload: ExperienceItem }
   | { type: 'UPDATE_EXPERIENCE', payload: { id: string, data: Partial<ExperienceItem> } }
   | { type: 'REMOVE_EXPERIENCE', payload: string }
+  | { type: 'REORDER_EXPERIENCE', payload: ExperienceItem[] }
   | { type: 'ADD_EDUCATION', payload: EducationItem }
   | { type: 'UPDATE_EDUCATION', payload: { id: string, data: Partial<EducationItem> } }
   | { type: 'REMOVE_EDUCATION', payload: string }
