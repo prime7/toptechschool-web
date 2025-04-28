@@ -2,7 +2,7 @@ import React from 'react';
 import { useResume } from './context/ResumeContext';
 import { formatDate } from '@/lib/date-utils';
 import { Mail, Phone, MapPin, Globe, Linkedin, Github, ExternalLink } from 'lucide-react';
-import { SectionType, TemplateType } from './types';
+import { SectionType, TemplateType, templateStyles } from './types';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -27,40 +27,12 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({ template: overrideTemplat
   } = state;
 
   const template = overrideTemplate || contextTemplate;
+  const currentStyle = templateStyles[template];
 
   const renderSection = (sectionId: SectionType, content: JSX.Element | null) => {
     if (!activeSections.includes(sectionId) || !content) return null;
     return content;
   };
-
-  const templateStyles = {
-    professional: {
-      fontFamily: 'font-sans',
-      heading: 'text-lg font-semibold border-b pb-1 text-blue-600 border-blue-200',
-      section: '',
-      badge: '',
-      card: '',
-      text: 'text-gray-900',
-      muted: 'text-gray-600',
-      accent: '',
-      border: 'border-gray-200',
-      background: 'bg-gray-50'
-    },
-    minimal: {
-      fontFamily: 'font-serif',
-      heading: 'text-lg font-semibold text-blue-600',
-      section: '',
-      badge: '',
-      card: '',
-      text: 'text-gray-900',
-      muted: 'text-gray-600',
-      accent: '',
-      border: 'border-gray-200',
-      background: 'bg-gray-50'
-    },
-  };
-
-  const currentStyle = templateStyles[template as keyof typeof templateStyles] || templateStyles.professional;
 
   const renderPersonalInfo = () => {
     const contactItems = [
@@ -81,23 +53,31 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({ template: overrideTemplat
       contactItems.push({ icon: <Github className="h-4 w-4" />, text: personal.github });
     }
 
+    const alignmentClass = {
+      left: 'text-left',
+      center: 'text-center',
+      right: 'text-right'
+    }[currentStyle.personalInfo.alignment];
+
     return (
-      <div className={cn("mb-6")}>
-        <h1 className={cn("text-3xl font-bold text-gray-900", 'mb-1')}>
-          {personal.fullName}
-        </h1>
-        {personal.title && (
-          <h2 className={cn("text-xl text-gray-700", 'mb-3')}>
-            {personal.title}
-          </h2>
-        )}
-        <div className={cn("flex flex-wrap gap-4")}>
-          {contactItems.map((item, index) => (
-            <div key={index} className="flex items-center text-sm text-gray-600">
-              <span className="mr-1.5">{item.icon}</span>
-              <span>{item.text}</span>
-            </div>
-          ))}
+      <div className={cn("mb-6", alignmentClass)}>
+        <div className={cn("flex flex-col items-center", alignmentClass)}>
+          <h1 className={cn(currentStyle.personalInfo.name, 'mb-1')}>
+            {personal.fullName}
+          </h1>
+          {personal.title && (
+            <h2 className={cn(currentStyle.personalInfo.title, 'mb-3')}>
+              {personal.title}
+            </h2>
+          )}
+          <div className={cn("flex flex-wrap justify-center gap-4", currentStyle.personalInfo.contact)}>
+            {contactItems.map((item, index) => (
+              <div key={index} className="flex items-center">
+                <span className="mr-1.5">{item.icon}</span>
+                <span>{item.text}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

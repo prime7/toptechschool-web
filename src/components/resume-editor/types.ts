@@ -131,3 +131,61 @@ export type ResumeAction =
   | { type: 'CHANGE_TEMPLATE', payload: TemplateType }
   | { type: 'LOAD_RESUME', payload: ResumeData }
   | { type: 'RESET_RESUME' };
+
+export interface TemplateStyles {
+  fontFamily: string;
+  heading: string;
+  section: string;
+  badge: string;
+  card: string;
+  text: string;
+  muted: string;
+  accent: string;
+  border: string;
+  background: string;
+  personalInfo: {
+    alignment: 'left' | 'center' | 'right';
+    name: string;
+    title: string;
+    contact: string;
+  };
+}
+
+export const templateStyles: Record<TemplateType, TemplateStyles> = {
+  professional: {
+    fontFamily: 'font-sans',
+    heading: 'text-lg font-semibold border-b pb-1 text-blue-600 border-blue-200',
+    section: '',
+    badge: '',
+    card: '',
+    text: 'text-gray-900',
+    muted: 'text-gray-600',
+    accent: '',
+    border: 'border-gray-200',
+    background: 'bg-gray-50',
+    personalInfo: {
+      alignment: 'left',
+      name: 'text-3xl font-bold text-gray-900',
+      title: 'text-xl text-gray-700',
+      contact: 'text-sm text-gray-600'
+    }
+  },
+  minimal: {
+    fontFamily: 'font-serif',
+    heading: 'text-lg font-semibold text-blue-600',
+    section: '',
+    badge: '',
+    card: '',
+    text: 'text-gray-900',
+    muted: 'text-gray-600',
+    accent: '',
+    border: 'border-gray-200',
+    background: 'bg-gray-50',
+    personalInfo: {
+      alignment: 'center',
+      name: 'text-3xl font-bold text-gray-900',
+      title: 'text-xl text-gray-700',
+      contact: 'text-sm text-gray-600'
+    }
+  }
+};
