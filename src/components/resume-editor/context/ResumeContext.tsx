@@ -1,9 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { ResumeData, ResumeAction } from '../types';
-
-const generateId = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-};
+import { generateId } from '../utils';
 
 const initialResumeData: ResumeData = {
   personal: {
