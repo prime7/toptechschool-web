@@ -32,7 +32,10 @@ export default function ResumeEditor() {
   return (
     <ResumeProvider>
       <div className="flex min-h-[calc(100vh-4rem)]">
-        <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
+        <Sidebar
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+        />
         <div className="flex-1 p-8 overflow-y-auto">
           <ActiveSectionComponent />
         </div>
@@ -41,4 +44,3 @@ export default function ResumeEditor() {
     </ResumeProvider>
   );
 }
-

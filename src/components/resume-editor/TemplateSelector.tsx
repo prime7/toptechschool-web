@@ -62,23 +62,22 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onClose }) => {
         </div>
 
         <div className="flex-1 p-4 overflow-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {templates.map((template) => (
               <div
                 key={template.id}
-                className={`cursor-pointer transition-all rounded-lg overflow-hidden flex items-center justify-center ${selectedTemplate === template.id
-                  ? 'border-2 border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.3)]'
-                  : 'border border-gray-200 hover:border-blue-300'
-                  }`}
+                className={`cursor-pointer rounded-lg overflow-hidden flex items-center justify-center ${
+                  selectedTemplate === template.id
+                    ? 'border-2 border-primary ring-2 ring-primary/20'
+                    : 'border hover:border-primary/50'
+                }`}
                 onClick={() => handleTemplateSelect(template.id)}
                 onMouseEnter={() => setHoveredTemplate(template.id)}
                 onMouseLeave={() => setHoveredTemplate(null)}
               >
-                <div className="aspect-[8.5/11] w-full flex items-center justify-center overflow-hidden">
-                  <div className="transform scale-[0.65]">
-                    <ResumePreview
-                      template={template.id}
-                    />
+                <div className="w-full flex items-center justify-center overflow-hidden">
+                  <div style={{ zoom: 0.5 }}>
+                    <ResumePreview template={template.id} />
                   </div>
                 </div>
               </div>
@@ -94,16 +93,11 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onClose }) => {
               <span>Select a template to preview</span>
             )}
           </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={onClose}
-            >
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              onClick={handleApply}
-            >
+            <Button onClick={handleApply}>
               Apply Template
             </Button>
           </div>

@@ -256,7 +256,7 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
 }
 
 export function ResumeProvider({ children, initialState }: { children: React.ReactNode, initialState?: ResumeData }) {
-  const [state, dispatch] = useReducer(resumeReducer, initialState || blankResumeData);
+  const [state, dispatch] = useReducer(resumeReducer, initialState || initialResumeData);
   return (
     <ResumeContext.Provider value={{ state, dispatch }}>
       {children}
