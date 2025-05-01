@@ -48,7 +48,7 @@ const ResumePreview: React.FC = () => {
 
     return (
       <div className={cn("mb-6")}>
-        <div className={cn("flex flex-col items-center")}>
+        <div>
           <h1 className={cn('mb-1 text-2xl font-bold text-gray-800')}>
             {personal.fullName}
           </h1>
