@@ -11,7 +11,6 @@ import type {
   SkillItem, 
   ProjectItem, 
   CertificationItem, 
-  LanguageItem, 
   ReferenceItem, 
   ResumeStyle 
 } from './types';
@@ -215,18 +214,6 @@ const CertificationsSection = ({ certifications, style }: { certifications: Cert
   </div>
 );
 
-const LanguagesSection = ({ languages, style }: { languages: LanguageItem[]; style: ResumeStyle }) => (
-  <div className="mb-6">
-    <SectionHeader title="Languages" alignment={style.sectionHeaderAlignment} />
-    {languages.map((lang, index) => (
-      <div key={index} className="mb-2 flex justify-between text-gray-600">
-        <span>{lang.language}</span>
-        <span>{lang.proficiency}</span>
-      </div>
-    ))}
-  </div>
-);
-
 const ReferencesSection = ({ references }: { references: ReferenceItem[] }) => (
   <div className="mb-6">
     <h2 className={cn("mb-3")}>References</h2>
@@ -253,7 +240,6 @@ const ResumePreview: React.FC = () => {
     skills,
     projects,
     certifications,
-    languages,
     references,
     activeSections,
     style
@@ -267,7 +253,6 @@ const ResumePreview: React.FC = () => {
     skills: () => skills.length > 0 && <SkillsSection skills={skills} style={style} />,
     projects: () => projects.length > 0 && <ProjectsSection projects={projects} style={style} />,
     certifications: () => certifications.length > 0 && <CertificationsSection certifications={certifications} style={style} />,
-    languages: () => languages.length > 0 && <LanguagesSection languages={languages} style={style} />,
     references: () => references.length > 0 && <ReferencesSection references={references} />
   };
 

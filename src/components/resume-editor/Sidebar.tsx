@@ -1,7 +1,7 @@
 import React from 'react';
 import { useResume } from './context/ResumeContext';
 import { SectionType } from './types';
-import { User, FileText, Briefcase, GraduationCap, Award, Calendar, BookOpen, Globe, Users, Plus, GripVertical, Layout, Type, Palette } from 'lucide-react';
+import { User, FileText, Briefcase, GraduationCap, Award, Calendar, BookOpen, Users, Plus, GripVertical, Layout, Type, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,7 +35,6 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
     { id: 'skills', label: 'Skills', icon: <Award className="h-4 w-4" /> },
     { id: 'projects', label: 'Projects', icon: <Calendar className="h-4 w-4" /> },
     { id: 'certifications', label: 'Certifications', icon: <BookOpen className="h-4 w-4" /> },
-    { id: 'languages', label: 'Languages', icon: <Globe className="h-4 w-4" /> },
     { id: 'references', label: 'References', icon: <Users className="h-4 w-4" /> }
   ];
 

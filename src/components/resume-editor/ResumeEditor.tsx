@@ -10,7 +10,6 @@ import EducationEditor from './sections/EducationsEditor';
 import SkillsEditor from './sections/SkillsEditor';
 import ProjectsEditor from './sections/ProjectsEditor';
 import CertificationsEditor from './sections/CertificationsEditor';
-import LanguagesEditor from './sections/LanguagesEditor';
 import ReferencesEditor from './sections/ReferencesEditor';
 
 const sectionComponents: Record<SectionType, React.ComponentType> = {
@@ -21,7 +20,6 @@ const sectionComponents: Record<SectionType, React.ComponentType> = {
   skills: SkillsEditor,
   projects: ProjectsEditor,
   certifications: CertificationsEditor,
-  languages: LanguagesEditor,
   references: ReferencesEditor,
 };
 

@@ -137,18 +137,6 @@ const initialResumeData: ResumeData = {
       url: 'https://frontendmasters.com'
     }
   ],
-  languages: [
-    {
-      id: generateId(),
-      language: 'English',
-      proficiency: 'elementary'
-    },
-    {
-      id: generateId(),
-      language: 'Spanish',
-      proficiency: 'elementary'
-    }
-  ],
   references: [
     {
       id: generateId(),
@@ -159,7 +147,7 @@ const initialResumeData: ResumeData = {
       phone: '(555) 987-6543'
     }
   ],
-  activeSections: ['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'languages', 'references'],
+  activeSections: ['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'references'],
   style: defaultStyle
 };
 
@@ -180,7 +168,6 @@ const blankResumeData: ResumeData = {
   skills: [],
   projects: [],
   certifications: [],
-  languages: [],
   references: [],
   activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
   style: defaultStyle
@@ -287,23 +274,6 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
       return {
         ...state,
         certifications: state.certifications.filter(item => item.id !== action.payload)
-      };
-    case 'ADD_LANGUAGE':
-      return {
-        ...state,
-        languages: [...state.languages, action.payload]
-      };
-    case 'UPDATE_LANGUAGE':
-      return {
-        ...state,
-        languages: state.languages.map(item => 
-          item.id === action.payload.id ? { ...item, ...action.payload.data } : item
-        )
-      };
-    case 'REMOVE_LANGUAGE':
-      return {
-        ...state,
-        languages: state.languages.filter(item => item.id !== action.payload)
       };
     case 'ADD_REFERENCE':
       return {

@@ -6,7 +6,6 @@ export type SectionType =
   | 'skills'
   | 'projects'
   | 'certifications'
-  | 'languages'
   | 'references';
 
 export interface PersonalInfo {
@@ -67,12 +66,6 @@ export interface CertificationItem {
   url?: string;
 }
 
-export interface LanguageItem {
-  id: string;
-  language: string;
-  proficiency: 'elementary' | 'limited' | 'professional' | 'full' | 'native';
-}
-
 export interface ReferenceItem {
   id: string;
   name: string;
@@ -101,7 +94,6 @@ export interface ResumeData {
   skills: SkillItem[];
   projects: ProjectItem[];
   certifications: CertificationItem[];
-  languages: LanguageItem[];
   references: ReferenceItem[];
   activeSections: SectionType[];
   style: ResumeStyle;
@@ -126,8 +118,6 @@ export type ResumeAction =
   | { type: 'ADD_CERTIFICATION', payload: CertificationItem }
   | { type: 'UPDATE_CERTIFICATION', payload: { id: string, data: Partial<CertificationItem> } }
   | { type: 'REMOVE_CERTIFICATION', payload: string }
-  | { type: 'ADD_LANGUAGE', payload: LanguageItem }
-  | { type: 'UPDATE_LANGUAGE', payload: { id: string, data: Partial<LanguageItem> } }
   | { type: 'REMOVE_LANGUAGE', payload: string }
   | { type: 'ADD_REFERENCE', payload: ReferenceItem }
   | { type: 'UPDATE_REFERENCE', payload: { id: string, data: Partial<ReferenceItem> } }
