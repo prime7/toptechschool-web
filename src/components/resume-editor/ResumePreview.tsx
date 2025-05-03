@@ -14,6 +14,7 @@ import type {
   ReferenceItem, 
   ResumeStyle 
 } from './types';
+import Link from 'next/link';
 
 const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
   <div className="flex items-center">
@@ -93,7 +94,7 @@ const ExperienceItem = ({ item }: { item: ExperienceItem }) => (
         <div className="text-gray-600">{item.company}</div>
       </div>
       <div className={cn("text-sm text-gray-500")}>
-        {formatDate(item.startDate)} - {item.endDate === undefined ? 'Present' : formatDate(item.endDate)}
+        {formatDate(item.startDate)} - {item.endDate === undefined || item.endDate === '' ? 'Present' : formatDate(item.endDate)}
       </div>
     </div>
     <p className="text-gray-600">{item.description}</p>
@@ -155,7 +156,7 @@ const SkillsSection = ({ skills, style }: { skills: SkillItem[]; style: ResumeSt
 const ProjectItem = ({ project }: { project: ProjectItem }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
-      <h3 className="text-lg font-semibold text-gray-800">
+      <h3 className="text-lg text-gray-800">
         {project.name}
         {project.url && (
           <a href={project.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-gray-600">
@@ -164,7 +165,7 @@ const ProjectItem = ({ project }: { project: ProjectItem }) => (
         )}
       </h3>
       <div className={cn("text-sm text-gray-500")}>
-        {formatDate(project.startDate)} - {formatDate(project.endDate)}
+        {formatDate(project.startDate)}{project.endDate ? ` - ${formatDate(project.endDate)}` : ''}
       </div>
     </div>
     <p className="text-gray-600">{project.description}</p>
@@ -188,20 +189,11 @@ const ProjectsSection = ({ projects, style }: { projects: ProjectItem[]; style: 
 const CertificationItem = ({ cert }: { cert: CertificationItem }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
-      <h3 className="text-lg font-semibold text-gray-800">
+      <Link href={cert.url || ''} target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-gray-600">
         {cert.name}
-        {cert.url && (
-          <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-gray-600">
-            <ExternalLink className="h-4 w-4 inline" />
-          </a>
-        )}
-      </h3>
-      <div className={cn("text-sm text-gray-500")}>
-        {formatDate(cert.date)}
-        {cert.expires && ` - Expires: ${formatDate(cert.expires)}`}
-      </div>
+        <ExternalLink className="h-4 w-4 inline ml-2" />
+      </Link>
     </div>
-    <div className={cn('text-gray-600')}>{cert.issuer}</div>
   </div>
 );
 

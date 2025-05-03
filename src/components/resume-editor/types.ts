@@ -60,9 +60,6 @@ export interface ProjectItem {
 export interface CertificationItem {
   id: string;
   name: string;
-  issuer: string;
-  date: string;
-  expires?: string;
   url?: string;
 }
 

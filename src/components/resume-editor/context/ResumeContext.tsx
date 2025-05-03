@@ -125,15 +125,11 @@ const initialResumeData: ResumeData = {
     {
       id: generateId(),
       name: 'AWS Certified Developer',
-      issuer: 'Amazon Web Services',
-      date: '2021-06',
       url: 'https://aws.amazon.com/certification'
     },
     {
       id: generateId(),
       name: 'React Advanced Patterns',
-      issuer: 'Frontend Masters',
-      date: '2020-03',
       url: 'https://frontendmasters.com'
     }
   ],
