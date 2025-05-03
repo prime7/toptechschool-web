@@ -10,12 +10,12 @@ const initialResumeData: ResumeData = {
     email: 'john.doe@example.com',
     phone: '(555) 123-4567',
     location: 'San Francisco, CA',
-    title: 'Software Engineer',
-    website: '',
-    linkedin: '',
-    github: ''
+    title: 'Senior Software Engineer',
+    website: 'https://johndoe.dev',
+    linkedin: 'linkedin.com/in/johndoe',
+    github: 'github.com/johndoe'
   },
-  summary: 'Experienced software engineer with a passion for building scalable web applications.',
+  summary: 'Experienced software engineer with 8+ years of experience in building scalable web applications. Specialized in frontend development with React and TypeScript, with a strong focus on performance optimization and user experience.',
   experience: [
     {
       id: generateId(),
@@ -27,7 +27,23 @@ const initialResumeData: ResumeData = {
       highlights: [
         'Developed new features for the company\'s flagship product',
         'Led a team of 5 developers',
-        'Improved application performance by 40%'
+        'Improved application performance by 40%',
+        'Implemented CI/CD pipeline reducing deployment time by 60%',
+        'Mentored junior developers and conducted code reviews'
+      ]
+    },
+    {
+      id: generateId(),
+      company: 'Startup Inc',
+      position: 'Frontend Developer',
+      startDate: '2018-03',
+      endDate: '2019-12',
+      description: 'Developed and maintained web applications using React and Redux.',
+      highlights: [
+        'Built responsive user interfaces for multiple products',
+        'Integrated third-party APIs and services',
+        'Optimized application load time by 30%',
+        'Implemented automated testing suite'
       ]
     }
   ],
@@ -41,6 +57,16 @@ const initialResumeData: ResumeData = {
       endDate: '2016-05',
       current: false,
       gpa: '3.8'
+    },
+    {
+      id: generateId(),
+      institution: 'Tech Bootcamp',
+      degree: 'Full Stack Web Development',
+      field: 'Web Development',
+      startDate: '2016-06',
+      endDate: '2016-12',
+      current: false,
+      gpa: '4.0'
     }
   ],
   skills: [
@@ -58,13 +84,82 @@ const initialResumeData: ResumeData = {
       id: generateId(),
       name: 'TypeScript',
       level: 'intermediate'
+    },
+    {
+      id: generateId(),
+      name: 'Node.js',
+      level: 'advanced'
+    },
+    {
+      id: generateId(),
+      name: 'GraphQL',
+      level: 'intermediate'
+    },
+    {
+      id: generateId(),
+      name: 'AWS',
+      level: 'intermediate'
     }
   ],
-  projects: [],
-  certifications: [],
-  languages: [],
-  references: [],
-  activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
+  projects: [
+    {
+      id: generateId(),
+      name: 'E-commerce Platform',
+      description: 'Full-stack e-commerce platform built with React and Node.js',
+      url: 'https://github.com/johndoe/ecommerce',
+      startDate: '',
+      endDate: '',
+      highlights: []
+    },
+    {
+      id: generateId(),
+      name: 'Task Management App',
+      description: 'Real-time task management application with collaborative features',
+      url: 'https://github.com/johndoe/taskmanager',
+      startDate: '',
+      endDate: '',
+      highlights: []
+    }
+  ],
+  certifications: [
+    {
+      id: generateId(),
+      name: 'AWS Certified Developer',
+      issuer: 'Amazon Web Services',
+      date: '2021-06',
+      url: 'https://aws.amazon.com/certification'
+    },
+    {
+      id: generateId(),
+      name: 'React Advanced Patterns',
+      issuer: 'Frontend Masters',
+      date: '2020-03',
+      url: 'https://frontendmasters.com'
+    }
+  ],
+  languages: [
+    {
+      id: generateId(),
+      language: 'English',
+      proficiency: 'elementary'
+    },
+    {
+      id: generateId(),
+      language: 'Spanish',
+      proficiency: 'elementary'
+    }
+  ],
+  references: [
+    {
+      id: generateId(),
+      name: 'Jane Smith',
+      position: 'CTO',
+      company: 'Tech Company',
+      email: 'jane.smith@techcompany.com',
+      phone: '(555) 987-6543'
+    }
+  ],
+  activeSections: ['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'languages', 'references'],
   style: defaultStyle
 };
 
