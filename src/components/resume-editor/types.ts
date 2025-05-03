@@ -89,6 +89,7 @@ export interface ResumeStyle {
   sectionSpacing: number;
   lineHeight: number;
   showSectionHorizontalRule: boolean;
+  personalSectionAlignment: 'left' | 'center' | 'right';
 }
 
 export interface ResumeData {

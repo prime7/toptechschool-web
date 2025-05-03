@@ -1,9 +1,11 @@
-export const defaultStyle = {
+import { ResumeStyle } from "./types";
+
+export const defaultStyle: ResumeStyle = {
   fontFamily: 'inter',
-  fontSize: 14,
-  primaryColor: '#000000',
-  accentColor: '#666666',
-  sectionSpacing: 24,
-  lineHeight: 1.5,
-  showSectionHorizontalRule: false
+  fontSize: 12,
+  accentColor: '#000',
+  sectionSpacing: 18,
+  lineHeight: 1.3,
+  showSectionHorizontalRule: false,
+  personalSectionAlignment: 'center'
 };

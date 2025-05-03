@@ -71,7 +71,19 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
 
     const newSections = [...state.activeSections];
     const [removed] = newSections.splice(draggedIndex, 1);
-    newSections.splice(index, 0, removed);
+    
+    // If dropping at index 0 and personal exists, ensure we drop after personal
+    const targetIndex = index === 0 && newSections[0] === 'personal' ? 1 : index;
+    
+    // Insert the section at the target index
+    newSections.splice(targetIndex, 0, removed);
+    
+    // Ensure personal section is always first if it exists
+    if (newSections.includes('personal') && newSections[0] !== 'personal') {
+        const personalIndex = newSections.indexOf('personal');
+        newSections.splice(personalIndex, 1);
+        newSections.unshift('personal');
+    }
 
     dispatch({ type: 'REORDER_SECTIONS', payload: newSections });
   };
@@ -254,6 +266,23 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                       />
                       <span className="w-12 text-sm">{state.style.lineHeight}</span>
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Personal Info Alignment</Label>
+                    <Select 
+                      value={state.style.personalSectionAlignment}
+                      onValueChange={(value) => handleStyleChange('personalSectionAlignment', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select alignment" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="left">Left</SelectItem>
+                        <SelectItem value="center">Center</SelectItem>
+                        <SelectItem value="right">Right</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="flex items-center justify-between space-x-2">

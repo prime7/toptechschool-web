@@ -43,7 +43,11 @@ const ResumePreview: React.FC = () => {
 
     return (
       <div className={cn("mb-6")}>
-        <div>
+        <div className={cn("flex flex-col", {
+          "items-center": style.personalSectionAlignment === "center",
+          "items-end": style.personalSectionAlignment === "right",
+          "items-start": style.personalSectionAlignment === "left"
+        })}>
           <h1 className={cn('mb-1 text-2xl font-bold text-gray-800')}>
             {personal.fullName}
           </h1>
@@ -52,7 +56,11 @@ const ResumePreview: React.FC = () => {
               {personal.title}
             </h2>
           )}
-          <div className={cn("flex flex-wrap justify-center gap-4 text-gray-600")}>
+          <div className={cn("flex flex-wrap gap-4 text-gray-600", {
+            "justify-center": style.personalSectionAlignment === "center",
+            "justify-end": style.personalSectionAlignment === "right",
+            "justify-start": style.personalSectionAlignment === "left"
+          })}>
             {contactItems.map((item, index) => (
               <div key={index} className="flex items-center">
                 <span className="mr-1.5">{item.icon}</span>
@@ -242,7 +250,10 @@ const ResumePreview: React.FC = () => {
       <div 
         className="h-full"
         style={{
-          fontFamily: style.fontFamily,
+          fontFamily: style.fontFamily === 'inter' ? 'var(--font-inter)' :
+                     style.fontFamily === 'roboto' ? 'var(--font-roboto)' :
+                     style.fontFamily === 'poppins' ? 'var(--font-poppins)' :
+                     style.fontFamily === 'opensans' ? 'var(--font-opensans)' : 'var(--font-inter)',
           fontSize: `${style.fontSize}px`,
           lineHeight: style.lineHeight,
           '--accent-color': style.accentColor,
