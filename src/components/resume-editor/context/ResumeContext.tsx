@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { ResumeData, ResumeAction } from '../types';
 import { generateId } from '../utils';
+import { defaultStyle } from '../constants'
+
 
 const initialResumeData: ResumeData = {
   personal: {
@@ -21,7 +23,6 @@ const initialResumeData: ResumeData = {
       position: 'Senior Software Engineer',
       startDate: '2020-01',
       endDate: '',
-      current: true,
       description: 'Leading development of web applications using modern technologies.',
       highlights: [
         'Developed new features for the company\'s flagship product',
@@ -64,7 +65,7 @@ const initialResumeData: ResumeData = {
   languages: [],
   references: [],
   activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
-  template: 'professional'
+  style: defaultStyle
 };
 
 const blankResumeData: ResumeData = {
@@ -87,7 +88,7 @@ const blankResumeData: ResumeData = {
   languages: [],
   references: [],
   activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
-  template: 'professional'
+  style: defaultStyle
 };
 
 const ResumeContext = createContext<{
@@ -238,15 +239,20 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
         ...state,
         activeSections: action.payload
       };
-    case 'CHANGE_TEMPLATE':
-      return {
-        ...state,
-        template: action.payload
-      };
     case 'LOAD_RESUME':
       return action.payload;
     case 'RESET_RESUME':
       return initialResumeData;
+    case 'UPDATE_STYLE':
+      return {
+        ...state,
+        style: { ...state.style, ...action.payload }
+      };
+    case 'RESET_STYLE':
+      return {
+        ...state,
+        style: defaultStyle
+      };
     default:
       return state;
   }

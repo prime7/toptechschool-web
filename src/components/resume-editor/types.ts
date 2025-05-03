@@ -25,8 +25,7 @@ export interface ExperienceItem {
   company: string;
   position: string;
   startDate: string;
-  endDate: string;
-  current: boolean;
+  endDate?: string;
   description: string;
   highlights: string[];
 }
@@ -83,6 +82,15 @@ export interface ReferenceItem {
   phone?: string;
 }
 
+export interface ResumeStyle {
+  fontFamily: string;
+  fontSize: number;
+  accentColor: string;
+  sectionSpacing: number;
+  lineHeight: number;
+  showSectionHorizontalRule: boolean;
+}
+
 export interface ResumeData {
   personal: PersonalInfo;
   summary: string;
@@ -94,6 +102,7 @@ export interface ResumeData {
   languages: LanguageItem[];
   references: ReferenceItem[];
   activeSections: SectionType[];
+  style: ResumeStyle;
 }
 
 export type ResumeAction =
@@ -124,4 +133,6 @@ export type ResumeAction =
   | { type: 'TOGGLE_SECTION', payload: SectionType }
   | { type: 'REORDER_SECTIONS', payload: SectionType[] }
   | { type: 'LOAD_RESUME', payload: ResumeData }
-  | { type: 'RESET_RESUME' };
+  | { type: 'RESET_RESUME' }
+  | { type: 'UPDATE_STYLE', payload: Partial<ResumeStyle> }
+  | { type: 'RESET_STYLE' };

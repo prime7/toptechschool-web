@@ -6,7 +6,6 @@ import { SectionType } from './types';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-
 const ResumePreview: React.FC = () => {
   const { state } = useResume();
   const {
@@ -19,13 +18,9 @@ const ResumePreview: React.FC = () => {
     certifications,
     languages,
     references,
-    activeSections
+    activeSections,
+    style
   } = state;
-
-  const renderSection = (sectionId: SectionType, content: JSX.Element | null) => {
-    if (!activeSections.includes(sectionId) || !content) return null;
-    return content;
-  };
 
   const renderPersonalInfo = () => {
     const contactItems = [
@@ -74,7 +69,7 @@ const ResumePreview: React.FC = () => {
     if (!summary) return null;
     return (
       <div className="mb-6">
-        <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Summary</h2>
+        <h2 className={cn("mb-3 text-xl font-bold", "text-[var(--accent-color)]")}>Summary</h2>
         <p className="text-gray-600">{summary}</p>
       </div>
     );
@@ -84,7 +79,7 @@ const ResumePreview: React.FC = () => {
     if (!experience.length) return null;
     return (
       <div className="mb-6">
-        <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Experience</h2>
+        <h2 className={cn("mb-3 text-xl font-bold", "text-[var(--accent-color)]")}>Experience</h2>
         {experience.map((item, index) => (
           <div key={index} className="mb-4">
             <div className="flex justify-between items-start">
@@ -93,7 +88,7 @@ const ResumePreview: React.FC = () => {
                 <div className="text-gray-600">{item.company}</div>
               </div>
               <div className={cn("text-sm text-gray-500")}>
-                {formatDate(item.startDate)} - {item.current ? 'Present' : formatDate(item.endDate)}
+                {formatDate(item.startDate)} - {item.endDate === undefined ? 'Present' : formatDate(item.endDate)}
               </div>
             </div>
             <p className="text-gray-600">{item.description}</p>
@@ -112,7 +107,7 @@ const ResumePreview: React.FC = () => {
     if (!education.length) return null;
     return (
       <div className="mb-6">
-        <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Education</h2>
+        <h2 className={cn("mb-3 text-xl font-bold", "text-[var(--accent-color)]")}>Education</h2>
         {education.map((item, index) => (
           <div key={index} className="mb-4">
             <div className="flex justify-between items-start">
@@ -136,7 +131,7 @@ const ResumePreview: React.FC = () => {
     if (!skills.length) return null;
     return (
       <div className="mb-6">
-        <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Skills</h2>
+        <h2 className={cn("mb-3 text-xl font-bold", "text-[var(--accent-color)]")}>Skills</h2>
         <div className="flex flex-wrap gap-2">
           {skills.map((skill, index) => (
             <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800">
@@ -152,7 +147,7 @@ const ResumePreview: React.FC = () => {
     if (!projects.length) return null;
     return (
       <div className="mb-6">
-        <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Projects</h2>
+        <h2 className={cn("mb-3 text-xl font-bold", "text-[var(--accent-color)]")}>Projects</h2>
         {projects.map((project, index) => (
           <div key={index} className="mb-4">
             <div className="flex justify-between items-start">
@@ -184,7 +179,7 @@ const ResumePreview: React.FC = () => {
     if (!certifications.length) return null;
     return (
       <div className="mb-6">
-        <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Certifications</h2>
+        <h2 className={cn("mb-3 text-xl font-bold", "text-[var(--accent-color)]")}>Certifications</h2>
         {certifications.map((cert, index) => (
           <div key={index} className="mb-4">
             <div className="flex justify-between items-start">
@@ -212,7 +207,7 @@ const ResumePreview: React.FC = () => {
     if (!languages.length) return null;
     return (
       <div className="mb-6">
-        <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Languages</h2>
+        <h2 className={cn("mb-3 text-xl font-bold", "text-[var(--accent-color)]")}>Languages</h2>
         {languages.map((lang, index) => (
           <div key={index} className="mb-2 flex justify-between text-gray-600">
             <span>{lang.language}</span>
@@ -243,45 +238,58 @@ const ResumePreview: React.FC = () => {
   };
 
   return (
-    <div className={cn(
-      "max-w-2xl mx-auto px-6 py-8 shadow-sm print:shadow-none flex-1",
-      "font-sans",
-      "bg-white",
-    )}>
-      {renderPersonalInfo()}
-
-      <div className={cn("section")}>
-        {activeSections.map((section) => {
+    <div className="w-[794px] min-h-[1123px] bg-white shadow-lg mx-auto p-8 box-border">
+      <div 
+        className="h-full"
+        style={{
+          fontFamily: style.fontFamily,
+          fontSize: `${style.fontSize}px`,
+          lineHeight: style.lineHeight,
+          '--accent-color': style.accentColor,
+          '--section-spacing': `${style.sectionSpacing}px`,
+        } as React.CSSProperties}
+      >
+        {activeSections.map((section, index) => {
           let sectionContent = null;
           switch (section) {
+            case 'personal':
+              sectionContent = renderPersonalInfo();
+              break;
             case 'summary':
-              sectionContent = renderSection('summary', renderSummary());
+              sectionContent = renderSummary();
               break;
             case 'experience':
-              sectionContent = renderSection('experience', renderExperience());
+              sectionContent = renderExperience();
               break;
             case 'education':
-              sectionContent = renderSection('education', renderEducation());
+              sectionContent = renderEducation();
               break;
             case 'skills':
-              sectionContent = renderSection('skills', renderSkills());
+              sectionContent = renderSkills();
               break;
             case 'projects':
-              sectionContent = renderSection('projects', renderProjects());
+              sectionContent = renderProjects();
               break;
             case 'certifications':
-              sectionContent = renderSection('certifications', renderCertifications());
+              sectionContent = renderCertifications();
               break;
             case 'languages':
-              sectionContent = renderSection('languages', renderLanguages());
+              sectionContent = renderLanguages();
               break;
             case 'references':
-              sectionContent = renderSection('references', renderReferences());
+              sectionContent = renderReferences();
               break;
             default:
               sectionContent = null;
           }
-          return <React.Fragment key={section}>{sectionContent}</React.Fragment>;
+          return (
+            <React.Fragment key={section}>
+              {sectionContent}
+              {style.showSectionHorizontalRule && index < activeSections.length - 1 && (
+                <hr className="border-t border-gray-600 my-6" />
+              )}
+            </React.Fragment>
+          );
         })}
       </div>
     </div>
