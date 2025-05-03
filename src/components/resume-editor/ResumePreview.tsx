@@ -85,8 +85,8 @@ const ResumePreview: React.FC = () => {
     return (
       <div className="mb-6">
         <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Experience</h2>
-        {experience.map((item) => (
-          <div key={item.id} className="mb-4">
+        {experience.map((item, index) => (
+          <div key={index} className="mb-4">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">{item.position}</h3>
@@ -98,8 +98,8 @@ const ResumePreview: React.FC = () => {
             </div>
             <p className="text-gray-600">{item.description}</p>
             <ul className="mt-2 list-disc list-inside text-gray-600">
-              {item.highlights.map((highlight, index) => (
-                <li key={index} className={cn('')}>{highlight}</li>
+              {item.highlights.map((highlight, highlightIndex) => (
+                <li key={highlightIndex} className={cn('')}>{highlight}</li>
               ))}
             </ul>
           </div>
@@ -113,8 +113,8 @@ const ResumePreview: React.FC = () => {
     return (
       <div className="mb-6">
         <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Education</h2>
-        {education.map((item) => (
-          <div key={item.id} className="mb-4">
+        {education.map((item, index) => (
+          <div key={index} className="mb-4">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">{item.degree} in {item.field}</h3>
@@ -138,8 +138,8 @@ const ResumePreview: React.FC = () => {
       <div className="mb-6">
         <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Skills</h2>
         <div className="flex flex-wrap gap-2">
-          {skills.map((skill) => (
-            <Badge key={skill.id} variant="secondary" className="bg-gray-100 text-gray-800">
+          {skills.map((skill, index) => (
+            <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800">
               {skill.name}
             </Badge>
           ))}
@@ -153,8 +153,8 @@ const ResumePreview: React.FC = () => {
     return (
       <div className="mb-6">
         <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Projects</h2>
-        {projects.map((project) => (
-          <div key={project.id} className="mb-4">
+        {projects.map((project, index) => (
+          <div key={index} className="mb-4">
             <div className="flex justify-between items-start">
               <h3 className="text-lg font-semibold text-gray-800">
                 {project.name}
@@ -170,8 +170,8 @@ const ResumePreview: React.FC = () => {
             </div>
             <p className="text-gray-600">{project.description}</p>
             <ul className="mt-2 list-disc list-inside text-gray-600">
-              {project.highlights.map((highlight, index) => (
-                <li key={index}>{highlight}</li>
+              {project.highlights.map((highlight, highlightIndex) => (
+                <li key={highlightIndex}>{highlight}</li>
               ))}
             </ul>
           </div>
@@ -185,8 +185,8 @@ const ResumePreview: React.FC = () => {
     return (
       <div className="mb-6">
         <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Certifications</h2>
-        {certifications.map((cert) => (
-          <div key={cert.id} className="mb-4">
+        {certifications.map((cert, index) => (
+          <div key={index} className="mb-4">
             <div className="flex justify-between items-start">
               <h3 className="text-lg font-semibold text-gray-800">
                 {cert.name}
@@ -213,8 +213,8 @@ const ResumePreview: React.FC = () => {
     return (
       <div className="mb-6">
         <h2 className={cn("mb-3 text-xl font-bold text-gray-800")}>Languages</h2>
-        {languages.map((lang) => (
-          <div key={lang.id} className="mb-2 flex justify-between text-gray-600">
+        {languages.map((lang, index) => (
+          <div key={index} className="mb-2 flex justify-between text-gray-600">
             <span>{lang.language}</span>
             <span>{lang.proficiency}</span>
           </div>
@@ -228,8 +228,8 @@ const ResumePreview: React.FC = () => {
     return (
       <div className="mb-6">
         <h2 className={cn("mb-3")}>References</h2>
-        {references.map((ref) => (
-          <div key={ref.id} className="mb-4">
+        {references.map((ref, index) => (
+          <div key={index} className="mb-4">
             <h3>{ref.name}</h3>
             <div>{ref.position} at {ref.company}</div>
             <div>
@@ -252,26 +252,36 @@ const ResumePreview: React.FC = () => {
 
       <div className={cn("section")}>
         {activeSections.map((section) => {
+          let sectionContent = null;
           switch (section) {
             case 'summary':
-              return renderSection('summary', renderSummary());
+              sectionContent = renderSection('summary', renderSummary());
+              break;
             case 'experience':
-              return renderSection('experience', renderExperience());
+              sectionContent = renderSection('experience', renderExperience());
+              break;
             case 'education':
-              return renderSection('education', renderEducation());
+              sectionContent = renderSection('education', renderEducation());
+              break;
             case 'skills':
-              return renderSection('skills', renderSkills());
+              sectionContent = renderSection('skills', renderSkills());
+              break;
             case 'projects':
-              return renderSection('projects', renderProjects());
+              sectionContent = renderSection('projects', renderProjects());
+              break;
             case 'certifications':
-              return renderSection('certifications', renderCertifications());
+              sectionContent = renderSection('certifications', renderCertifications());
+              break;
             case 'languages':
-              return renderSection('languages', renderLanguages());
+              sectionContent = renderSection('languages', renderLanguages());
+              break;
             case 'references':
-              return renderSection('references', renderReferences());
+              sectionContent = renderSection('references', renderReferences());
+              break;
             default:
-              return null;
+              sectionContent = null;
           }
+          return <React.Fragment key={section}>{sectionContent}</React.Fragment>;
         })}
       </div>
     </div>
