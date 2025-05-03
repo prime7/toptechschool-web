@@ -214,9 +214,9 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                       <Slider 
                         value={[state.style.fontSize]} 
                         onValueChange={([value]) => handleStyleChange('fontSize', value)}
-                        max={20} 
-                        min={12} 
-                        step={1} 
+                        max={13} 
+                        min={10} 
+                        step={.2} 
                       />
                       <span className="w-12 text-sm">{state.style.fontSize}px</span>
                     </div>
@@ -273,6 +273,23 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                     <Select 
                       value={state.style.personalSectionAlignment}
                       onValueChange={(value) => handleStyleChange('personalSectionAlignment', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select alignment" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="left">Left</SelectItem>
+                        <SelectItem value="center">Center</SelectItem>
+                        <SelectItem value="right">Right</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Section Header Alignment</Label>
+                    <Select 
+                      value={state.style.sectionHeaderAlignment}
+                      onValueChange={(value) => handleStyleChange('sectionHeaderAlignment', value)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select alignment" />

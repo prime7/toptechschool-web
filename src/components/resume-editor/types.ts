@@ -90,6 +90,7 @@ export interface ResumeStyle {
   lineHeight: number;
   showSectionHorizontalRule: boolean;
   personalSectionAlignment: 'left' | 'center' | 'right';
+  sectionHeaderAlignment: 'left' | 'center' | 'right';
 }
 
 export interface ResumeData {
