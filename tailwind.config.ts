@@ -16,6 +16,12 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        inter: ['var(--font-inter)'],
+        roboto: ['var(--font-roboto)'],
+        poppins: ['var(--font-poppins)'],
+        opensans: ['var(--font-opensans)'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

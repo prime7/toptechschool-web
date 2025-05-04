@@ -4,15 +4,15 @@ import { formatDate } from '@/lib/date-utils';
 import { Mail, Phone, MapPin, Globe, Linkedin, Github, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import type { 
-  PersonalInfo, 
-  ExperienceItem, 
-  EducationItem, 
-  SkillItem, 
-  ProjectItem, 
-  CertificationItem, 
-  ReferenceItem, 
-  ResumeStyle 
+import type {
+  PersonalInfo,
+  ExperienceItem,
+  EducationItem,
+  SkillItem,
+  ProjectItem,
+  CertificationItem,
+  ReferenceItem,
+  ResumeStyle
 } from './types';
 import Link from 'next/link';
 
@@ -23,12 +23,21 @@ const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) =>
   </div>
 )
 
-const SectionHeader = ({ title, alignment }: { title: string; alignment: string }) => (
-  <h2 className={cn("mb-3 text-xl font-bold", {
-    "text-center": alignment === "center",
-    "text-right": alignment === "right",
-    "text-left": alignment === "left"
-  })} style={{ color: 'var(--accent-color)' }}>{title}</h2>
+const SectionHeader = ({ title, style }: { title: string; style: ResumeStyle }) => (
+  <h2
+    className={cn(
+      "mb-3 text-xl font-bold",
+      {
+        "text-center": style.sectionHeaderAlignment === "center",
+        "text-right": style.sectionHeaderAlignment === "right",
+        "text-left": style.sectionHeaderAlignment === "left"
+      }
+    )}
+    style={{ color: 'var(--accent-color)' }}
+  >
+    {title}
+    {style.showSectionHorizontalRule && <hr className="my-2 border-gray-900 border-solid" />}
+  </h2>
 )
 
 const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: ResumeStyle }) => {
@@ -80,8 +89,8 @@ const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: R
 };
 
 const SummarySection = ({ summary, style }: { summary: string; style: ResumeStyle }) => (
-  <div className="mb-6">
-    <SectionHeader title="Summary" alignment={style.sectionHeaderAlignment} />
+  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+    <SectionHeader title="Summary" style={style} />
     <p className="text-gray-600">{summary}</p>
   </div>
 );
@@ -107,8 +116,8 @@ const ExperienceItem = ({ item }: { item: ExperienceItem }) => (
 );
 
 const ExperienceSection = ({ experience, style }: { experience: ExperienceItem[]; style: ResumeStyle }) => (
-  <div className="mb-6">
-    <SectionHeader title="Experience" alignment={style.sectionHeaderAlignment} />
+  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+    <SectionHeader title="Experience" style={style} />
     {experience.map((item, index) => (
       <ExperienceItem key={index} item={item} />
     ))}
@@ -132,8 +141,8 @@ const EducationItem = ({ item }: { item: EducationItem }) => (
 );
 
 const EducationSection = ({ education, style }: { education: EducationItem[]; style: ResumeStyle }) => (
-  <div className="mb-6">
-    <SectionHeader title="Education" alignment={style.sectionHeaderAlignment} />
+  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+    <SectionHeader title="Education" style={style} />
     {education.map((item, index) => (
       <EducationItem key={index} item={item} />
     ))}
@@ -141,13 +150,11 @@ const EducationSection = ({ education, style }: { education: EducationItem[]; st
 );
 
 const SkillsSection = ({ skills, style }: { skills: SkillItem[]; style: ResumeStyle }) => (
-  <div className="mb-6">
-    <SectionHeader title="Skills" alignment={style.sectionHeaderAlignment} />
+  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+    <SectionHeader title="Skills" style={style} />
     <div className="flex flex-wrap gap-2">
       {skills.map((skill, index) => (
-        <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800 py-1">
-          {skill.name}
-        </Badge>
+        <Badge key={index} variant="secondary">{skill.name}</Badge>
       ))}
     </div>
   </div>
@@ -178,8 +185,8 @@ const ProjectItem = ({ project }: { project: ProjectItem }) => (
 );
 
 const ProjectsSection = ({ projects, style }: { projects: ProjectItem[]; style: ResumeStyle }) => (
-  <div className="mb-6">
-    <SectionHeader title="Projects" alignment={style.sectionHeaderAlignment} />
+  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+    <SectionHeader title="Projects" style={style} />
     {projects.map((project, index) => (
       <ProjectItem key={index} project={project} />
     ))}
@@ -198,25 +205,24 @@ const CertificationItem = ({ cert }: { cert: CertificationItem }) => (
 );
 
 const CertificationsSection = ({ certifications, style }: { certifications: CertificationItem[]; style: ResumeStyle }) => (
-  <div className="mb-6">
-    <SectionHeader title="Certifications" alignment={style.sectionHeaderAlignment} />
+  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+    <SectionHeader title="Certifications" style={style} />
     {certifications.map((cert, index) => (
       <CertificationItem key={index} cert={cert} />
     ))}
   </div>
 );
 
-const ReferencesSection = ({ references }: { references: ReferenceItem[] }) => (
-  <div className="mb-6">
-    <h2 className={cn("mb-3 text-xl font-bold")} style={{ color: 'var(--accent-color)' }}>References</h2>
+const ReferencesSection = ({ references, style }: { references: ReferenceItem[]; style: ResumeStyle }) => (
+  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+    <SectionHeader title="References" style={style} />
     {references.map((ref, index) => (
       <div key={index} className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">{ref.name}</h3>
-        <div className="text-gray-600">{ref.position} at {ref.company}</div>
-        <div className="text-gray-600">
-          {ref.email}
-          {ref.phone && ` • ${ref.phone}`}
-        </div>
+        <div className="font-semibold text-gray-800">{ref.name}</div>
+        <div className="text-gray-600">{ref.position}</div>
+        <div className="text-gray-600">{ref.company}</div>
+        <div className="text-gray-600">{ref.email}</div>
+        <div className="text-gray-600">{ref.phone}</div>
       </div>
     ))}
   </div>
@@ -245,12 +251,28 @@ const ResumePreview: React.FC = () => {
     skills: () => skills.length > 0 && <SkillsSection skills={skills} style={style} />,
     projects: () => projects.length > 0 && <ProjectsSection projects={projects} style={style} />,
     certifications: () => certifications.length > 0 && <CertificationsSection certifications={certifications} style={style} />,
-    references: () => references.length > 0 && <ReferencesSection references={references} />
+    references: () => references.length > 0 && <ReferencesSection references={references} style={style} />
   };
 
   return (
     <div className="bg-white shadow-lg p-8 overflow-visible">
-      <div id="resumePreviewContent" className="max-w-full" style={{ '--accent-color': style.accentColor } as React.CSSProperties}>
+      <div
+        id="resumePreviewContent"
+        className={cn("max-w-full", {
+          "font-inter": style.fontFamily === "inter",
+          "font-roboto": style.fontFamily === "roboto",
+          "font-poppins": style.fontFamily === "poppins",
+          "font-opensans": style.fontFamily === "opensans"
+        })}
+        style={{
+          '--accent-color': style.accentColor,
+          'fontSize': `${style.fontSize}px`,
+          'lineHeight': style.lineHeight,
+          '--section-spacing': `${style.sectionSpacing}px`,
+          '--resume-font-size': `${style.fontSize}px`,
+          '--resume-line-height': style.lineHeight
+        } as React.CSSProperties}
+      >
         {activeSections.map((section) => {
           const Component = sectionComponents[section];
           return Component ? Component() : null;
