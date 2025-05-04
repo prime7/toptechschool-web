@@ -1,7 +1,7 @@
 import React from 'react';
 import { useResume } from './context/ResumeContext';
 import { SectionType } from './types';
-import { User, FileText, Briefcase, GraduationCap, Award, Calendar, BookOpen, Users, Plus, GripVertical, Layout, Type, Palette } from 'lucide-react';
+import { User, FileText, Briefcase, GraduationCap, Award, Calendar, BookOpen, Users, Plus, GripVertical, Layout, Type, Palette, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,6 +16,7 @@ import { Switch } from '@/components/ui/switch';
 interface SectionsListProps {
   activeSection: SectionType;
   setActiveSection: (section: SectionType) => void;
+  onExportPDF: () => void;
 }
 
 interface SectionInfo {
@@ -24,7 +25,7 @@ interface SectionInfo {
   icon: React.ReactNode;
 }
 
-const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSection }) => {
+const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSection, onExportPDF }) => {
   const { state, dispatch } = useResume();
 
   const sections: SectionInfo[] = [
@@ -321,6 +322,9 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
             </ScrollArea>
           </TabsContent>
         </Tabs>
+        <Button variant="outline" size="icon" className="w-full" onClick={onExportPDF}>
+          Export PDF
+        </Button>
       </CardContent>
     </Card>
   );

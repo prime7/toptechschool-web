@@ -1,0 +1,79 @@
+#resumePreviewContent {
+  font-family: var(--font-family, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+#resumeContainer {
+  transition: all 0.3s ease;
+}
+
+@media print {
+  body {
+    background: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  #resumePreviewContent {
+    zoom: 1 !important;
+    padding: 0;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  #resumeContainer {
+    box-shadow: none;
+    margin: 0;
+    padding: 0.5cm;
+    width: 100% !important;
+  }
+
+  #resumePreviewContent a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  /* Hide UI elements when printing */
+  button, nav, .print-hidden {
+    display: none !important;
+  }
+}
+
+@page {
+  size: A4;
+  margin: 0.6cm;
+}
+
+/* Default focus styles for better accessibility */
+#resumePreviewContent a:focus,
+#resumePreviewContent button:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Adding transition effects for hover states */
+#resumePreviewContent a,
+#resumePreviewContent .badge,
+#resumePreviewContent button {
+  transition: all 0.2s ease;
+}
+
+/* Custom scrollbar for the resume container */
+#resumeContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+#resumeContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+#resumeContainer::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+#resumeContainer::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

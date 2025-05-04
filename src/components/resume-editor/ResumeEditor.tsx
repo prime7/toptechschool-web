@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { SectionType } from './types';
 import { ResumeProvider } from './context/ResumeContext';
 import Sidebar from './Sidebar';
@@ -11,6 +11,7 @@ import SkillsEditor from './sections/SkillsEditor';
 import ProjectsEditor from './sections/ProjectsEditor';
 import CertificationsEditor from './sections/CertificationsEditor';
 import ReferencesEditor from './sections/ReferencesEditor';
+import { usePDF } from 'react-to-pdf';
 
 const sectionComponents: Record<SectionType, React.ComponentType> = {
   personal: PersonalInfoEditor,
@@ -26,18 +27,32 @@ const sectionComponents: Record<SectionType, React.ComponentType> = {
 export default function ResumeEditor() {
   const [activeSection, setActiveSection] = useState<SectionType>('personal');
   const ActiveSectionComponent = sectionComponents[activeSection];
+  const { toPDF, targetRef } = usePDF({
+
+    filename: 'resume.pdf',
+    page: { format: 'a4', orientation: 'portrait' }
+  });
+
+  const [items] = useState(Array.from({ length: 20 }, (_, i) => `Item ${i + 1}`));
 
   return (
-    <ResumeProvider>
-      <div className="flex min-h-[calc(100vh-4rem)]">
-        <Sidebar
-          activeSection={activeSection}
-          setActiveSection={setActiveSection}
-        />
-        <div className="flex-1 p-8 overflow-y-auto">
+<ResumeProvider>
+      <div className="flex flex-row h-screen">
+        <div>
+          <Sidebar
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+            onExportPDF={() => toPDF()}
+          />
+        </div>
+        <div className="flex-1 p-6">
           <ActiveSectionComponent />
         </div>
-        <ResumePreview />
+        <div className="flex-1 overflow-y-scroll">
+          <div ref={targetRef}>
+            <ResumePreview />
+          </div>
+        </div>
       </div>
     </ResumeProvider>
   );

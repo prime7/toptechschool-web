@@ -24,11 +24,11 @@ const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) =>
 )
 
 const SectionHeader = ({ title, alignment }: { title: string; alignment: string }) => (
-  <h2 className={cn("mb-3 text-xl font-bold", "text-[var(--accent-color)]", {
+  <h2 className={cn("mb-3 text-xl font-bold", {
     "text-center": alignment === "center",
     "text-right": alignment === "right",
     "text-left": alignment === "left"
-  })}>{title}</h2>
+  })} style={{ color: 'var(--accent-color)' }}>{title}</h2>
 )
 
 const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: ResumeStyle }) => {
@@ -145,7 +145,7 @@ const SkillsSection = ({ skills, style }: { skills: SkillItem[]; style: ResumeSt
     <SectionHeader title="Skills" alignment={style.sectionHeaderAlignment} />
     <div className="flex flex-wrap gap-2">
       {skills.map((skill, index) => (
-        <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800">
+        <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800 py-1">
           {skill.name}
         </Badge>
       ))}
@@ -191,7 +191,7 @@ const CertificationItem = ({ cert }: { cert: CertificationItem }) => (
     <div className="flex justify-between items-start">
       <Link href={cert.url || ''} target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-gray-600">
         {cert.name}
-        <ExternalLink className="h-4 w-4 inline ml-2" />
+        <ExternalLink className="h-4 w-4 ml-2 inline" />
       </Link>
     </div>
   </div>
@@ -208,12 +208,12 @@ const CertificationsSection = ({ certifications, style }: { certifications: Cert
 
 const ReferencesSection = ({ references }: { references: ReferenceItem[] }) => (
   <div className="mb-6">
-    <h2 className={cn("mb-3")}>References</h2>
+    <h2 className={cn("mb-3 text-xl font-bold")} style={{ color: 'var(--accent-color)' }}>References</h2>
     {references.map((ref, index) => (
       <div key={index} className="mb-4">
-        <h3>{ref.name}</h3>
-        <div>{ref.position} at {ref.company}</div>
-        <div>
+        <h3 className="text-lg font-semibold text-gray-800">{ref.name}</h3>
+        <div className="text-gray-600">{ref.position} at {ref.company}</div>
+        <div className="text-gray-600">
           {ref.email}
           {ref.phone && ` • ${ref.phone}`}
         </div>
@@ -249,28 +249,12 @@ const ResumePreview: React.FC = () => {
   };
 
   return (
-    <div className="w-[794px] min-h-[1123px] bg-white shadow-lg mx-auto p-8 box-border">
-      <div 
-        className="h-full"
-        style={{
-          fontFamily: style.fontFamily === 'inter' ? 'var(--font-inter)' :
-                     style.fontFamily === 'roboto' ? 'var(--font-roboto)' :
-                     style.fontFamily === 'poppins' ? 'var(--font-poppins)' :
-                     style.fontFamily === 'opensans' ? 'var(--font-opensans)' : 'var(--font-inter)',
-          fontSize: `${style.fontSize}px`,
-          lineHeight: style.lineHeight,
-          '--accent-color': style.accentColor,
-          '--section-spacing': `${style.sectionSpacing}px`,
-        } as React.CSSProperties}
-      >
-        {activeSections.map((section, index) => (
-          <React.Fragment key={section}>
-            {sectionComponents[section as keyof typeof sectionComponents]?.()}
-            {style.showSectionHorizontalRule && index < activeSections.length - 1 && (
-              <hr className="border-t border-gray-600 my-1" />
-            )}
-          </React.Fragment>
-        ))}
+    <div className="bg-white shadow-lg p-8 overflow-visible">
+      <div id="resumePreviewContent" className="max-w-full" style={{ '--accent-color': style.accentColor } as React.CSSProperties}>
+        {activeSections.map((section) => {
+          const Component = sectionComponents[section];
+          return Component ? Component() : null;
+        })}
       </div>
     </div>
   );
