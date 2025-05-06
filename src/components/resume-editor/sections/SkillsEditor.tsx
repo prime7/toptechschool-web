@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 
 const emptySkill: Omit<SkillItem, 'id'> = {
   name: '',
@@ -138,14 +139,9 @@ const SkillsEditor: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <span className="font-medium text-sm">{item.name}</span>
-                  <span className={`text-xs mt-1 px-2 py-1 rounded-full w-fit
-                    ${item.level === 'beginner' ? 'bg-gray-200 text-gray-700' :
-                      item.level === 'intermediate' ? 'bg-blue-100 text-blue-800' :
-                      item.level === 'advanced' ? 'bg-green-100 text-green-800' :
-                      'bg-purple-100 text-purple-800'}`
-                  }>
+                  <Badge variant="secondary" className="mt-1 px-2 w-fit">
                     {item.level.charAt(0).toUpperCase() + item.level.slice(1)}
-                  </span>
+                  </Badge>
                 </div>
                 <div className="flex space-x-1">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
