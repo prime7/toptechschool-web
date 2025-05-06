@@ -246,12 +246,12 @@ const ResumePreview: React.FC = () => {
   const sectionComponents = {
     personal: () => personal && <PersonalSection personal={personal} style={style} />,
     summary: () => summary && <SummarySection summary={summary} style={style} />,
-    experience: () => experience.length > 0 && <ExperienceSection experience={experience} style={style} />,
-    education: () => education.length > 0 && <EducationSection education={education} style={style} />,
-    skills: () => skills.length > 0 && <SkillsSection skills={skills} style={style} />,
-    projects: () => projects.length > 0 && <ProjectsSection projects={projects} style={style} />,
-    certifications: () => certifications.length > 0 && <CertificationsSection certifications={certifications} style={style} />,
-    references: () => references.length > 0 && <ReferencesSection references={references} style={style} />
+    experience: () => experience && experience.length > 0 && <ExperienceSection experience={experience} style={style} />,
+    education: () => education && education.length > 0 && <EducationSection education={education} style={style} />,
+    skills: () => skills && skills.length > 0 && <SkillsSection skills={skills} style={style} />,
+    projects: () => projects && projects.length > 0 && <ProjectsSection projects={projects} style={style} />,
+    certifications: () => certifications && certifications.length > 0 && <CertificationsSection certifications={certifications} style={style} />,
+    references: () => references && references.length > 0 && <ReferencesSection references={references} style={style} />
   };
 
   return (

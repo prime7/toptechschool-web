@@ -202,10 +202,10 @@ const EducationEditor: React.FC = () => {
         </Card>
       )}
       
-      {state.education.length > 0 && !isAdding && (
+      {state.education && state.education.length > 0 && !isAdding && (
         <div className="space-y-4">
-          {state.education.map((item) => (
-            <Card key={item.id}>
+          {state.education.map((item, idx) => (
+            <Card key={idx}>
               <CardContent className="pt-6">
                 <div className="flex justify-between">
                   <div className="space-y-1">

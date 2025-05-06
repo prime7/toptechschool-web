@@ -113,8 +113,8 @@ const SkillsEditor: React.FC = () => {
                     <SelectValue placeholder="Select level" />
                   </SelectTrigger>
                   <SelectContent>
-                    {skillLevels.map((level) => (
-                      <SelectItem key={level.value} value={level.value}>
+                    {skillLevels.map((level, idx) => (
+                      <SelectItem key={idx} value={level.value}>
                         {level.label}
                       </SelectItem>
                     ))}
@@ -131,10 +131,10 @@ const SkillsEditor: React.FC = () => {
         </Card>
       )}
 
-      {state.skills.length > 0 && (
+      {state.skills && state.skills.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {state.skills.map((item) => (
-            <Card key={item.id} className="p-3">
+          {state.skills.map((item, idx) => (
+            <Card key={idx} className="p-3">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <span className="font-medium text-sm">{item.name}</span>

@@ -18,7 +18,6 @@ const emptyExperience: Omit<ExperienceItem, 'id'> = {
   position: '',
   startDate: '',
   endDate: '',
-  current: false,
   description: '',
   highlights: []
 };
@@ -82,7 +81,6 @@ const ExperienceEditor: React.FC = () => {
       position: item.position,
       startDate: item.startDate,
       endDate: item.endDate,
-      current: item.current,
       description: item.description,
       highlights: [...item.highlights]
     });
@@ -126,7 +124,7 @@ const ExperienceEditor: React.FC = () => {
         <span>Add Experience</span>
       </Button>
 
-      {state.experience.length === 0 && !isModalOpen && (
+      {state.experience && state.experience.length === 0 && !isModalOpen && (
         <Alert className="bg-muted/50 text-muted-foreground border border-dashed border-muted">
           <Building className="h-4 w-4" />
           <AlertDescription>
@@ -135,10 +133,10 @@ const ExperienceEditor: React.FC = () => {
         </Alert>
       )}
 
-      {state.experience.length > 0 && (
+      {state.experience && state.experience.length > 0 && (
         <div className="grid gap-4">
-          {state.experience.map((item) => (
-            <Card key={item.id} className="group overflow-hidden bg-card">
+          {state.experience.map((item, idx) => (
+            <Card key={idx} className="group overflow-hidden bg-card">
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                   <div className="space-y-1">
@@ -146,12 +144,6 @@ const ExperienceEditor: React.FC = () => {
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Building className="h-4 w-4" />
                       <span>{item.company}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span>
-                        {formatDate(item.startDate)} - {item.current ? 'Present' : formatDate(item.endDate)}
-                      </span>
                     </div>
                   </div>
 
@@ -238,30 +230,6 @@ const ExperienceEditor: React.FC = () => {
                   value={formData.startDate}
                   onChange={handleChange}
                 />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="endDate">End Date</Label>
-                <Input
-                  type="month"
-                  id="endDate"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  disabled={formData.current}
-                />
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="current"
-                    checked={formData.current}
-                    onCheckedChange={(checked) => 
-                      setFormData(prev => ({ ...prev, current: checked === true }))
-                    }
-                  />
-                  <Label htmlFor="current" className="text-sm font-normal">
-                    I currently work here
-                  </Label>
-                </div>
               </div>
             </div>
 

@@ -149,9 +149,9 @@ const UploadComponent: React.FC = () => {
             <SelectValue placeholder="Choose your target position" />
           </SelectTrigger>
           <SelectContent>
-            {Object.values(JobRole).map((role) => (
+            {Object.values(JobRole).map((role, idx) => (
               <SelectItem
-                key={role}
+                key={idx}
                 value={role}
                 className="hover:bg-primary/10"
               >

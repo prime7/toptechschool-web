@@ -190,10 +190,10 @@ const ProjectsEditor: React.FC = () => {
         </Card>
       )}
 
-      {state.projects.length > 0 && !isAdding && (
+      {state.projects && state.projects.length > 0 && !isAdding && (
         <ScrollArea className="space-y-4">
-          {state.projects.map((item) => (
-            <Card key={item.id} className="p-4">
+          {state.projects.map((item, idx) => (
+            <Card key={idx} className="p-4">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-semibold text-lg">{item.name}</h3>

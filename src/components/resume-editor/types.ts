@@ -85,13 +85,13 @@ export interface ResumeStyle {
 
 export interface ResumeData {
   personal: PersonalInfo;
-  summary: string;
-  experience: ExperienceItem[];
-  education: EducationItem[];
-  skills: SkillItem[];
-  projects: ProjectItem[];
-  certifications: CertificationItem[];
-  references: ReferenceItem[];
+  summary?: string;
+  experience?: ExperienceItem[];
+  education?: EducationItem[];
+  skills?: SkillItem[];
+  projects?: ProjectItem[];
+  certifications?: CertificationItem[];
+  references?: ReferenceItem[];
   activeSections: SectionType[];
   style: ResumeStyle;
 }

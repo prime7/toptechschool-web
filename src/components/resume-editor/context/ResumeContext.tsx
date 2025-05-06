@@ -5,6 +5,7 @@ import { defaultStyle } from '../constants'
 
 
 const initialResumeData: ResumeData = {
+  activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
   personal: {
     fullName: 'John Doe',
     email: 'john.doe@example.com',
@@ -121,29 +122,6 @@ const initialResumeData: ResumeData = {
       highlights: []
     }
   ],
-  certifications: [
-    {
-      id: generateId(),
-      name: 'AWS Certified Developer',
-      url: 'https://aws.amazon.com/certification'
-    },
-    {
-      id: generateId(),
-      name: 'React Advanced Patterns',
-      url: 'https://frontendmasters.com'
-    }
-  ],
-  references: [
-    {
-      id: generateId(),
-      name: 'Jane Smith',
-      position: 'CTO',
-      company: 'Tech Company',
-      email: 'jane.smith@techcompany.com',
-      phone: '(555) 987-6543'
-    }
-  ],
-  activeSections: ['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'references'],
   style: defaultStyle
 };
 
@@ -189,104 +167,104 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case 'ADD_EXPERIENCE':
       return {
         ...state,
-        experience: [...state.experience, action.payload]
+        experience: [...(state.experience || []), action.payload]
       };
     case 'UPDATE_EXPERIENCE':
       return {
         ...state,
-        experience: state.experience.map(item => 
+        experience: (state.experience || []).map(item => 
           item.id === action.payload.id ? { ...item, ...action.payload.data } : item
         )
       };
     case 'REMOVE_EXPERIENCE':
       return {
         ...state,
-        experience: state.experience.filter(item => item.id !== action.payload)
+        experience: (state.experience || []).filter(item => item.id !== action.payload)
       };
     case 'ADD_EDUCATION':
       return {
         ...state,
-        education: [...state.education, action.payload]
+        education: [...(state.education || []), action.payload]
       };
     case 'UPDATE_EDUCATION':
       return {
         ...state,
-        education: state.education.map(item => 
+        education: (state.education || []).map(item => 
           item.id === action.payload.id ? { ...item, ...action.payload.data } : item
         )
       };
     case 'REMOVE_EDUCATION':
       return {
         ...state,
-        education: state.education.filter(item => item.id !== action.payload)
+        education: (state.education || []).filter(item => item.id !== action.payload)
       };
     case 'ADD_SKILL':
       return {
         ...state,
-        skills: [...state.skills, action.payload]
+        skills: [...(state.skills || []), action.payload]
       };
     case 'UPDATE_SKILL':
       return {
         ...state,
-        skills: state.skills.map(item => 
+        skills: (state.skills || []).map(item => 
           item.id === action.payload.id ? { ...item, ...action.payload.data } : item
         )
       };
     case 'REMOVE_SKILL':
       return {
         ...state,
-        skills: state.skills.filter(item => item.id !== action.payload)
+        skills: (state.skills || []).filter(item => item.id !== action.payload)
       };
     case 'ADD_PROJECT':
       return {
         ...state,
-        projects: [...state.projects, action.payload]
+        projects: [...(state.projects || []), action.payload]
       };
     case 'UPDATE_PROJECT':
       return {
         ...state,
-        projects: state.projects.map(item => 
+        projects: (state.projects || []).map(item => 
           item.id === action.payload.id ? { ...item, ...action.payload.data } : item
         )
       };
     case 'REMOVE_PROJECT':
       return {
         ...state,
-        projects: state.projects.filter(item => item.id !== action.payload)
+        projects: (state.projects || []).filter(item => item.id !== action.payload)
       };
     case 'ADD_CERTIFICATION':
       return {
         ...state,
-        certifications: [...state.certifications, action.payload]
+        certifications: [...(state.certifications || []), action.payload]
       };
     case 'UPDATE_CERTIFICATION':
       return {
         ...state,
-        certifications: state.certifications.map(item => 
+        certifications: (state.certifications || []).map(item => 
           item.id === action.payload.id ? { ...item, ...action.payload.data } : item
         )
       };
     case 'REMOVE_CERTIFICATION':
       return {
         ...state,
-        certifications: state.certifications.filter(item => item.id !== action.payload)
+        certifications: (state.certifications || []).filter(item => item.id !== action.payload)
       };
     case 'ADD_REFERENCE':
       return {
         ...state,
-        references: [...state.references, action.payload]
+        references: (state.references || []).concat(action.payload)
       };
     case 'UPDATE_REFERENCE':
       return {
         ...state,
-        references: state.references.map(item => 
+        references: (state.references || []).map(item => 
           item.id === action.payload.id ? { ...item, ...action.payload.data } : item
         )
       };
     case 'REMOVE_REFERENCE':
       return {
         ...state,
-        references: state.references.filter(item => item.id !== action.payload)
+        references: (state.references || []).filter(item => item.id !== action.payload)
       };
     case 'TOGGLE_SECTION':
       return {

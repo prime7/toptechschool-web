@@ -127,10 +127,10 @@ const ReferencesEditor: React.FC = () => {
         </Card>
       )}
 
-      {state.references.length > 0 && !isAdding && (
+      {state.references && state.references.length > 0 && !isAdding && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {state.references.map((item) => (
-            <Card key={item.id} className="p-4">
+          {state.references.map((item, idx) => (
+            <Card key={idx} className="p-4">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-semibold text-lg">{item.name}</h3>
