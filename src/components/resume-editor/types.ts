@@ -25,8 +25,7 @@ export interface ExperienceItem {
   position: string;
   startDate: string;
   endDate?: string;
-  description: string;
-  highlights: string[];
+  content: string;
 }
 
 export interface EducationItem {
@@ -37,7 +36,7 @@ export interface EducationItem {
   startDate: string;
   endDate: string;
   current: boolean;
-  description?: string;
+  content: string;
   gpa?: string;
 }
 
@@ -50,11 +49,10 @@ export interface SkillItem {
 export interface ProjectItem {
   id: string;
   name: string;
-  description: string;
+  content: string;
   startDate: string;
   endDate: string;
   url?: string;
-  highlights: string[];
 }
 
 export interface CertificationItem {

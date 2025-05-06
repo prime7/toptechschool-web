@@ -24,14 +24,7 @@ const initialResumeData: ResumeData = {
       position: 'Senior Software Engineer',
       startDate: '2020-01',
       endDate: '',
-      description: 'Leading development of web applications using modern technologies.',
-      highlights: [
-        'Developed new features for the company\'s flagship product',
-        'Led a team of 5 developers',
-        'Improved application performance by 40%',
-        'Implemented CI/CD pipeline reducing deployment time by 60%',
-        'Mentored junior developers and conducted code reviews'
-      ]
+      content: '## Responsibilities\n- Led development of web applications using modern technologies\n- Managed a team of 5 developers\n- Implemented CI/CD pipelines\n\n## Achievements\n- Improved application performance by 40%\n- Reduced deployment time by 60%\n- Mentored junior developers'
     },
     {
       id: generateId(),
@@ -39,24 +32,19 @@ const initialResumeData: ResumeData = {
       position: 'Frontend Developer',
       startDate: '2018-03',
       endDate: '2019-12',
-      description: 'Developed and maintained web applications using React and Redux.',
-      highlights: [
-        'Built responsive user interfaces for multiple products',
-        'Integrated third-party APIs and services',
-        'Optimized application load time by 30%',
-        'Implemented automated testing suite'
-      ]
+      content: '## Responsibilities\n- Developed responsive UIs using React and Redux\n- Integrated third-party APIs and services\n\n## Achievements\n- Optimized application load time by 30%\n- Implemented automated testing suite'
     }
   ],
   education: [
     {
       id: generateId(),
       institution: 'University of Technology',
-      degree: 'Bachelor of Science',
+      degree: 'Bachelor',
       field: 'Computer Science',
-      startDate: '2012-09',
-      endDate: '2016-05',
+      startDate: '2014-09',
+      endDate: '2018-06',
       current: false,
+      content: 'Graduated with honors. Specialized in software engineering and data structures.\n\n**Relevant Coursework**\n- Data Structures and Algorithms\n- Software Engineering\n- Database Systems\n- Web Development',
       gpa: '3.8'
     },
     {
@@ -67,6 +55,7 @@ const initialResumeData: ResumeData = {
       startDate: '2016-06',
       endDate: '2016-12',
       current: false,
+      content: 'Intensive 6-month bootcamp covering modern web development technologies and practices.',
       gpa: '4.0'
     }
   ],
@@ -106,20 +95,18 @@ const initialResumeData: ResumeData = {
     {
       id: generateId(),
       name: 'E-commerce Platform',
-      description: 'Full-stack e-commerce platform built with React and Node.js',
-      url: 'https://github.com/johndoe/ecommerce',
-      startDate: '',
-      endDate: '',
-      highlights: []
+      startDate: '2020-01',
+      endDate: '2020-06',
+      content: 'Developed a full-featured e-commerce platform using React, Node.js, and MongoDB.\n\n### Key Features\n- User authentication\n- Product catalog with search and filtering\n- Shopping cart and checkout process\n- Admin dashboard for managing products and orders',
+      url: 'https://github.com/johndoe/ecommerce'
     },
     {
       id: generateId(),
-      name: 'Task Management App',
-      description: 'Real-time task management application with collaborative features',
-      url: 'https://github.com/johndoe/taskmanager',
-      startDate: '',
-      endDate: '',
-      highlights: []
+      name: 'Personal Portfolio',
+      content: 'Designed and developed a personal portfolio website to showcase my projects and skills',
+      startDate: '2019-10',
+      endDate: '2019-12',
+      url: 'https://github.com/johndoe/portfolio'
     }
   ],
   style: defaultStyle
