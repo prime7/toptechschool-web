@@ -6,50 +6,31 @@ import { Plus, Trash2, Pencil, X, Building, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Checkbox } from '@/components/ui/checkbox';
+import { EnhancedMarkdownEditor } from '@/components/ui/enhanced-markdown-editor';
+import { MarkdownPreview } from '@/components/ui/markdown-preview';
 
 const emptyExperience: Omit<ExperienceItem, 'id'> = {
   company: '',
   position: '',
   startDate: '',
   endDate: '',
-  description: '',
-  highlights: []
+  content: ''
 };
 
 const ExperienceEditor: React.FC = () => {
   const { state, dispatch } = useResume();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
-  const [newHighlight, setNewHighlight] = useState('');
   const [formData, setFormData] = useState<Omit<ExperienceItem, 'id'>>(emptyExperience);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleAddHighlight = () => {
-    if (newHighlight.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        highlights: [...prev.highlights, newHighlight.trim()]
-      }));
-      setNewHighlight('');
-    }
-  };
-
-  const handleRemoveHighlight = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      highlights: prev.highlights.filter((_, i) => i !== index)
-    }));
   };
 
   const handleSubmit = () => {
@@ -81,8 +62,7 @@ const ExperienceEditor: React.FC = () => {
       position: item.position,
       startDate: item.startDate,
       endDate: item.endDate,
-      description: item.description,
-      highlights: [...item.highlights]
+      content: item.content
     });
     setIsEditing(item.id);
     setIsModalOpen(true);
@@ -169,16 +149,11 @@ const ExperienceEditor: React.FC = () => {
                   </div>
                 </div>
 
-                {item.description && (
-                  <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
-                )}
-
-                {item.highlights.length > 0 && (
-                  <ul className="mt-2 list-disc list-inside text-sm text-muted-foreground space-y-1">
-                    {item.highlights.map((highlight, idx) => (
-                      <li key={idx}>{highlight}</li>
-                    ))}
-                  </ul>
+                {item.content && (
+                  <MarkdownPreview 
+                    content={item.content} 
+                    className="mt-2 text-sm text-muted-foreground" 
+                  />
                 )}
               </CardContent>
             </Card>
@@ -234,52 +209,14 @@ const ExperienceEditor: React.FC = () => {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Briefly describe your role and responsibilities"
+              <Label htmlFor="content">Job Description</Label>
+              <EnhancedMarkdownEditor
+                id="content"
+                value={formData.content}
+                onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
+                placeholder="Describe your role, responsibilities, and achievements"
+                minHeight={250}
               />
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Key Achievements</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={newHighlight}
-                  onChange={(e) => setNewHighlight(e.target.value)}
-                  placeholder="Add a key achievement"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddHighlight();
-                    }
-                  }}
-                />
-                <Button onClick={handleAddHighlight} type="button">
-                  Add
-                </Button>
-              </div>
-
-              {formData.highlights.length > 0 && (
-                <ul className="mt-2 space-y-2">
-                  {formData.highlights.map((highlight, index) => (
-                    <li key={index} className="flex items-center gap-2 bg-muted p-2 rounded-md">
-                      <span className="flex-1 text-sm">{highlight}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 hover:text-destructive"
-                        onClick={() => handleRemoveHighlight(index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
           </div>
 
