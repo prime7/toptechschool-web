@@ -5,11 +5,12 @@ import { Plus, Trash, Edit } from 'lucide-react';
 import { generateId } from '../utils';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { EnhancedMarkdownEditor } from '@/components/ui/enhanced-markdown-editor';
+import { MarkdownPreview } from '@/components/ui/markdown-preview';
 
 const emptyEducation: Omit<EducationItem, 'id'> = {
   institution: '',
@@ -18,7 +19,7 @@ const emptyEducation: Omit<EducationItem, 'id'> = {
   startDate: '',
   endDate: '',
   current: false,
-  description: '',
+  content: '',
   gpa: ''
 };
 
@@ -68,7 +69,7 @@ const EducationEditor: React.FC = () => {
       startDate: item.startDate,
       endDate: item.endDate,
       current: item.current,
-      description: item.description || '',
+      content: item.content,
       gpa: item.gpa || ''
     });
     setIsEditing(item.id);
@@ -180,13 +181,13 @@ const EducationEditor: React.FC = () => {
             </div>
             
             <div className="mt-4 space-y-2">
-              <Label htmlFor="description">Description (Optional)</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Relevant coursework, achievements, or other details"
+              <Label htmlFor="content">Description</Label>
+              <EnhancedMarkdownEditor
+                id="content"
+                value={formData.content}
+                onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
+                placeholder="Describe your education, achievements, or relevant coursework"
+                minHeight={200}
               />
             </div>
             
@@ -244,8 +245,11 @@ const EducationEditor: React.FC = () => {
                     </AlertDialog>
                   </div>
                 </div>
-                {item.description && (
-                  <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
+                {item.content && (
+                  <MarkdownPreview 
+                    content={item.content} 
+                    className="mt-2 text-sm text-muted-foreground" 
+                  />
                 )}
               </CardContent>
             </Card>
