@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { EnhancedMarkdownEditor } from '@/components/ui/enhanced-markdown-editor';
+import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { MarkdownPreview } from '@/components/ui/markdown-preview';
 
 const emptyEducation: Omit<EducationItem, 'id'> = {
@@ -182,10 +182,10 @@ const EducationEditor: React.FC = () => {
             
             <div className="mt-4 space-y-2">
               <Label htmlFor="content">Description</Label>
-              <EnhancedMarkdownEditor
+              <MarkdownEditor
                 id="content"
                 value={formData.content}
-                onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
+                onChange={(value: string) => setFormData(prev => ({ ...prev, content: value }))}
                 placeholder="Describe your education, achievements, or relevant coursework"
                 minHeight={200}
               />

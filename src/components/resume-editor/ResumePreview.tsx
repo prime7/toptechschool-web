@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Globe, Linkedin, Github, ExternalLink } from 'luci
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { MarkdownPreview } from '@/components/ui/markdown-preview';
-import '@/components/ui/markdown.module.css';
+
 import type {
   PersonalInfo,
   ExperienceItem,
@@ -48,21 +48,21 @@ const SectionHeader = ({ title, style }: { title: string; style: ResumeStyle }) 
 
 const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: ResumeStyle }) => {
   const contactItems = [
-    { icon: <Mail className="h-4 w-4 text-gray-600" />, text: personal.email },
-    { icon: <Phone className="h-4 w-4 text-gray-600" />, text: personal.phone },
-    { icon: <MapPin className="h-4 w-4 text-gray-600" />, text: personal.location }
+    { icon: <Mail className="h-4 w-4 text-gray-800" />, text: personal.email },
+    { icon: <Phone className="h-4 w-4 text-gray-800" />, text: personal.phone },
+    { icon: <MapPin className="h-4 w-4 text-gray-800" />, text: personal.location }
   ];
 
   if (personal.website) {
-    contactItems.push({ icon: <Globe className="h-4 w-4 text-gray-600" />, text: personal.website });
+    contactItems.push({ icon: <Globe className="h-4 w-4 text-gray-800" />, text: personal.website });
   }
 
   if (personal.linkedin) {
-    contactItems.push({ icon: <Linkedin className="h-4 w-4 text-gray-600" />, text: personal.linkedin });
+    contactItems.push({ icon: <Linkedin className="h-4 w-4 text-gray-800" />, text: personal.linkedin });
   }
 
   if (personal.github) {
-    contactItems.push({ icon: <Github className="h-4 w-4 text-gray-600" />, text: personal.github });
+    contactItems.push({ icon: <Github className="h-4 w-4 text-gray-800" />, text: personal.github });
   }
 
   return (
@@ -76,11 +76,11 @@ const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: R
           {personal.fullName}
         </h1>
         {personal.title && (
-          <h2 className={cn('mb-3 text-lg text-gray-600')}>
+          <h2 className={cn('mb-3 text-lg text-gray-800')}>
             {personal.title}
           </h2>
         )}
-        <div className={cn("flex flex-wrap gap-4 text-gray-600", {
+        <div className={cn("flex flex-wrap gap-4 text-gray-800", {
           "justify-center": style.personalSectionAlignment === "center",
           "justify-end": style.personalSectionAlignment === "right",
           "justify-start": style.personalSectionAlignment === "left"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useResume } from '../context/ResumeContext';
-import { EnhancedMarkdownEditor } from '@/components/ui/enhanced-markdown-editor';
+import { MarkdownEditor } from '@/components/ui/markdown-editor';
 
 const SummaryEditor: React.FC = () => {
   const { state, dispatch } = useResume();
@@ -22,10 +22,10 @@ const SummaryEditor: React.FC = () => {
       </p>
 
       <div>
-        <EnhancedMarkdownEditor
+        <MarkdownEditor
           id="summary"
           value={summary || ''}
-          onChange={handleChange}
+          onChange={(value: string) => handleChange(value)}
           minHeight={200}
           placeholder="Experienced software engineer with a passion for creating elegant solutions to complex problems..."
           label="Summary"

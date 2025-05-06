@@ -6,7 +6,7 @@ import { Plus, Trash, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { EnhancedMarkdownEditor } from '@/components/ui/enhanced-markdown-editor';
+import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { MarkdownPreview } from '@/components/ui/markdown-preview';
 
 const emptyProject: Omit<ProjectItem, 'id'> = {
@@ -103,9 +103,9 @@ const ProjectsEditor: React.FC = () => {
                 />
               </div>
               <div className="md:col-span-2">
-                <EnhancedMarkdownEditor
+                <MarkdownEditor
                   value={formData.content}
-                  onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
+                  onChange={(value: string) => setFormData(prev => ({ ...prev, content: value }))}
                   placeholder="Describe the project, its purpose, and your role"
                   minHeight={200}
                   label="Project Description"
