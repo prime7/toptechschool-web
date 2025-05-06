@@ -1,16 +1,15 @@
 import React from 'react';
 import { useResume } from '../context/ResumeContext';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { EnhancedMarkdownEditor } from '@/components/ui/enhanced-markdown-editor';
 
 const SummaryEditor: React.FC = () => {
   const { state, dispatch } = useResume();
   const { summary } = state;
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (value: string) => {
     dispatch({
       type: 'UPDATE_SUMMARY',
-      payload: e.target.value
+      payload: value
     });
   };
 
@@ -23,13 +22,13 @@ const SummaryEditor: React.FC = () => {
       </p>
 
       <div>
-        <Label htmlFor="summary">Summary</Label>
-        <Textarea
+        <EnhancedMarkdownEditor
           id="summary"
-          value={summary}
+          value={summary || ''}
           onChange={handleChange}
-          rows={6}
+          minHeight={200}
           placeholder="Experienced software engineer with a passion for creating elegant solutions to complex problems..."
+          label="Summary"
         />
       </div>
 
