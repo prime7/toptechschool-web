@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { CertificationItem } from '../types';
-import { Plus, Trash2, Pencil, ExternalLink, Calendar, Award, Building } from 'lucide-react';
+import { Plus, Trash2, Pencil, ExternalLink, Award } from 'lucide-react';
 import { generateId } from '../utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const emptyCertification: Omit<CertificationItem, 'id'> = {
@@ -18,7 +17,7 @@ const emptyCertification: Omit<CertificationItem, 'id'> = {
 
 const CertificationsEditor: React.FC = () => {
   const { state, dispatch } = useResume();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<CertificationItem, 'id'>>(emptyCertification);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -42,12 +41,12 @@ const CertificationsEditor: React.FC = () => {
       });
     }
     setFormData(emptyCertification);
-    setIsModalOpen(false);
+    setIsAdding(false);
   };
 
   const handleCancel = () => {
     setFormData(emptyCertification);
-    setIsModalOpen(false);
+    setIsAdding(false);
     setIsEditing(null);
   };
 
@@ -57,7 +56,7 @@ const CertificationsEditor: React.FC = () => {
       url: item.url || ''
     });
     setIsEditing(item.id);
-    setIsModalOpen(true);
+    setIsAdding(true);
   };
 
   const openDeleteDialog = (id: string) => {
@@ -71,15 +70,10 @@ const CertificationsEditor: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('default', { month: 'short', year: 'numeric' });
-  };
-
   const addNewCertification = () => {
     setIsEditing(null);
     setFormData(emptyCertification);
-    setIsModalOpen(true);
+    setIsAdding(true);
   };
 
   return (
@@ -91,12 +85,50 @@ const CertificationsEditor: React.FC = () => {
         </p>
       </div>
 
-      <Button onClick={addNewCertification} variant="default" size="sm" className="flex gap-1">
-        <Plus className="h-4 w-4" />
-        <span>Add Certification</span>
-      </Button>
+      {!isAdding && (
+        <Button onClick={addNewCertification} variant="default" size="sm" className="flex gap-1">
+          <Plus className="h-4 w-4" />
+          <span>Add Certification</span>
+        </Button>
+      )}
 
-      {state.certifications && state.certifications.length === 0 && !isModalOpen && (
+      {isAdding && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Certification Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="AWS Certified Solutions Architect, etc."
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="url">Certificate URL (Optional)</Label>
+                <Input
+                  type="url"
+                  id="url"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  placeholder="https://example.com/certificate"
+                />
+              </div>
+              <div className="flex justify-end space-x-2 mt-4">
+                <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+                <Button type="button" onClick={handleSubmit}>
+                  {isEditing ? 'Update' : 'Save'}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {state.certifications && state.certifications.length === 0 && !isAdding && (
         <Alert className="bg-muted/50 text-muted-foreground border border-dashed border-muted">
           <Award className="h-4 w-4" />
           <AlertDescription>
@@ -105,7 +137,7 @@ const CertificationsEditor: React.FC = () => {
         </Alert>
       )}
 
-      {state.certifications && state.certifications.length > 0 && (
+      {state.certifications && state.certifications.length > 0 && !isAdding && (
         <div className="grid gap-4">
           {state.certifications.map((item, idx) => (
             <Card key={idx} className="group overflow-hidden bg-card">
@@ -157,50 +189,6 @@ const CertificationsEditor: React.FC = () => {
         </div>
       )}
 
-      {/* Certification Form Dialog */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{isEditing ? 'Edit Certification' : 'Add Certification'}</DialogTitle>
-            <DialogDescription>
-              Enter your certification details below
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Certification Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="AWS Certified Solutions Architect, etc."
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="url">Certificate URL (Optional)</Label>
-              <Input
-                type="url"
-                id="url"
-                name="url"
-                value={formData.url}
-                onChange={handleChange}
-                placeholder="https://example.com/certificate"
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
-            <Button type="button" onClick={handleSubmit}>
-              {isEditing ? 'Update' : 'Save'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
