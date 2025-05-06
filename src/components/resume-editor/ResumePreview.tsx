@@ -4,6 +4,8 @@ import { formatDate } from '@/lib/date-utils';
 import { Mail, Phone, MapPin, Globe, Linkedin, Github, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { MarkdownPreview } from '@/components/ui/markdown-preview';
+import '@/components/ui/markdown.module.css';
 import type {
   PersonalInfo,
   ExperienceItem,
@@ -15,6 +17,10 @@ import type {
   ResumeStyle
 } from './types';
 import Link from 'next/link';
+
+interface ResumePreviewProps {
+  isPrintMode?: boolean;
+}
 
 const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
   <div className="flex items-center">
@@ -88,43 +94,38 @@ const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: R
   );
 };
 
-const SummarySection = ({ summary, style }: { summary: string; style: ResumeStyle }) => (
+const SummarySection = ({ summary, style, isPrintMode }: { summary: string; style: ResumeStyle; isPrintMode?: boolean }) => (
   <div style={{ marginBottom: 'var(--section-spacing)' }}>
     <SectionHeader title="Summary" style={style} />
-    <p className="text-gray-600">{summary}</p>
+    <MarkdownPreview content={summary} className="text-gray-600" printMode={isPrintMode} />
   </div>
 );
 
-const ExperienceItem = ({ item }: { item: ExperienceItem }) => (
+const ExperienceItem = ({ item, isPrintMode }: { item: ExperienceItem; isPrintMode?: boolean }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
       <div>
         <h3 className="text-lg font-semibold text-gray-800">{item.position}</h3>
         <div className="text-gray-600">{item.company}</div>
       </div>
-      <div className={cn("text-sm text-gray-500")}>
+      <div className={cn("text-sm text-gray-800")}>
         {formatDate(item.startDate)} - {item.endDate === undefined || item.endDate === '' ? 'Present' : formatDate(item.endDate)}
       </div>
     </div>
-    <p className="text-gray-600">{item.description}</p>
-    <ul className="mt-2 list-disc list-inside text-gray-600">
-      {item.highlights.map((highlight: string, index: number) => (
-        <li key={index}>{highlight}</li>
-      ))}
-    </ul>
+    <MarkdownPreview content={item.content} className="mt-2 text-gray-600" printMode={isPrintMode} />
   </div>
 );
 
-const ExperienceSection = ({ experience, style }: { experience: ExperienceItem[]; style: ResumeStyle }) => (
+const ExperienceSection = ({ experience, style, isPrintMode }: { experience: ExperienceItem[]; style: ResumeStyle; isPrintMode?: boolean }) => (
   <div style={{ marginBottom: 'var(--section-spacing)' }}>
     <SectionHeader title="Experience" style={style} />
     {experience.map((item, index) => (
-      <ExperienceItem key={index} item={item} />
+      <ExperienceItem key={index} item={item} isPrintMode={isPrintMode} />
     ))}
   </div>
 );
 
-const EducationItem = ({ item }: { item: EducationItem }) => (
+const EducationItem = ({ item, isPrintMode }: { item: EducationItem; isPrintMode?: boolean }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
       <div>
@@ -136,15 +137,15 @@ const EducationItem = ({ item }: { item: EducationItem }) => (
       </div>
     </div>
     {item.gpa && <div className={cn("mt-1 text-gray-600")}>GPA: {item.gpa}</div>}
-    {item.description && <p className={cn("mt-2 text-gray-600")}>{item.description}</p>}
+    <MarkdownPreview content={item.content} className="mt-2 text-gray-600" printMode={isPrintMode} />
   </div>
 );
 
-const EducationSection = ({ education, style }: { education: EducationItem[]; style: ResumeStyle }) => (
+const EducationSection = ({ education, style, isPrintMode }: { education: EducationItem[]; style: ResumeStyle; isPrintMode?: boolean }) => (
   <div style={{ marginBottom: 'var(--section-spacing)' }}>
     <SectionHeader title="Education" style={style} />
     {education.map((item, index) => (
-      <EducationItem key={index} item={item} />
+      <EducationItem key={index} item={item} isPrintMode={isPrintMode} />
     ))}
   </div>
 );
@@ -160,7 +161,7 @@ const SkillsSection = ({ skills, style }: { skills: SkillItem[]; style: ResumeSt
   </div>
 );
 
-const ProjectItem = ({ project }: { project: ProjectItem }) => (
+const ProjectItem = ({ project, isPrintMode }: { project: ProjectItem; isPrintMode?: boolean }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
       <h3 className="text-lg text-gray-800">
@@ -171,24 +172,16 @@ const ProjectItem = ({ project }: { project: ProjectItem }) => (
           </a>
         )}
       </h3>
-      <div className={cn("text-sm text-gray-500")}>
-        {formatDate(project.startDate)}{project.endDate ? ` - ${formatDate(project.endDate)}` : ''}
-      </div>
     </div>
-    <p className="text-gray-600">{project.description}</p>
-    <ul className="mt-2 list-disc list-inside text-gray-600">
-      {project.highlights.map((highlight: string, index: number) => (
-        <li key={index}>{highlight}</li>
-      ))}
-    </ul>
+    <MarkdownPreview content={project.content} className="mt-2 text-gray-600" printMode={isPrintMode} />
   </div>
 );
 
-const ProjectsSection = ({ projects, style }: { projects: ProjectItem[]; style: ResumeStyle }) => (
+const ProjectsSection = ({ projects, style, isPrintMode }: { projects: ProjectItem[]; style: ResumeStyle; isPrintMode?: boolean }) => (
   <div style={{ marginBottom: 'var(--section-spacing)' }}>
     <SectionHeader title="Projects" style={style} />
     {projects.map((project, index) => (
-      <ProjectItem key={index} project={project} />
+      <ProjectItem key={index} project={project} isPrintMode={isPrintMode} />
     ))}
   </div>
 );
@@ -196,10 +189,14 @@ const ProjectsSection = ({ projects, style }: { projects: ProjectItem[]; style: 
 const CertificationItem = ({ cert }: { cert: CertificationItem }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
-      <Link href={cert.url || ''} target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-gray-600">
-        {cert.name}
-        <ExternalLink className="h-4 w-4 ml-2 inline" />
-      </Link>
+      {cert.url ? (
+        <Link href={cert.url} target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-gray-600">
+          {cert.name}
+          <ExternalLink className="h-4 w-4 ml-2 inline" />
+        </Link>
+      ) : (
+        <span className="text-gray-800">{cert.name}</span>
+      )}
     </div>
   </div>
 );
@@ -228,7 +225,7 @@ const ReferencesSection = ({ references, style }: { references: ReferenceItem[];
   </div>
 );
 
-const ResumePreview: React.FC = () => {
+const ResumePreview: React.FC<ResumePreviewProps> = ({ isPrintMode = false }) => {
   const { state } = useResume();
   const {
     personal,
@@ -245,17 +242,19 @@ const ResumePreview: React.FC = () => {
 
   const sectionComponents = {
     personal: () => personal && <PersonalSection personal={personal} style={style} />,
-    summary: () => summary && <SummarySection summary={summary} style={style} />,
-    experience: () => experience && experience.length > 0 && <ExperienceSection experience={experience} style={style} />,
-    education: () => education && education.length > 0 && <EducationSection education={education} style={style} />,
+    summary: () => summary && <SummarySection summary={summary} style={style} isPrintMode={isPrintMode} />,
+    experience: () => experience && experience.length > 0 && <ExperienceSection experience={experience} style={style} isPrintMode={isPrintMode} />,
+    education: () => education && education.length > 0 && <EducationSection education={education} style={style} isPrintMode={isPrintMode} />,
     skills: () => skills && skills.length > 0 && <SkillsSection skills={skills} style={style} />,
-    projects: () => projects && projects.length > 0 && <ProjectsSection projects={projects} style={style} />,
+    projects: () => projects && projects.length > 0 && <ProjectsSection projects={projects} style={style} isPrintMode={isPrintMode} />,
     certifications: () => certifications && certifications.length > 0 && <CertificationsSection certifications={certifications} style={style} />,
     references: () => references && references.length > 0 && <ReferencesSection references={references} style={style} />
   };
 
   return (
-    <div className="bg-white shadow-lg p-8 overflow-visible">
+    <div className={cn("bg-white shadow-lg p-8 overflow-visible", {
+      "print:shadow-none print:p-0": isPrintMode
+    })}>
       <div
         id="resumePreviewContent"
         className={cn("max-w-full", {
