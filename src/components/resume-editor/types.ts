@@ -50,8 +50,6 @@ export interface ProjectItem {
   id: string;
   name: string;
   content: string;
-  startDate: string;
-  endDate: string;
   url?: string;
 }
 
