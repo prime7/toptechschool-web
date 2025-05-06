@@ -3,7 +3,6 @@ import { useResume } from './context/ResumeContext';
 import { SectionType } from './types';
 import { User, FileText, Briefcase, GraduationCap, Award, Calendar, BookOpen, Users, Plus, GripVertical, Layout, Type, Palette, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -72,13 +71,9 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
     const newSections = [...state.activeSections];
     const [removed] = newSections.splice(draggedIndex, 1);
     
-    // If dropping at index 0 and personal exists, ensure we drop after personal
     const targetIndex = index === 0 && newSections[0] === 'personal' ? 1 : index;
-    
-    // Insert the section at the target index
     newSections.splice(targetIndex, 0, removed);
     
-    // Ensure personal section is always first if it exists
     if (newSections.includes('personal') && newSections[0] !== 'personal') {
         const personalIndex = newSections.indexOf('personal');
         newSections.splice(personalIndex, 1);
@@ -96,9 +91,9 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
   };
 
   return (
-    <Card className="p-2 border-0 shadow-none  w-[280px]">
-      <CardContent className="p-0">
-        <Tabs defaultValue="sections" className="w-full">
+    <Card className="p-2 border-0 shadow-none h-full w-[280px] flex flex-col">
+      <CardContent className="p-0 flex flex-col flex-1">
+        <Tabs defaultValue="sections" className="w-full flex-1">
           <TabsList className="w-full grid grid-cols-2">
             <TabsTrigger value="sections" className="flex items-center gap-2">
               <Layout className="h-4 w-4" />
@@ -109,222 +104,219 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
               Styling
             </TabsTrigger>
           </TabsList>
-
           <TabsContent value="sections">
-            <ScrollArea className="h-[calc(100vh-220px)]">
-              <div className="px-1 py-2">
-                {state.activeSections.length > 0 && (
-                  <div className="space-y-1 mb-4">
-                    {state.activeSections.map((sectionId, index) => {
-                      const section = sections.find(s => s.id === sectionId);
-                      if (!section) return null;
+            <div className="px-1 py-2">
+              {state.activeSections.length > 0 && (
+                <div className="space-y-1 mb-4">
+                  {state.activeSections.map((sectionId, index) => {
+                    const section = sections.find(s => s.id === sectionId);
+                    if (!section) return null;
 
-                      return (
-                        <div
-                          key={section.id}
-                          draggable={section.id !== 'personal'}
-                          onDragStart={(e) => handleDragStart(e, index)}
-                          onDragOver={handleDragOver}
-                          onDrop={(e) => handleDrop(e, index)}
-                          className={cn(
-                            "flex items-center px-3 py-2 text-sm rounded-md cursor-pointer group",
-                            activeSection === section.id
-                              ? "bg-primary/10 text-primary border-l-2 border-primary"
-                              : "text-foreground hover:bg-muted border-l-2 border-transparent"
-                          )}
-                          onClick={() => setActiveSection(section.id)}
-                        >
-                          {section.id !== 'personal' && (
-                            <GripVertical className="h-4 w-4 mr-2 text-muted-foreground cursor-grab" />
-                          )}
-                          <span className="mr-3">{section.icon}</span>
-                          <span className="font-medium">{section.label}</span>
-                          {section.id !== 'personal' && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="ml-auto h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleSection(section.id);
-                              }}
-                            >
-                              <span className="sr-only">Remove section</span>
-                              &times;
-                            </Button>
-                          )}
-                        </div>
-                      );
-                    })}
+                    return (
+                      <div
+                        key={section.id}
+                        draggable={section.id !== 'personal'}
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, index)}
+                        className={cn(
+                          "flex items-center px-3 py-2 text-sm rounded-md cursor-pointer group",
+                          activeSection === section.id
+                            ? "bg-primary/10 text-primary border-l-2 border-primary"
+                            : "text-foreground hover:bg-muted border-l-2 border-transparent"
+                        )}
+                        onClick={() => setActiveSection(section.id)}
+                      >
+                        {section.id !== 'personal' && (
+                          <GripVertical className="h-4 w-4 mr-2 text-muted-foreground cursor-grab" />
+                        )}
+                        <span className="mr-3">{section.icon}</span>
+                        <span className="font-medium">{section.label}</span>
+                        {section.id !== 'personal' && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="ml-auto h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSection(section.id);
+                            }}
+                          >
+                            <span className="sr-only">Remove section</span>
+                            &times;
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {availableSections.length > 0 && (
+                <React.Fragment>
+                  <div className="px-3 mb-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">Add Sections</h3>
                   </div>
-                )}
-
-                {availableSections.length > 0 && (
-                  <React.Fragment>
-                    <div className="px-3 mb-2">
-                      <h3 className="text-sm font-medium text-muted-foreground">Add Sections</h3>
-                    </div>
-                    <div className="space-y-1">
-                      {availableSections.map(section => (
-                        <div
-                          key={section.id}
-                          className="flex items-center px-3 py-2 text-sm text-muted-foreground hover:bg-muted rounded-md cursor-pointer"
-                          onClick={() => {
-                            toggleSection(section.id);
-                            setActiveSection(section.id);
-                          }}
-                        >
-                          <Plus className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <span className="mr-3">{section.icon}</span>
-                          <span>{section.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </React.Fragment>
-                )}
-              </div>
-            </ScrollArea>
+                  <div className="space-y-1">
+                    {availableSections.map(section => (
+                      <div
+                        key={section.id}
+                        className="flex items-center px-3 py-2 text-sm text-muted-foreground hover:bg-muted rounded-md cursor-pointer"
+                        onClick={() => {
+                          toggleSection(section.id);
+                          setActiveSection(section.id);
+                        }}
+                      >
+                        <Plus className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <span className="mr-3">{section.icon}</span>
+                        <span>{section.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </React.Fragment>
+              )}
+            </div>
           </TabsContent>
 
           <TabsContent value="styling">
-            <ScrollArea className="h-[calc(100vh-220px)]">
-              <div className="px-4 py-2 space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Font Family</Label>
-                    <Select 
-                      value={state.style.fontFamily}
-                      onValueChange={(value) => handleStyleChange('fontFamily', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select font" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="inter">Inter</SelectItem>
-                        <SelectItem value="roboto">Roboto</SelectItem>
-                        <SelectItem value="poppins">Poppins</SelectItem>
-                        <SelectItem value="opensans">Open Sans</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+            <div className="px-4 py-2 space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Font Family</Label>
+                  <Select 
+                    value={state.style.fontFamily}
+                    onValueChange={(value) => handleStyleChange('fontFamily', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="inter">Inter</SelectItem>
+                      <SelectItem value="roboto">Roboto</SelectItem>
+                      <SelectItem value="poppins">Poppins</SelectItem>
+                      <SelectItem value="opensans">Open Sans</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                  <div className="space-y-2">
-                    <Label>Font Size</Label>
-                    <div className="flex items-center space-x-2">
-                      <Slider 
-                        value={[state.style.fontSize]} 
-                        onValueChange={([value]) => handleStyleChange('fontSize', value)}
-                        max={13} 
-                        min={10} 
-                        step={.2} 
-                      />
-                      <span className="w-12 text-sm">{state.style.fontSize}px</span>
-                    </div>
+                <div className="space-y-2">
+                  <Label>Font Size</Label>
+                  <div className="flex items-center space-x-2">
+                    <Slider 
+                      value={[state.style.fontSize]} 
+                      onValueChange={([value]) => handleStyleChange('fontSize', value)}
+                      max={13} 
+                      min={10} 
+                      step={.2} 
+                    />
+                    <span className="w-12 text-sm">{state.style.fontSize}px</span>
                   </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <Label>Accent Color</Label>
-                    <div className="flex items-center space-x-2">
-                      <input 
-                        type="color" 
-                        className="w-10 h-10 rounded-md cursor-pointer border border-input" 
-                        value={state.style.accentColor}
-                        onChange={(e) => handleStyleChange('accentColor', e.target.value)}
-                      />
-                      <Input 
-                        type="text" 
-                        value={state.style.accentColor}
-                        onChange={(e) => handleStyleChange('accentColor', e.target.value)}
-                        className="w-24"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Section Spacing</Label>
-                    <div className="flex items-center space-x-2">
-                      <Slider 
-                        value={[state.style.sectionSpacing]} 
-                        onValueChange={([value]) => handleStyleChange('sectionSpacing', value)}
-                        max={48} 
-                        min={16} 
-                        step={4} 
-                      />
-                      <span className="w-12 text-sm">{state.style.sectionSpacing}px</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Line Height</Label>
-                    <div className="flex items-center space-x-2">
-                      <Slider 
-                        value={[state.style.lineHeight]} 
-                        onValueChange={([value]) => handleStyleChange('lineHeight', value)}
-                        max={2} 
-                        min={1} 
-                        step={0.1} 
-                      />
-                      <span className="w-12 text-sm">{state.style.lineHeight}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Personal Info Alignment</Label>
-                    <Select 
-                      value={state.style.personalSectionAlignment}
-                      onValueChange={(value) => handleStyleChange('personalSectionAlignment', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select alignment" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="left">Left</SelectItem>
-                        <SelectItem value="center">Center</SelectItem>
-                        <SelectItem value="right">Right</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Section Header Alignment</Label>
-                    <Select 
-                      value={state.style.sectionHeaderAlignment}
-                      onValueChange={(value) => handleStyleChange('sectionHeaderAlignment', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select alignment" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="left">Left</SelectItem>
-                        <SelectItem value="center">Center</SelectItem>
-                        <SelectItem value="right">Right</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center justify-between space-x-2">
-                    <Label>Show Section Dividers</Label>
-                    <Switch
-                      checked={state.style.showSectionHorizontalRule}
-                      onCheckedChange={(checked) => handleStyleChange('showSectionHorizontalRule', checked)}
+                <div className="space-y-2">
+                  <Label>Accent Color</Label>
+                  <div className="flex items-center space-x-2">
+                    <input 
+                      type="color" 
+                      className="w-10 h-10 rounded-md cursor-pointer border border-input" 
+                      value={state.style.accentColor}
+                      onChange={(e) => handleStyleChange('accentColor', e.target.value)}
+                    />
+                    <Input 
+                      type="text" 
+                      value={state.style.accentColor}
+                      onChange={(e) => handleStyleChange('accentColor', e.target.value)}
+                      className="w-24"
                     />
                   </div>
-
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => dispatch({ type: 'RESET_STYLE' })}
-                  >
-                    Reset to Default
-                  </Button>
                 </div>
+
+                <div className="space-y-2">
+                  <Label>Section Spacing</Label>
+                  <div className="flex items-center space-x-2">
+                    <Slider 
+                      value={[state.style.sectionSpacing]} 
+                      onValueChange={([value]) => handleStyleChange('sectionSpacing', value)}
+                      max={48} 
+                      min={16} 
+                      step={4} 
+                    />
+                    <span className="w-12 text-sm">{state.style.sectionSpacing}px</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Line Height</Label>
+                  <div className="flex items-center space-x-2">
+                    <Slider 
+                      value={[state.style.lineHeight]} 
+                      onValueChange={([value]) => handleStyleChange('lineHeight', value)}
+                      max={2} 
+                      min={1} 
+                      step={0.1} 
+                    />
+                    <span className="w-12 text-sm">{state.style.lineHeight}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Personal Info Alignment</Label>
+                  <Select 
+                    value={state.style.personalSectionAlignment}
+                    onValueChange={(value) => handleStyleChange('personalSectionAlignment', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select alignment" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="left">Left</SelectItem>
+                      <SelectItem value="center">Center</SelectItem>
+                      <SelectItem value="right">Right</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Section Header Alignment</Label>
+                  <Select 
+                    value={state.style.sectionHeaderAlignment}
+                    onValueChange={(value) => handleStyleChange('sectionHeaderAlignment', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select alignment" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="left">Left</SelectItem>
+                      <SelectItem value="center">Center</SelectItem>
+                      <SelectItem value="right">Right</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center justify-between space-x-2">
+                  <Label>Show Section Dividers</Label>
+                  <Switch
+                    checked={state.style.showSectionHorizontalRule}
+                    onCheckedChange={(checked) => handleStyleChange('showSectionHorizontalRule', checked)}
+                  />
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => dispatch({ type: 'RESET_STYLE' })}
+                >
+                  Reset to Default
+                </Button>
               </div>
-            </ScrollArea>
+            </div>
           </TabsContent>
         </Tabs>
-        <Button variant="outline" size="icon" className="w-full" onClick={onExportPDF}>
-          Export PDF
-        </Button>
+        <div className="mt-auto pt-2">
+          <Button variant="outline" className="w-full" onClick={onExportPDF}>
+            Export PDF
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

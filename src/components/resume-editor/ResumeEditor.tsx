@@ -26,23 +26,27 @@ const sectionComponents: Record<SectionType, React.ComponentType> = {
 
 export default function ResumeEditor() {
   const [activeSection, setActiveSection] = useState<SectionType>('personal');
+  const [isExporting, setIsExporting] = useState(false);
   const ActiveSectionComponent = sectionComponents[activeSection];
   const { toPDF, targetRef } = usePDF({
-
     filename: 'resume.pdf',
     page: { format: 'a4', orientation: 'portrait' }
   });
 
-  const [items] = useState(Array.from({ length: 20 }, (_, i) => `Item ${i + 1}`));
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    toPDF();
+    setIsExporting(false);
+  };
 
   return (
-<ResumeProvider>
-      <div className="flex flex-row h-screen">
+    <ResumeProvider>
+      <div className="flex flex-row h-[calc(100vh-5rem)]">
         <div>
           <Sidebar
             activeSection={activeSection}
             setActiveSection={setActiveSection}
-            onExportPDF={() => toPDF()}
+            onExportPDF={handleExportPDF}
           />
         </div>
         <div className="flex-1 p-6">
@@ -50,7 +54,7 @@ export default function ResumeEditor() {
         </div>
         <div className="flex-1 overflow-y-scroll">
           <div ref={targetRef}>
-            <ResumePreview />
+            <ResumePreview isPrintMode={isExporting} />
           </div>
         </div>
       </div>

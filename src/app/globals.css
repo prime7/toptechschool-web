@@ -66,3 +66,58 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* GitHub Flavored Markdown styles */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.75rem 0;
+}
+
+table td,
+table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+table tr:hover {
+  background-color: #f1f5f9;
+}
+
+table th {
+  padding: 8px;
+  text-align: left;
+  background-color: #f1f5f9;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+blockquote {
+  border-left: 3px solid #e5e7eb;
+  padding-left: 1rem;
+  color: #6b7280;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Print-specific styles */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  blockquote {
+    border-left: 2px solid #000;
+    color: #333;
+  }
+  
+  table th {
+    background-color: #eee !important;
+    color: #000;
+  }
+}
