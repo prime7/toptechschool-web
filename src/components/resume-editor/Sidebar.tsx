@@ -15,7 +15,6 @@ import { Switch } from '@/components/ui/switch';
 interface SectionsListProps {
   activeSection: SectionType;
   setActiveSection: (section: SectionType) => void;
-  onExportPDF: () => void;
 }
 
 interface SectionInfo {
@@ -24,7 +23,7 @@ interface SectionInfo {
   icon: React.ReactNode;
 }
 
-const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSection, onExportPDF }) => {
+const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSection }) => {
   const { state, dispatch } = useResume();
 
   const sections: SectionInfo[] = [
@@ -332,11 +331,6 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
             </div>
           </TabsContent>
         </Tabs>
-        <div className="mt-auto pt-2">
-          <Button variant="outline" className="w-full" onClick={onExportPDF}>
-            Export PDF
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
