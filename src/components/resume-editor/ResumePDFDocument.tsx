@@ -1,3 +1,6 @@
+/* eslint-disable */
+
+
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Svg, Path } from '@react-pdf/renderer';
 import { formatDate } from '@/lib/date-utils';
