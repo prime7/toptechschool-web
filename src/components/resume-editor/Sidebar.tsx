@@ -38,9 +38,29 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
     { id: 'references', label: 'References', icon: <Users className="h-4 w-4" /> }
   ];
 
-  const availableSections = sections.filter(section =>
-    !state.activeSections.includes(section.id)
-  );
+  const availableSections = sections.filter(section => {
+    if (state.activeSections.includes(section.id)) return false;
+    
+    // Check if section has content
+    switch (section.id) {
+      case 'summary':
+        return !state.summary;
+      case 'experience':
+        return !state.experience || state.experience.length === 0;
+      case 'education':
+        return !state.education || state.education.length === 0;
+      case 'skills':
+        return !state.skills || state.skills.length === 0;
+      case 'projects':
+        return !state.projects || state.projects.length === 0;
+      case 'certifications':
+        return !state.certifications || state.certifications.length === 0;
+      case 'references':
+        return !state.references || state.references.length === 0;
+      default:
+        return true;
+    }
+  });
 
   const toggleSection = (sectionId: SectionType) => {
     dispatch({ type: 'TOGGLE_SECTION', payload: sectionId });
