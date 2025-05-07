@@ -24,7 +24,14 @@ const initialResumeData: ResumeData = {
       position: 'Senior Software Engineer',
       startDate: '2020-01',
       endDate: '',
-      content: '## Responsibilities\n- Led development of web applications using modern technologies\n- Managed a team of 5 developers\n- Implemented CI/CD pipelines\n\n## Achievements\n- Improved application performance by 40%\n- Reduced deployment time by 60%\n- Mentored junior developers'
+      description: 'Led development of web applications using modern technologies',
+      bulletPoints: [
+        'Managed a team of 5 developers',
+        'Implemented CI/CD pipelines',
+        'Improved application performance by 40%',
+        'Reduced deployment time by 60%',
+        'Mentored junior developers'
+      ]
     },
     {
       id: generateId(),
@@ -32,7 +39,12 @@ const initialResumeData: ResumeData = {
       position: 'Frontend Developer',
       startDate: '2018-03',
       endDate: '2019-12',
-      content: '## Responsibilities\n- Developed responsive UIs using React and Redux\n- Integrated third-party APIs and services\n\n## Achievements\n- Optimized application load time by 30%\n- Implemented automated testing suite'
+      description: 'Developed responsive UIs using React and Redux',
+      bulletPoints: [
+        'Integrated third-party APIs and services',
+        'Optimized application load time by 30%',
+        'Implemented automated testing suite'
+      ]
     }
   ],
   education: [
@@ -44,7 +56,13 @@ const initialResumeData: ResumeData = {
       startDate: '2014-09',
       endDate: '2018-06',
       current: false,
-      content: 'Graduated with honors. Specialized in software engineering and data structures.\n\n**Relevant Coursework**\n- Data Structures and Algorithms\n- Software Engineering\n- Database Systems\n- Web Development',
+      description: 'Graduated with honors. Specialized in software engineering and data structures.',
+      bulletPoints: [
+        'Data Structures and Algorithms',
+        'Software Engineering',
+        'Database Systems',
+        'Web Development'
+      ],
       gpa: '3.8'
     },
     {
@@ -55,7 +73,8 @@ const initialResumeData: ResumeData = {
       startDate: '2016-06',
       endDate: '2016-12',
       current: false,
-      content: 'Intensive 6-month bootcamp covering modern web development technologies and practices.',
+      description: 'Intensive 6-month bootcamp covering modern web development technologies and practices.',
+      bulletPoints: [],
       gpa: '4.0'
     }
   ],
@@ -95,44 +114,47 @@ const initialResumeData: ResumeData = {
     {
       id: generateId(),
       name: 'E-commerce Platform',
-      startDate: '2020-01',
-      endDate: '2020-06',
-      content: 'Developed a full-featured e-commerce platform using React, Node.js, and MongoDB.\n\n### Key Features\n- User authentication\n- Product catalog with search and filtering\n- Shopping cart and checkout process\n- Admin dashboard for managing products and orders',
+      description: 'Developed a full-featured e-commerce platform using React, Node.js, and MongoDB.',
+      bulletPoints: [
+        'User authentication',
+        'Product catalog with search and filtering',
+        'Shopping cart and checkout process',
+        'Admin dashboard for managing products and orders'
+      ],
       url: 'https://github.com/johndoe/ecommerce'
     },
     {
       id: generateId(),
       name: 'Personal Portfolio',
-      content: 'Designed and developed a personal portfolio website to showcase my projects and skills',
-      startDate: '2019-10',
-      endDate: '2019-12',
+      description: 'Designed and developed a personal portfolio website to showcase my projects and skills',
+      bulletPoints: [],
       url: 'https://github.com/johndoe/portfolio'
     }
   ],
   style: defaultStyle
 };
 
-const blankResumeData: ResumeData = {
-  personal: {
-    fullName: '',
-    email: '',
-    phone: '',
-    location: '',
-    title: '',
-    website: '',
-    linkedin: '',
-    github: ''
-  },
-  summary: '',
-  experience: [],
-  education: [],
-  skills: [],
-  projects: [],
-  certifications: [],
-  references: [],
-  activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
-  style: defaultStyle
-};
+// const blankResumeData: ResumeData = {
+//   personal: {
+//     fullName: '',
+//     email: '',
+//     phone: '',
+//     location: '',
+//     title: '',
+//     website: '',
+//     linkedin: '',
+//     github: ''
+//   },
+//   summary: '',
+//   experience: [],
+//   education: [],
+//   skills: [],
+//   projects: [],
+//   certifications: [],
+//   references: [],
+//   activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
+//   style: defaultStyle
+// };
 
 const ResumeContext = createContext<{
   state: ResumeData;
@@ -168,6 +190,45 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
         ...state,
         experience: (state.experience || []).filter(item => item.id !== action.payload)
       };
+    case 'ADD_EXPERIENCE_BULLET':
+      return {
+        ...state,
+        experience: (state.experience || []).map(item => 
+          item.id === action.payload.experienceId 
+            ? { ...item, bulletPoints: [...(item.bulletPoints || []), action.payload.bullet] } 
+            : item
+        )
+      };
+    case 'UPDATE_EXPERIENCE_BULLET':
+      return {
+        ...state,
+        experience: (state.experience || []).map(item => 
+          item.id === action.payload.experienceId 
+            ? { 
+                ...item, 
+                bulletPoints: (item.bulletPoints || []).map((bullet, index) => 
+                  index === action.payload.index 
+                    ? action.payload.text 
+                    : bullet
+                ) 
+              } 
+            : item
+        )
+      };
+    case 'REMOVE_EXPERIENCE_BULLET':
+      return {
+        ...state,
+        experience: (state.experience || []).map(item => 
+          item.id === action.payload.experienceId 
+            ? { 
+                ...item, 
+                bulletPoints: (item.bulletPoints || []).filter((_, index) => 
+                  index !== action.payload.index
+                ) 
+              } 
+            : item
+        )
+      };
     case 'ADD_EDUCATION':
       return {
         ...state,
@@ -184,6 +245,45 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
       return {
         ...state,
         education: (state.education || []).filter(item => item.id !== action.payload)
+      };
+    case 'ADD_EDUCATION_BULLET':
+      return {
+        ...state,
+        education: (state.education || []).map(item => 
+          item.id === action.payload.educationId 
+            ? { ...item, bulletPoints: [...(item.bulletPoints || []), action.payload.bullet] } 
+            : item
+        )
+      };
+    case 'UPDATE_EDUCATION_BULLET':
+      return {
+        ...state,
+        education: (state.education || []).map(item => 
+          item.id === action.payload.educationId 
+            ? { 
+                ...item, 
+                bulletPoints: (item.bulletPoints || []).map((bullet, index) => 
+                  index === action.payload.index 
+                    ? action.payload.text 
+                    : bullet
+                ) 
+              } 
+            : item
+        )
+      };
+    case 'REMOVE_EDUCATION_BULLET':
+      return {
+        ...state,
+        education: (state.education || []).map(item => 
+          item.id === action.payload.educationId 
+            ? { 
+                ...item, 
+                bulletPoints: (item.bulletPoints || []).filter((_, index) => 
+                  index !== action.payload.index
+                ) 
+              } 
+            : item
+        )
       };
     case 'ADD_SKILL':
       return {
@@ -218,6 +318,45 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
       return {
         ...state,
         projects: (state.projects || []).filter(item => item.id !== action.payload)
+      };
+    case 'ADD_PROJECT_BULLET':
+      return {
+        ...state,
+        projects: (state.projects || []).map(item => 
+          item.id === action.payload.projectId 
+            ? { ...item, bulletPoints: [...(item.bulletPoints || []), action.payload.bullet] } 
+            : item
+        )
+      };
+    case 'UPDATE_PROJECT_BULLET':
+      return {
+        ...state,
+        projects: (state.projects || []).map(item => 
+          item.id === action.payload.projectId 
+            ? { 
+                ...item, 
+                bulletPoints: (item.bulletPoints || []).map((bullet, index) => 
+                  index === action.payload.index 
+                    ? action.payload.text 
+                    : bullet
+                ) 
+              } 
+            : item
+        )
+      };
+    case 'REMOVE_PROJECT_BULLET':
+      return {
+        ...state,
+        projects: (state.projects || []).map(item => 
+          item.id === action.payload.projectId 
+            ? { 
+                ...item, 
+                bulletPoints: (item.bulletPoints || []).filter((_, index) => 
+                  index !== action.payload.index
+                ) 
+              } 
+            : item
+        )
       };
     case 'ADD_CERTIFICATION':
       return {

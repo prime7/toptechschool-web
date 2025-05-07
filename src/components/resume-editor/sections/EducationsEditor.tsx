@@ -9,8 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { MarkdownEditor } from '@/components/ui/markdown-editor';
-import { MarkdownPreview } from '@/components/ui/markdown-preview';
+import { BulletPointEditor } from '../components/BulletPointEditor';
 
 const emptyEducation: Omit<EducationItem, 'id'> = {
   institution: '',
@@ -19,8 +18,8 @@ const emptyEducation: Omit<EducationItem, 'id'> = {
   startDate: '',
   endDate: '',
   current: false,
-  content: '',
-  gpa: ''
+  gpa: '',
+  bulletPoints: []
 };
 
 const EducationEditor: React.FC = () => {
@@ -69,8 +68,8 @@ const EducationEditor: React.FC = () => {
       startDate: item.startDate,
       endDate: item.endDate,
       current: item.current,
-      content: item.content,
-      gpa: item.gpa || ''
+      gpa: item.gpa || '',
+      bulletPoints: item.bulletPoints || []
     });
     setIsEditing(item.id);
     setIsAdding(true);
@@ -182,12 +181,12 @@ const EducationEditor: React.FC = () => {
             
             <div className="mt-4 space-y-2">
               <Label htmlFor="content">Description</Label>
-              <MarkdownEditor
-                id="content"
-                value={formData.content}
-                onChange={(value: string) => setFormData(prev => ({ ...prev, content: value }))}
-                placeholder="Describe your education, achievements, or relevant coursework"
-                minHeight={200}
+              <BulletPointEditor
+                bulletPoints={formData.bulletPoints || []}
+                onAdd={(bullet) => setFormData(prev => ({ ...prev, bulletPoints: [...prev.bulletPoints, bullet] }))}
+                onUpdate={(index, text) => setFormData(prev => ({ ...prev, bulletPoints: prev.bulletPoints.map((b, i) => i === index ? text : b) }))}
+                onRemove={(index) => setFormData(prev => ({ ...prev, bulletPoints: prev.bulletPoints.filter((_, i) => i !== index) }))}
+                onReorder={(newOrder) => setFormData(prev => ({ ...prev, bulletPoints: newOrder }))}
               />
             </div>
             
@@ -245,11 +244,12 @@ const EducationEditor: React.FC = () => {
                     </AlertDialog>
                   </div>
                 </div>
-                {item.content && (
-                  <MarkdownPreview 
-                    content={item.content} 
-                    className="mt-2 text-sm text-muted-foreground" 
-                  />
+                {item.bulletPoints && item.bulletPoints.length > 0 && (
+                  <ul className="list-disc pl-5 mt-2 text-sm text-muted-foreground">
+                    {item.bulletPoints.map((point, i) => (
+                      <li key={i}>{point}</li>
+                    ))}
+                  </ul>
                 )}
               </CardContent>
             </Card>

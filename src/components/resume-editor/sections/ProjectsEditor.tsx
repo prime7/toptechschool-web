@@ -6,12 +6,13 @@ import { Plus, Trash, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { MarkdownEditor } from '@/components/ui/markdown-editor';
-import { MarkdownPreview } from '@/components/ui/markdown-preview';
+import { BulletPointEditor } from '../components/BulletPointEditor';
+import { Textarea } from '@/components/ui/textarea';
 
 const emptyProject: Omit<ProjectItem, 'id'> = {
   name: '',
-  content: '',
+  description: '',
+  bulletPoints: [],
   url: ''
 };
 
@@ -52,7 +53,8 @@ const ProjectsEditor: React.FC = () => {
   const handleEdit = (item: ProjectItem) => {
     setFormData({
       name: item.name,
-      content: item.content,
+      description: item.description,
+      bulletPoints: item.bulletPoints,
       url: item.url || ''
     });
     setIsEditing(item.id);
@@ -69,7 +71,7 @@ const ProjectsEditor: React.FC = () => {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Projects</h2>
       <p className="text-muted-foreground text-sm">
-        Add notable projects you've worked on, including personal, academic, and professional projects.
+        Add notable projects you&apos;ve worked on, including personal, academic, and professional projects.
       </p>
 
       {!isAdding && (
@@ -103,12 +105,21 @@ const ProjectsEditor: React.FC = () => {
                 />
               </div>
               <div className="md:col-span-2">
-                <MarkdownEditor
-                  value={formData.content}
-                  onChange={(value: string) => setFormData(prev => ({ ...prev, content: value }))}
+                <Textarea
+                  name="description"
+                  value={formData.description || ''}
+                  onChange={handleChange}
                   placeholder="Describe the project, its purpose, and your role"
-                  minHeight={200}
-                  label="Project Description"
+                  className="min-h-[200px]"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <BulletPointEditor
+                  bulletPoints={formData.bulletPoints || []}
+                  onAdd={(bullet) => setFormData(prev => ({ ...prev, bulletPoints: [...prev.bulletPoints, bullet] }))}
+                  onUpdate={(index, text) => setFormData(prev => ({ ...prev, bulletPoints: prev.bulletPoints.map((b, i) => i === index ? text : b) }))}
+                  onRemove={(index) => setFormData(prev => ({ ...prev, bulletPoints: prev.bulletPoints.filter((_, i) => i !== index) }))}
+                  onReorder={(newOrder) => setFormData(prev => ({ ...prev, bulletPoints: newOrder }))}
                 />
               </div>
             </div>
@@ -124,7 +135,7 @@ const ProjectsEditor: React.FC = () => {
       {state.projects && state.projects.length > 0 && !isAdding && (
         <div className="space-y-4 mt-4">
           {state.projects.map((item, idx) => (
-            <Card key={item.id} className="overflow-hidden">
+            <Card key={idx} className="overflow-hidden">
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                   <div>
@@ -155,11 +166,18 @@ const ProjectsEditor: React.FC = () => {
                   </div>
                 </div>
 
-                {item.content && (
-                  <MarkdownPreview
-                    content={item.content}
-                    className="mt-2 text-sm text-muted-foreground"
-                  />
+                {item.description && (
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    {item.description}
+                  </div>
+                )}
+                
+                {item.bulletPoints && item.bulletPoints.length > 0 && (
+                  <ul className="list-disc pl-5 mt-2 text-sm text-muted-foreground">
+                    {item.bulletPoints.map((point, i) => (
+                      <li key={i}>{point}</li>
+                    ))}
+                  </ul>
                 )}
               </CardContent>
             </Card>

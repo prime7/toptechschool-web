@@ -8,6 +8,11 @@ export type SectionType =
   | 'certifications'
   | 'references';
 
+export interface ListItem {
+  id: string;
+  text: string;
+}
+
 export interface PersonalInfo {
   fullName: string;
   email: string;
@@ -25,7 +30,8 @@ export interface ExperienceItem {
   position: string;
   startDate: string;
   endDate?: string;
-  content: string;
+  description?: string;
+  bulletPoints: string[];
 }
 
 export interface EducationItem {
@@ -36,7 +42,8 @@ export interface EducationItem {
   startDate: string;
   endDate: string;
   current: boolean;
-  content: string;
+  description?: string;
+  bulletPoints: string[];
   gpa?: string;
 }
 
@@ -49,7 +56,8 @@ export interface SkillItem {
 export interface ProjectItem {
   id: string;
   name: string;
-  content: string;
+  description?: string;
+  bulletPoints: string[];
   url?: string;
 }
 
@@ -99,15 +107,24 @@ export type ResumeAction =
   | { type: 'UPDATE_EXPERIENCE', payload: { id: string, data: Partial<ExperienceItem> } }
   | { type: 'REMOVE_EXPERIENCE', payload: string }
   | { type: 'REORDER_EXPERIENCE', payload: ExperienceItem[] }
+  | { type: 'ADD_EXPERIENCE_BULLET', payload: { experienceId: string, bullet: string } }
+  | { type: 'UPDATE_EXPERIENCE_BULLET', payload: { experienceId: string, index: number, text: string } }
+  | { type: 'REMOVE_EXPERIENCE_BULLET', payload: { experienceId: string, index: number } }
   | { type: 'ADD_EDUCATION', payload: EducationItem }
   | { type: 'UPDATE_EDUCATION', payload: { id: string, data: Partial<EducationItem> } }
   | { type: 'REMOVE_EDUCATION', payload: string }
+  | { type: 'ADD_EDUCATION_BULLET', payload: { educationId: string, bullet: string } }
+  | { type: 'UPDATE_EDUCATION_BULLET', payload: { educationId: string, index: number, text: string } }
+  | { type: 'REMOVE_EDUCATION_BULLET', payload: { educationId: string, index: number } }
   | { type: 'ADD_SKILL', payload: SkillItem }
   | { type: 'UPDATE_SKILL', payload: { id: string, data: Partial<SkillItem> } }
   | { type: 'REMOVE_SKILL', payload: string }
   | { type: 'ADD_PROJECT', payload: ProjectItem }
   | { type: 'UPDATE_PROJECT', payload: { id: string, data: Partial<ProjectItem> } }
   | { type: 'REMOVE_PROJECT', payload: string }
+  | { type: 'ADD_PROJECT_BULLET', payload: { projectId: string, bullet: string } }
+  | { type: 'UPDATE_PROJECT_BULLET', payload: { projectId: string, index: number, text: string } }
+  | { type: 'REMOVE_PROJECT_BULLET', payload: { projectId: string, index: number } }
   | { type: 'ADD_CERTIFICATION', payload: CertificationItem }
   | { type: 'UPDATE_CERTIFICATION', payload: { id: string, data: Partial<CertificationItem> } }
   | { type: 'REMOVE_CERTIFICATION', payload: string }

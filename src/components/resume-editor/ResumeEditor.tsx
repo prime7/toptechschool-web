@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { SectionType } from './types';
 import { ResumeProvider } from './context/ResumeContext';
 import Sidebar from './Sidebar';

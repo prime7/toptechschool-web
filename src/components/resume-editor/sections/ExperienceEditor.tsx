@@ -2,23 +2,22 @@ import React, { useState } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { ExperienceItem } from '../types';
 import { generateId } from '../utils';
-import { Plus, Trash2, Pencil, Building } from 'lucide-react';
+import { Plus, Trash2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { MarkdownEditor } from '@/components/ui/markdown-editor';
-import { MarkdownPreview } from '@/components/ui/markdown-preview';
-import { Checkbox } from '@/components/ui/checkbox';
+import { BulletPointEditor } from '../components/BulletPointEditor';
 
 const emptyExperience: Omit<ExperienceItem, 'id'> = {
   company: '',
   position: '',
   startDate: '',
   endDate: '',
-  content: ''
+  description: '',
+  bulletPoints: []
 };
 
 const ExperienceEditor: React.FC = () => {
@@ -26,14 +25,11 @@ const ExperienceEditor: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<ExperienceItem, 'id'>>(emptyExperience);
+  const [originalData, setOriginalData] = useState<Omit<ExperienceItem, 'id'>>(emptyExperience);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, current: checked }));
   };
 
   const handleSubmit = () => {
@@ -50,29 +46,68 @@ const ExperienceEditor: React.FC = () => {
       });
     }
     setFormData(emptyExperience);
+    setOriginalData(emptyExperience);
     setIsAdding(false);
   };
 
   const handleCancel = () => {
+    if (isEditing) {
+      dispatch({
+        type: 'UPDATE_EXPERIENCE',
+        payload: { id: isEditing, data: originalData }
+      });
+    }
     setFormData(emptyExperience);
+    setOriginalData(emptyExperience);
     setIsAdding(false);
     setIsEditing(null);
   };
 
   const handleEdit = (item: ExperienceItem) => {
-    setFormData({
+    const itemData = {
       company: item.company,
       position: item.position,
       startDate: item.startDate,
       endDate: item.endDate,
-      content: item.content
-    });
+      description: item.description || '',
+      bulletPoints: item.bulletPoints || []
+    };
+    setFormData(itemData);
+    setOriginalData(itemData);
     setIsEditing(item.id);
     setIsAdding(true);
   };
 
   const handleDelete = (id: string) => {
     dispatch({ type: 'REMOVE_EXPERIENCE', payload: id });
+  };
+
+  const handleAddBullet = (bullet: string) => {
+    setFormData(prev => ({
+      ...prev,
+      bulletPoints: [...prev.bulletPoints, bullet]
+    }));
+  };
+
+  const handleUpdateBullet = (index: number, text: string) => {
+    setFormData(prev => ({
+      ...prev,
+      bulletPoints: prev.bulletPoints.map((b, i) => i === index ? text : b)
+    }));
+  };
+
+  const handleRemoveBullet = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      bulletPoints: prev.bulletPoints.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleReorder = (newOrder: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      bulletPoints: newOrder
+    }));
   };
 
   return (
@@ -145,13 +180,25 @@ const ExperienceEditor: React.FC = () => {
             </div>
             
             <div className="mt-4 space-y-2">
-              <Label htmlFor="content">Job Description</Label>
-              <MarkdownEditor
-                id="content"
-                value={formData.content}
-                onChange={(value: string) => setFormData(prev => ({ ...prev, content: value }))}
-                placeholder="Describe your role, responsibilities, and achievements"
-                minHeight={200}
+              <Label htmlFor="description">Description (Optional)</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Brief overview of your role"
+                rows={2}
+              />
+            </div>
+            
+            <div className="mt-4 space-y-2">
+              <Label>Key Achievements & Responsibilities</Label>
+              <BulletPointEditor
+                bulletPoints={formData.bulletPoints}
+                onAdd={handleAddBullet}
+                onUpdate={handleUpdateBullet}
+                onRemove={handleRemoveBullet}
+                onReorder={handleReorder}
               />
             </div>
             
@@ -208,11 +255,13 @@ const ExperienceEditor: React.FC = () => {
                     </AlertDialog>
                   </div>
                 </div>
-                {item.content && (
-                  <MarkdownPreview 
-                    content={item.content} 
-                    className="mt-2 text-sm text-muted-foreground" 
-                  />
+                {item.description && <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>}
+                {item.bulletPoints && item.bulletPoints.length > 0 && (
+                  <ul className="list-disc pl-5 mt-2 text-sm text-muted-foreground space-y-1">
+                    {item.bulletPoints.map((bullet, index) => (
+                      <li key={index}>{bullet}</li>
+                    ))}
+                  </ul>
                 )}
               </CardContent>
             </Card>

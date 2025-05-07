@@ -81,7 +81,7 @@ const CertificationsEditor: React.FC = () => {
       <div>
         <h2 className="text-2xl font-semibold text-foreground">Certifications</h2>
         <p className="text-muted-foreground mt-1">
-          Add professional certifications, licenses, and courses you've completed.
+          Add professional certifications, licenses, and courses you&apos;ve completed.
         </p>
       </div>
 
@@ -132,7 +132,7 @@ const CertificationsEditor: React.FC = () => {
         <Alert className="bg-muted/50 text-muted-foreground border border-dashed border-muted">
           <Award className="h-4 w-4" />
           <AlertDescription>
-            You haven't added any certifications yet. Add certifications to demonstrate your professional qualifications.
+            You haven&apos;t added any certifications yet. Add certifications to demonstrate your professional qualifications.
           </AlertDescription>
         </Alert>
       )}

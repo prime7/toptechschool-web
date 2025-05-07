@@ -79,7 +79,7 @@ const SkillsEditor: React.FC = () => {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Skills</h2>
       <p className="text-sm text-muted-foreground">
-        Add technical skills, soft skills, tools, and technologies you're proficient with.
+        Add technical skills, soft skills, tools, and technologies you&apos;re proficient with.
       </p>
 
       {!isAdding && (

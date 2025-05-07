@@ -1,7 +1,7 @@
 import React from 'react';
 import { useResume } from './context/ResumeContext';
 import { SectionType } from './types';
-import { User, FileText, Briefcase, GraduationCap, Award, Calendar, BookOpen, Users, Plus, GripVertical, Layout, Type, Palette, Menu } from 'lucide-react';
+import { User, FileText, Briefcase, GraduationCap, Award, Calendar, BookOpen, Users, Plus, GripVertical, Layout, Type } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';

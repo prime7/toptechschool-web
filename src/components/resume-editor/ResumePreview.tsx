@@ -4,7 +4,6 @@ import { formatDate } from '@/lib/date-utils';
 import { Mail, Phone, MapPin, Globe, Linkedin, Github, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { MarkdownPreview } from '@/components/ui/markdown-preview';
 
 import type {
   PersonalInfo,
@@ -94,14 +93,38 @@ const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: R
   );
 };
 
-const SummarySection = ({ summary, style, isPrintMode }: { summary: string; style: ResumeStyle; isPrintMode?: boolean }) => (
+const SummarySection = ({ summary, style }: { summary: string; style: ResumeStyle }) => (
   <div style={{ marginBottom: 'var(--section-spacing)' }}>
     <SectionHeader title="Summary" style={style} />
-    <MarkdownPreview content={summary} className="text-gray-600" printMode={isPrintMode} />
+    <div 
+      className="text-gray-600 whitespace-pre-line" 
+      style={{ 
+        whiteSpace: 'pre-line',
+        wordBreak: 'break-word' 
+      }}
+    >
+      {summary}
+    </div>
   </div>
 );
 
-const ExperienceItem = ({ item, isPrintMode }: { item: ExperienceItem; isPrintMode?: boolean }) => (
+const BulletPointsList = ({ bulletPoints }: { bulletPoints: string[] }) => (
+  <ul className="list-disc pl-5 mt-2 text-gray-600 space-y-1">
+    {bulletPoints.map((bullet, index) => (
+      <li key={index} 
+        className="whitespace-pre-line" 
+        style={{ 
+          whiteSpace: 'pre-line',
+          wordBreak: 'break-word' 
+        }}
+      >
+        {bullet}
+      </li>
+    ))}
+  </ul>
+);
+
+const ExperienceItem = ({ item }: { item: ExperienceItem }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
       <div>
@@ -112,20 +135,23 @@ const ExperienceItem = ({ item, isPrintMode }: { item: ExperienceItem; isPrintMo
         {formatDate(item.startDate)} - {item.endDate === undefined || item.endDate === '' ? 'Present' : formatDate(item.endDate)}
       </div>
     </div>
-    <MarkdownPreview content={item.content} className="mt-2 text-gray-600" printMode={isPrintMode} />
+    {item.description && <p className="mt-2 text-gray-600">{item.description}</p>}
+    {item.bulletPoints && item.bulletPoints.length > 0 && (
+      <BulletPointsList bulletPoints={item.bulletPoints} />
+    )}
   </div>
 );
 
-const ExperienceSection = ({ experience, style, isPrintMode }: { experience: ExperienceItem[]; style: ResumeStyle; isPrintMode?: boolean }) => (
+const ExperienceSection = ({ experience, style }: { experience: ExperienceItem[]; style: ResumeStyle }) => (
   <div style={{ marginBottom: 'var(--section-spacing)' }}>
     <SectionHeader title="Experience" style={style} />
     {experience.map((item, index) => (
-      <ExperienceItem key={index} item={item} isPrintMode={isPrintMode} />
+      <ExperienceItem key={index} item={item} />
     ))}
   </div>
 );
 
-const EducationItem = ({ item, isPrintMode }: { item: EducationItem; isPrintMode?: boolean }) => (
+const EducationItem = ({ item }: { item: EducationItem }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
       <div>
@@ -137,15 +163,18 @@ const EducationItem = ({ item, isPrintMode }: { item: EducationItem; isPrintMode
       </div>
     </div>
     {item.gpa && <div className={cn("mt-1 text-gray-600")}>GPA: {item.gpa}</div>}
-    <MarkdownPreview content={item.content} className="mt-2 text-gray-600" printMode={isPrintMode} />
+    {item.description && <p className="mt-2 text-gray-600">{item.description}</p>}
+    {item.bulletPoints && item.bulletPoints.length > 0 && (
+      <BulletPointsList bulletPoints={item.bulletPoints} />
+    )}
   </div>
 );
 
-const EducationSection = ({ education, style, isPrintMode }: { education: EducationItem[]; style: ResumeStyle; isPrintMode?: boolean }) => (
+const EducationSection = ({ education, style }: { education: EducationItem[]; style: ResumeStyle }) => (
   <div style={{ marginBottom: 'var(--section-spacing)' }}>
     <SectionHeader title="Education" style={style} />
     {education.map((item, index) => (
-      <EducationItem key={index} item={item} isPrintMode={isPrintMode} />
+      <EducationItem key={index} item={item} />
     ))}
   </div>
 );
@@ -161,7 +190,7 @@ const SkillsSection = ({ skills, style }: { skills: SkillItem[]; style: ResumeSt
   </div>
 );
 
-const ProjectItem = ({ project, isPrintMode }: { project: ProjectItem; isPrintMode?: boolean }) => (
+const ProjectItem = ({ project }: { project: ProjectItem }) => (
   <div className="mb-4">
     <div className="flex justify-between items-start">
       <h3 className="text-lg text-gray-800">
@@ -173,15 +202,18 @@ const ProjectItem = ({ project, isPrintMode }: { project: ProjectItem; isPrintMo
         )}
       </h3>
     </div>
-    <MarkdownPreview content={project.content} className="mt-2 text-gray-600" printMode={isPrintMode} />
+    {project.description && <p className="mt-2 text-gray-600">{project.description}</p>}
+    {project.bulletPoints && project.bulletPoints.length > 0 && (
+      <BulletPointsList bulletPoints={project.bulletPoints} />
+    )}
   </div>
 );
 
-const ProjectsSection = ({ projects, style, isPrintMode }: { projects: ProjectItem[]; style: ResumeStyle; isPrintMode?: boolean }) => (
+const ProjectsSection = ({ projects, style }: { projects: ProjectItem[]; style: ResumeStyle }) => (
   <div style={{ marginBottom: 'var(--section-spacing)' }}>
     <SectionHeader title="Projects" style={style} />
     {projects.map((project, index) => (
-      <ProjectItem key={index} project={project} isPrintMode={isPrintMode} />
+      <ProjectItem key={index} project={project} />
     ))}
   </div>
 );
@@ -242,11 +274,11 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({ isPrintMode = false }) =>
 
   const sectionComponents = {
     personal: () => personal && <PersonalSection personal={personal} style={style} />,
-    summary: () => summary && <SummarySection summary={summary} style={style} isPrintMode={isPrintMode} />,
-    experience: () => experience && experience.length > 0 && <ExperienceSection experience={experience} style={style} isPrintMode={isPrintMode} />,
-    education: () => education && education.length > 0 && <EducationSection education={education} style={style} isPrintMode={isPrintMode} />,
+    summary: () => summary && <SummarySection summary={summary} style={style} />,
+    experience: () => experience && experience.length > 0 && <ExperienceSection experience={experience} style={style} />,
+    education: () => education && education.length > 0 && <EducationSection education={education} style={style} />,
     skills: () => skills && skills.length > 0 && <SkillsSection skills={skills} style={style} />,
-    projects: () => projects && projects.length > 0 && <ProjectsSection projects={projects} style={style} isPrintMode={isPrintMode} />,
+    projects: () => projects && projects.length > 0 && <ProjectsSection projects={projects} style={style} />,
     certifications: () => certifications && certifications.length > 0 && <CertificationsSection certifications={certifications} style={style} />,
     references: () => references && references.length > 0 && <ReferencesSection references={references} style={style} />
   };
