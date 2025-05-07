@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { useResume } from './context/ResumeContext';
 import { formatDate } from '@/lib/date-utils';
 import { Mail, Phone, MapPin, Globe, Linkedin, Github, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import useFitContent from './useFitContent';
 
 import type {
   PersonalInfo,
@@ -18,7 +19,7 @@ import type {
 import Link from 'next/link';
 
 interface ResumePreviewProps {
-  isPrintMode?: boolean;
+  contentRef?: React.RefObject<HTMLDivElement>;
 }
 
 const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
@@ -38,7 +39,12 @@ const SectionHeader = ({ title, style }: { title: string; style: ResumeStyle }) 
         "text-left": style.sectionHeaderAlignment === "left"
       }
     )}
-    style={{ color: 'var(--accent-color)' }}
+    style={{ 
+      color: 'var(--accent-color)',
+      pageBreakAfter: 'avoid',
+      breakAfter: 'avoid'
+    }}
+    data-section-header
   >
     {title}
     {style.showSectionHorizontalRule && <hr className="my-2 border-gray-900 border-solid" />}
@@ -65,7 +71,7 @@ const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: R
   }
 
   return (
-    <div className={cn("mb-6")}>
+    <div className={cn("mb-6")} data-section="personal">
       <div className={cn("flex flex-col", {
         "items-center": style.personalSectionAlignment === "center",
         "items-end": style.personalSectionAlignment === "right",
@@ -94,7 +100,7 @@ const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: R
 };
 
 const SummarySection = ({ summary, style }: { summary: string; style: ResumeStyle }) => (
-  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+  <div style={{ marginBottom: 'var(--section-spacing)' }} data-section="summary">
     <SectionHeader title="Summary" style={style} />
     <div 
       className="text-gray-600 whitespace-pre-line" 
@@ -124,8 +130,16 @@ const BulletPointsList = ({ bulletPoints }: { bulletPoints: string[] }) => (
   </ul>
 );
 
-const ExperienceItem = ({ item }: { item: ExperienceItem }) => (
-  <div className="mb-4">
+const ExperienceItem = ({ item, isFirst }: { item: ExperienceItem; isFirst?: boolean }) => (
+  <div 
+    className="mb-4" 
+    data-item 
+    style={{
+      pageBreakInside: 'avoid',
+      breakInside: 'avoid',
+      pageBreakBefore: isFirst ? 'auto' : 'auto'
+    }}
+  >
     <div className="flex justify-between items-start">
       <div>
         <h3 className="text-lg font-semibold text-gray-800">{item.position}</h3>
@@ -142,17 +156,70 @@ const ExperienceItem = ({ item }: { item: ExperienceItem }) => (
   </div>
 );
 
-const ExperienceSection = ({ experience, style }: { experience: ExperienceItem[]; style: ResumeStyle }) => (
-  <div style={{ marginBottom: 'var(--section-spacing)' }}>
-    <SectionHeader title="Experience" style={style} />
-    {experience.map((item, index) => (
-      <ExperienceItem key={index} item={item} />
-    ))}
-  </div>
-);
+const ExperienceSection = ({ experience, style }: { experience: ExperienceItem[]; style: ResumeStyle }) => {
+  // Split experiences into chunks that should stay together
+  const splitExperiences = () => {
+    if (experience.length <= 2) {
+      // If 2 or fewer experiences, keep them all together
+      return [experience];
+    } else {
+      // For more experiences, split into chunks that can fit on a page
+      const result: ExperienceItem[][] = [];
+      let currentChunk: ExperienceItem[] = [];
+      
+      experience.forEach((exp, index) => {
+        // Start a new chunk every 2 experiences
+        if (index % 2 === 0 && index > 0) {
+          result.push([...currentChunk]);
+          currentChunk = [];
+        }
+        currentChunk.push(exp);
+      });
+      
+      if (currentChunk.length > 0) {
+        result.push(currentChunk);
+      }
+      
+      return result;
+    }
+  };
+
+  const experienceChunks = splitExperiences();
+
+  return (
+    <div 
+      style={{ marginBottom: 'var(--section-spacing)' }} 
+      data-section="experience"
+    >
+      <SectionHeader title="Experience" style={style} />
+      
+      {experienceChunks.map((chunk, chunkIndex) => (
+        <div 
+          key={`chunk-${chunkIndex}`} 
+          style={{ 
+            pageBreakInside: 'avoid',
+            breakInside: 'avoid',
+            pageBreakBefore: chunkIndex > 0 ? 'always' : 'auto',
+            breakBefore: chunkIndex > 0 ? 'page' : 'auto'
+          }}
+          className="experience-chunk"
+          data-chunk={chunkIndex}
+        >
+          {chunk.map((item, index) => (
+            <ExperienceItem 
+              key={item.id || index} 
+              item={item} 
+              isFirst={index === 0}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const EducationItem = ({ item }: { item: EducationItem }) => (
-  <div className="mb-4">
+  <div className="mb-4" data-item>
     <div className="flex justify-between items-start">
       <div>
         <h3 className="text-lg font-semibold text-gray-800">{item.degree} in {item.field}</h3>
@@ -171,7 +238,7 @@ const EducationItem = ({ item }: { item: EducationItem }) => (
 );
 
 const EducationSection = ({ education, style }: { education: EducationItem[]; style: ResumeStyle }) => (
-  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+  <div style={{ marginBottom: 'var(--section-spacing)' }} data-section="education">
     <SectionHeader title="Education" style={style} />
     {education.map((item, index) => (
       <EducationItem key={index} item={item} />
@@ -180,7 +247,7 @@ const EducationSection = ({ education, style }: { education: EducationItem[]; st
 );
 
 const SkillsSection = ({ skills, style }: { skills: SkillItem[]; style: ResumeStyle }) => (
-  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+  <div style={{ marginBottom: 'var(--section-spacing)' }} data-section="skills">
     <SectionHeader title="Skills" style={style} />
     <div className="flex flex-wrap gap-2">
       {skills.map((skill, index) => (
@@ -191,7 +258,7 @@ const SkillsSection = ({ skills, style }: { skills: SkillItem[]; style: ResumeSt
 );
 
 const ProjectItem = ({ project }: { project: ProjectItem }) => (
-  <div className="mb-4">
+  <div className="mb-4" data-item>
     <div className="flex justify-between items-start">
       <h3 className="text-lg text-gray-800">
         {project.name}
@@ -210,7 +277,7 @@ const ProjectItem = ({ project }: { project: ProjectItem }) => (
 );
 
 const ProjectsSection = ({ projects, style }: { projects: ProjectItem[]; style: ResumeStyle }) => (
-  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+  <div style={{ marginBottom: 'var(--section-spacing)' }} data-section="projects">
     <SectionHeader title="Projects" style={style} />
     {projects.map((project, index) => (
       <ProjectItem key={index} project={project} />
@@ -234,7 +301,7 @@ const CertificationItem = ({ cert }: { cert: CertificationItem }) => (
 );
 
 const CertificationsSection = ({ certifications, style }: { certifications: CertificationItem[]; style: ResumeStyle }) => (
-  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+  <div style={{ marginBottom: 'var(--section-spacing)' }} data-section="certifications">
     <SectionHeader title="Certifications" style={style} />
     {certifications.map((cert, index) => (
       <CertificationItem key={index} cert={cert} />
@@ -243,7 +310,7 @@ const CertificationsSection = ({ certifications, style }: { certifications: Cert
 );
 
 const ReferencesSection = ({ references, style }: { references: ReferenceItem[]; style: ResumeStyle }) => (
-  <div style={{ marginBottom: 'var(--section-spacing)' }}>
+  <div style={{ marginBottom: 'var(--section-spacing)' }} data-section="references">
     <SectionHeader title="References" style={style} />
     {references.map((ref, index) => (
       <div key={index} className="mb-4">
@@ -257,8 +324,11 @@ const ReferencesSection = ({ references, style }: { references: ReferenceItem[];
   </div>
 );
 
-const ResumePreview: React.FC<ResumePreviewProps> = ({ isPrintMode = false }) => {
+const ResumePreview: React.FC<ResumePreviewProps> = ({ contentRef }) => {
   const { state } = useResume();
+  const { checkFitOnePage, A4_WIDTH_MM, A4_HEIGHT_MM, PAGE_MARGIN_MM } = useFitContent();
+  const [shouldPaginate, setShouldPaginate] = useState(false);
+  
   const {
     personal,
     summary,
@@ -283,17 +353,41 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({ isPrintMode = false }) =>
     references: () => references && references.length > 0 && <ReferencesSection references={references} style={style} />
   };
 
+  // A4 size is 210mm × 297mm, or 8.27in × 11.69in
+  // For better viewing, we use a scale factor in the UI
+  const scaleFactor = 0.8; // 80% of actual A4 size for screen display
+  const a4Width = `${A4_WIDTH_MM * scaleFactor}mm`;
+  const a4Padding = `${PAGE_MARGIN_MM * scaleFactor}mm`;
+  
+  // Check content height after render
+  useLayoutEffect(() => {
+    const checkContentSize = () => {
+      if (contentRef?.current) {
+        const fits = checkFitOnePage(contentRef.current);
+        setShouldPaginate(!fits);
+      }
+    };
+    
+    checkContentSize();
+    
+    // Add resize listener to recheck when window size changes
+    window.addEventListener('resize', checkContentSize);
+    return () => {
+      window.removeEventListener('resize', checkContentSize);
+    };
+  }, [checkFitOnePage, contentRef, state]);
+  
   return (
-    <div className={cn("bg-white shadow-lg p-8 overflow-visible", {
-      "print:shadow-none print:p-0": isPrintMode
-    })}>
+    <div className="bg-white shadow-lg p-0 overflow-visible flex justify-center">
       <div
         id="resumePreviewContent"
-        className={cn("max-w-full", {
+        ref={contentRef}
+        className={cn("", {
           "font-inter": style.fontFamily === "inter",
           "font-roboto": style.fontFamily === "roboto",
           "font-poppins": style.fontFamily === "poppins",
-          "font-opensans": style.fontFamily === "opensans"
+          "font-opensans": style.fontFamily === "opensans",
+          "allow-pagination": shouldPaginate
         })}
         style={{
           '--accent-color': style.accentColor,
@@ -301,7 +395,17 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({ isPrintMode = false }) =>
           'lineHeight': style.lineHeight,
           '--section-spacing': `${style.sectionSpacing}px`,
           '--resume-font-size': `${style.fontSize}px`,
-          '--resume-line-height': style.lineHeight
+          '--resume-line-height': style.lineHeight,
+          'width': a4Width,
+          'height': 'auto',
+          'padding': a4Padding,
+          'margin': '0 auto',
+          'background': 'white',
+          'boxShadow': '0 0 10px rgba(0, 0, 0, 0.1)',
+          'boxSizing': 'border-box',
+          'position': 'relative',
+          'maxHeight': shouldPaginate ? 'none' : `${(A4_HEIGHT_MM - PAGE_MARGIN_MM * 2) * scaleFactor}mm`,
+          'overflow': shouldPaginate ? 'visible' : 'hidden'
         } as React.CSSProperties}
       >
         {activeSections.map((section) => {
