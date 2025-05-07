@@ -256,9 +256,9 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                     <Slider 
                       value={[state.style.sectionSpacing]} 
                       onValueChange={([value]) => handleStyleChange('sectionSpacing', value)}
-                      max={48} 
-                      min={16} 
-                      step={4} 
+                      max={18} 
+                      min={10} 
+                      step={2} 
                     />
                     <span className="w-12 text-sm">{state.style.sectionSpacing}px</span>
                   </div>

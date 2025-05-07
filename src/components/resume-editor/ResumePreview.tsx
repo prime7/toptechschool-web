@@ -71,21 +71,21 @@ const PersonalSection = ({ personal, style }: { personal: PersonalInfo; style: R
   }
 
   return (
-    <div className={cn("mb-6")} data-section="personal">
+    <div className="mb-4" data-section="personal">
       <div className={cn("flex flex-col", {
         "items-center": style.personalSectionAlignment === "center",
         "items-end": style.personalSectionAlignment === "right",
         "items-start": style.personalSectionAlignment === "left"
       })}>
-        <h1 className={cn('mb-1 text-2xl font-bold text-gray-800')}>
+        <h1 className="text-2xl font-bold text-gray-800">
           {personal.fullName}
         </h1>
         {personal.title && (
-          <h2 className={cn('mb-3 text-lg text-gray-800')}>
+          <h2 className="text-lg text-gray-800">
             {personal.title}
           </h2>
         )}
-        <div className={cn("flex flex-wrap gap-4 text-gray-800", {
+        <div className={cn("flex flex-wrap gap-1 text-gray-800", {
           "justify-center": style.personalSectionAlignment === "center",
           "justify-end": style.personalSectionAlignment === "right",
           "justify-start": style.personalSectionAlignment === "left"

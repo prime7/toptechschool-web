@@ -32,6 +32,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
     { name: "Dashboard", href: "/dashboard" },
     { name: "Practice", href: "/practice" },
     { name: "Resume", href: "/resume" },
+    { name: "Resume Editor", href: "/resume/editor" },
     { name: "Job", href: "/job" },
   ];
 
