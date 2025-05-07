@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { SectionType } from './types';
 import { ResumeProvider } from './context/ResumeContext';
 import { useResume } from './context/ResumeContext';
@@ -37,10 +37,10 @@ export default function ResumeEditor() {
 function ResumeEditorContent() {
   const [activeSection, setActiveSection] = React.useState<SectionType>('personal');
   const { state } = useResume();
-  const pdfContainerRef = useRef<HTMLDivElement>(null);
+
   const ActiveSectionComponent = SECTION_COMPONENTS[activeSection];
 
-  const { debouncedValue: debouncedState, isLoading } = useDebounce(state, 500);
+  const { debouncedValue: debouncedState } = useDebounce(state, 500);
 
   useEffect(() => {
     const style = document.createElement('style');
@@ -52,12 +52,6 @@ function ResumeEditorContent() {
     return () => {
       document.head.removeChild(style);
     };
-  }, []);
-
-  const [isClient, setIsClient] = React.useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
   }, []);
 
   const StablePDFDocument = useMemo(() => (
