@@ -31,3 +31,5 @@ Google Analytics is used for the following:
 Google Search Console is used for the following:
 - Sitemap submission
 - Robots.txt submission
+
+## Used react-pdf renderer
