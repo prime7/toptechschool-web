@@ -1,11 +1,5 @@
 import React from 'react';
 import { useResume } from '../context/ResumeContext';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -22,15 +16,15 @@ const PersonalInfoEditor: React.FC = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-xl">Personal Information</CardTitle>
+    <div>
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold">Personal Information</h2>
         <p className="text-sm text-muted-foreground">
           Add your personal and contact information.
         </p>
-      </CardHeader>
+      </div>
 
-      <CardContent className="space-y-6">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="fullName">Full Name</Label>
@@ -120,8 +114,8 @@ const PersonalInfoEditor: React.FC = () => {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
