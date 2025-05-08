@@ -13,14 +13,14 @@ import {
 } from "@/components/ui/accordion"
 
 interface QuestionAnalysis {
-  questionText: string
+  question: string
   answer: string
   feedback: string
   improvement: string
 }
 
 interface PracticeAnalysis {
-  questionAnalysis: QuestionAnalysis[]
+  results: QuestionAnalysis[]
 }
 
 export default async function PracticeResultPage({ params }: { params: { id: string } }) {
@@ -37,7 +37,7 @@ export default async function PracticeResultPage({ params }: { params: { id: str
   revalidatePath(`/practice`)
 
   const analysis = practiceTest.aiAnalysis as unknown as PracticeAnalysis
-  if (!analysis?.questionAnalysis) {
+  if (!analysis?.results) {
     redirect(`/practice/${params.id}`)
   }
 
@@ -64,7 +64,7 @@ export default async function PracticeResultPage({ params }: { params: { id: str
         </div>
 
         <Accordion type="single" collapsible className="space-y-6">
-          {analysis.questionAnalysis.map((item, index) => (
+          {analysis.results.map((item, index) => (
             <AccordionItem key={index} value={`question-${index}`}>
               <Card>
                 <CardHeader>
@@ -73,7 +73,7 @@ export default async function PracticeResultPage({ params }: { params: { id: str
                       <span className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center font-semibold">
                         {index + 1}
                       </span>
-                      <p>{item.questionText}</p>
+                      <p>{item.question}</p>
                     </div>
                   </AccordionTrigger>
                 </CardHeader>
