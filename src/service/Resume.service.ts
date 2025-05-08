@@ -112,9 +112,11 @@ export class ResumeService extends BaseService {
     }
     const analysis = resume.analysis;
     return [
-      ...(Array.isArray(analysis.strengths) ? analysis.strengths : []),
-      ...(Array.isArray(analysis.gaps) ? analysis.gaps : []),
-      typeof analysis.recommendations === 'string' ? analysis.recommendations : ""
+      ...(Array.isArray(analysis.detailedAreasForImprovement) 
+        ? analysis.detailedAreasForImprovement.map(area => area.improvedText) 
+        : []),
+      ...(Array.isArray(analysis.missingSkills) ? analysis.missingSkills : []),
+      ...(Array.isArray(analysis.redFlags) ? analysis.redFlags : [])
     ].filter(Boolean).join(" ");
   }
-} 
+}
