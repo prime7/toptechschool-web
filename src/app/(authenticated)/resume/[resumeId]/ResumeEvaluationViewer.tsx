@@ -9,8 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Lightbulb, ArrowRight, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AlertTriangle, Lightbulb, ChevronRight } from "lucide-react";
 
 interface ResumeEvaluationViewerProps {
   evaluation: ResumeEvaluationResult | null;
