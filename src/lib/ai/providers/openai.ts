@@ -10,6 +10,10 @@ const MODEL_COST_PER_TOKEN = {
     input: 0.00000040,
     output: 0.00000160,
   },
+  "gpt-4.1-2025-04-14": {
+    input: 0.00000800,
+    output: 0.00002000
+  }
 } as const;
 
 export type OpenAIModels = keyof typeof MODEL_COST_PER_TOKEN;
@@ -40,7 +44,7 @@ export class OpenAIProvider implements AIProvider {
     const response = await this.client.chat.completions.create({
       model: params.model,
       messages: [{ role: "user", content: params.prompt }],
-      max_tokens: params.maxTokens,
+      max_tokens: params.maxTokens ?? 4096,
       temperature: params.temperature,
     });
 

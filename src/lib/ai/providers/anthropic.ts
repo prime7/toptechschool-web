@@ -3,8 +3,12 @@ import { AIProvider, AIConfig } from "../types";
 
 const MODEL_COST_PER_TOKEN = {
   "claude-3-haiku-20240307": {
+    input: 0.00000025,
+    output: 0.00000125
+  },
+  "claude-3-5-haiku-20241022": {
     input: 0.00000080,
-    output: 0.00000040
+    output: 0.00000400
   }
 } as const;
 
@@ -35,7 +39,7 @@ export class AnthropicProvider implements AIProvider {
     const response = await this.client.messages.create({
       model: params.model,
       messages: [{ role: "user", content: params.prompt }],
-      max_tokens: params.maxTokens ?? 1000,
+      max_tokens: params.maxTokens ?? 4096,
       temperature: params.temperature,
     });
 

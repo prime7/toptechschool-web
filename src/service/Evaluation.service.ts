@@ -13,12 +13,15 @@ export interface JobMatchEvaluationResult {
 }
 
 export interface ResumeEvaluationResult {
-  matchScore: number;
-  missingKeywords: string[];
-  suggestions: string[];
-  strengths: string[];
-  gaps: string[];
-  recommendations: string[];
+  overallScore: number;
+  detailedAreasForImprovement: Array<{
+    area: string;
+    referenceText: string;
+    improvedText: string;
+    relevanceToRoleCategory: string;
+  }>;
+  missingSkills: string[];
+  redFlags: string[];
 }
 
 export interface QuestionAnalysis {
@@ -44,12 +47,10 @@ export class EvaluationService extends BaseService {
     } as JobMatchEvaluationResult,
 
     resume: {
-      matchScore: 0,
-      missingKeywords: [],
-      suggestions: [],
-      strengths: [],
-      gaps: [],
-      recommendations: ["Unable to generate recommendations due to an error."]
+      overallScore: 0,
+      detailedAreasForImprovement: [],
+      missingSkills: [],
+      redFlags: []
     } as ResumeEvaluationResult,
 
     practice: {
@@ -71,6 +72,7 @@ export class EvaluationService extends BaseService {
             prompt,
             model: "claude-3-haiku-20240307",
             requestType: "job_evaluation",
+            maxTokens: 4096,
             userId
           });
           return JSON.parse(response.text) as JobMatchEvaluationResult;
@@ -90,16 +92,17 @@ export class EvaluationService extends BaseService {
     return this.handleError(
       async () => {
         try {
-          const prompt = generateResumeReviewPrompt(resumeData, jobRole);
+          const prompt = generateResumeReviewPrompt({ resumeData, jobRole });
           const response = await ai.generateResponse({
             prompt: prompt,
-            model: "claude-3-haiku-20240307",
+            model: 'claude-3-5-haiku-20241022',
             requestType: "resume_review",
             userId,
             provider: "anthropic"
           });
           return JSON.parse(response.text) as ResumeEvaluationResult;
-        } catch {
+        } catch (error) {
+          console.error("Error evaluating resume", error);
           return this.DEFAULT_RESPONSES.resume;
         }
       },
