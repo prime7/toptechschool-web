@@ -4,7 +4,7 @@ import { generateId } from '../utils';
 import { defaultStyle } from '../constants'
 
 
-const initialResumeData: ResumeData = {
+export const initialResumeData: ResumeData = {
   activeSections: ['personal', 'summary', 'experience', 'education', 'skills'],
   personal: {
     fullName: 'John Doe',
@@ -134,7 +134,7 @@ const initialResumeData: ResumeData = {
   style: defaultStyle
 };
 
-const blankResumeData: ResumeData = {
+export const blankResumeData: ResumeData = {
   personal: {
     fullName: '',
     email: '',
@@ -423,9 +423,8 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
   }
 }
 
-export function ResumeProvider({ children, initialState }: { children: React.ReactNode, initialState?: ResumeData }) {
-  const data = process.env.NODE_ENV === "development" ? initialResumeData : blankResumeData;
-  const [state, dispatch] = useReducer(resumeReducer, data);
+export function ResumeProvider({ children, initialState }: { children: React.ReactNode, initialState: ResumeData }) {
+  const [state, dispatch] = useReducer(resumeReducer, initialState);
   return (
     <ResumeContext.Provider value={{ state, dispatch }}>
       {children}

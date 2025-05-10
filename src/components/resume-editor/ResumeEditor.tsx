@@ -14,6 +14,7 @@ import ProjectsEditor from './sections/ProjectsEditor';
 import CertificationsEditor from './sections/CertificationsEditor';
 import ReferencesEditor from './sections/ReferencesEditor';
 import { useDebounce } from '@/hooks/use-debounce';
+import { blankResumeData } from './context/ResumeContext';
 
 const SECTION_COMPONENTS: Record<SectionType, React.ComponentType> = {
   personal: PersonalInfoEditor,
@@ -28,7 +29,7 @@ const SECTION_COMPONENTS: Record<SectionType, React.ComponentType> = {
 
 export default function ResumeEditor() {
   return (
-    <ResumeProvider>
+    <ResumeProvider initialState={blankResumeData}>
       <ResumeEditorContent />
     </ResumeProvider>
   );
