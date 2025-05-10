@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import { SectionType } from './types';
 import { ResumeProvider } from './context/ResumeContext';
 import { useResume } from './context/ResumeContext';
@@ -40,23 +40,7 @@ function ResumeEditorContent() {
 
   const ActiveSectionComponent = SECTION_COMPONENTS[activeSection];
 
-  const { debouncedValue: debouncedState } = useDebounce(state, 500);
-
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;500;600;700&display=swap');
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
-  const StablePDFDocument = useMemo(() => (
-    <ResumePDFDocument resumeData={debouncedState} />
-  ), [debouncedState]);
+  const { debouncedValue: debouncedState } = useDebounce(state, 1500);
 
   return (
     <div className="h-[calc(100vh-5rem)] flex flex-row">
@@ -67,9 +51,11 @@ function ResumeEditorContent() {
       <div className="flex-1 overflow-y-auto p-4">
         <ActiveSectionComponent />
       </div>
-      <PDFViewer className="flex-1">
-        {StablePDFDocument}
-      </PDFViewer>
+      <div className="flex-1 relative">
+        <PDFViewer className="w-full h-full">
+          <ResumePDFDocument resumeData={debouncedState} />
+        </PDFViewer>
+      </div>
     </div>
   );
 }

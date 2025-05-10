@@ -44,19 +44,18 @@ const createStyles = (style: ResumeStyle) => StyleSheet.create({
   personalHeaderName: {
     fontSize: style.fontSize * 1.6,
     fontWeight: 'bold',
-    marginBottom: 3
+    marginBottom: 6
   },
   personalHeaderTitle: {
     fontSize: style.fontSize * 1.1,
-    marginBottom: 6,
+    marginBottom: 3,
     color: style.accentColor
   },
   contactRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    gap: 10,
-    marginBottom: 10
+    marginBottom: 3
   },
   contactItem: {
     flexDirection: 'row',
@@ -276,31 +275,20 @@ const PersonalSection = ({
     return { textAlign: alignment } as const;
   };
   
-  const getFlexAlign = () => {
+  const getAlignmentStyles = () => {
     switch (alignment) {
       case 'center': 
-        return { alignItems: 'center' } as const;
+        return { alignItems: 'center', justifyContent: 'center' } as const;
       case 'right': 
-        return { alignItems: 'flex-end' } as const;
+        return { alignItems: 'flex-end', justifyContent: 'flex-end' } as const;
       default: 
-        return { alignItems: 'flex-start' } as const;
-    }
-  };
-  
-  const getJustify = () => {
-    switch (alignment) {
-      case 'center': 
-        return { justifyContent: 'center' } as const;
-      case 'right': 
-        return { justifyContent: 'flex-end' } as const;
-      default: 
-        return { justifyContent: 'flex-start' } as const;
+        return { alignItems: 'flex-start', justifyContent: 'flex-start' } as const;
     }
   };
   
   return (
     <View style={styles.section}>
-      <View style={getFlexAlign()}>
+      <View style={getAlignmentStyles()}>
         <Text style={[styles.personalHeaderName, getTextAlign()]}>
           {personal.fullName}
         </Text>
@@ -311,7 +299,7 @@ const PersonalSection = ({
         )}
       </View>
       
-      <View style={[styles.contactRow, getJustify()]}>
+      <View style={[styles.contactRow, getAlignmentStyles()]}>
         {personal.email && (
           <ContactItem icon={<MailIcon />} text={personal.email} />
         )}
