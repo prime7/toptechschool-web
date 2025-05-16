@@ -1,5 +1,6 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import Google from "next-auth/providers/google";
+import LinkedInProvider from "next-auth/providers/linkedin";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 
@@ -33,6 +34,12 @@ export const { handlers, auth, signIn, signOut, unstable_update: updateSession }
           response_type: "code",
         },
       },
+      allowDangerousEmailAccountLinking: true,
+    }),
+    LinkedInProvider({
+      clientId: process.env.AUTH_LINKEDIN_ID as string,
+      clientSecret: process.env.AUTH_LINKEDIN_SECRET as string,
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   callbacks: {
