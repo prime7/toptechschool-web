@@ -27,7 +27,7 @@ export function PrefixedInput({
           {icon}
         </div>
       )}
-      <div className="flex-1 flex items-center border border-input rounded-md overflow-hidden transition-shadow">
+      <div className="flex-1 flex items-center border border-input rounded-md overflow-hidden transition-shadow focus-within:border-primary">
         <div className="py-2 px-3 text-sm font-medium text-muted-foreground bg-muted/50 whitespace-nowrap border-r border-input">
           {prefix}
         </div>
