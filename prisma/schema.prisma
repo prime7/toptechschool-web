@@ -19,28 +19,19 @@ model User {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   title           String?
-  bio             String?
+  summary         String?
+  github          String?
+  website         String?
+  linkedin        String?
   location        String?
   accounts        Account[]
   resumes         Resume[]
   sessions        Session[]
-  socialLinks     SocialLink[]
   workExperience  WorkExperience[]
   education       Education[]
   skills          Skill[]
   practiceTests   PracticeTest[]
   ai              AI[]
-}
-
-model SocialLink {
-  id           String   @id @default(cuid())
-  platform     Platform
-  url          String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  displayOrder Int      @default(0)
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Skill {
@@ -197,17 +188,6 @@ enum JobRole {
   SYSTEM_ADMINISTRATOR
   SECURITY_ENGINEER
   DATABASE_ADMINISTRATOR
-}
-
-enum Platform {
-  LINKEDIN
-  GITHUB
-  X
-  FACEBOOK
-  YOUTUBE
-  STACKOVERFLOW
-  PERSONAL_WEBSITE
-  PORTFOLIO
 }
 
 enum Degree {
