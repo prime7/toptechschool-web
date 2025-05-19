@@ -1,187 +1,418 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState, useTransition, useOptimistic, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { getInitialsFromName } from "@/lib/utils";
-import { User } from '@prisma/client'
-import { Edit, User as UserIcon, MapPin, Mail } from "lucide-react";
-import { useState, useTransition, useOptimistic } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { InputField } from "@/components/common/FormField";
-import { ProfileSection } from "@/app/(authenticated)/profile/ProfileSection";
+import { Textarea } from "@/components/ui/textarea";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { type User, JobRole } from "@prisma/client";
+import {
+  Edit,
+  MapPin,
+  Mail,
+  Github,
+  Globe,
+  Linkedin,
+  Loader2,
+  X,
+  Check,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { PrefixedInput } from "@/components/ui/prefix-input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+
+const JOB_ROLES = Object.entries(JobRole).map(([key, value]) => ({
+  label: key
+    .replace(/_/g, " ")
+    .replace(
+      /\w\S*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    ),
+  value,
+}));
+
+interface ProfileFormData {
+  name: string;
+  title: string;
+  location: string;
+  email: string;
+  summary: string;
+  githubUsername: string;
+  website: string;
+  linkedinUsername: string;
+}
 
 interface ProfileHeaderProps {
   user: User;
   onSave: (updatedUser: Partial<User>) => Promise<User>;
 }
 
+const ProfileEditDialog = ({
+  open,
+  onOpenChange,
+  formData,
+  onFieldChange,
+  onSave,
+  isPending,
+  user,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  formData: ProfileFormData;
+  onFieldChange: (field: keyof ProfileFormData, value: string) => void;
+  onSave: () => void;
+  isPending: boolean;
+  user: User;
+}) => (
+  <Dialog open={open} onOpenChange={onOpenChange}>
+    <DialogContent className="sm:max-w-[575px] p-6 border-primary/20 overflow-y-auto max-h-[90vh]">
+      <DialogHeader className="space-y-2">
+        <DialogTitle className="text-xl font-semibold">
+          Edit Profile
+        </DialogTitle>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Mail className="h-4 w-4 text-primary/70" />
+          <span>{user.email}</span>
+        </div>
+      </DialogHeader>
+
+      <Separator className="my-4" />
+
+      <div className="grid gap-5 py-2">
+        <div className="space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <InputField
+              label="Name"
+              value={formData.name}
+              onChange={(value) => onFieldChange("name", value)}
+              required
+              placeholder="Enter your full name"
+            />
+            <SearchableSelect
+              label="Job Role"
+              options={JOB_ROLES}
+              value={formData.title}
+              onValueChange={(value) => onFieldChange("title", value)}
+              placeholder="Select a job role"
+            />
+          </div>
+          <InputField
+            label="Location"
+            value={formData.location}
+            onChange={(value) => onFieldChange("location", value)}
+            placeholder="e.g. San Francisco, CA"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="summary" className="text-sm font-medium">
+            Professional Summary
+          </Label>
+          <Textarea
+            id="summary"
+            value={formData.summary}
+            onChange={(e) => onFieldChange("summary", e.target.value)}
+            placeholder="Write a brief summary about your professional experience, skills, and career goals..."
+            className="min-h-[120px] resize-y"
+          />
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Social Profiles</h3>
+          <div className="grid gap-4">
+            <PrefixedInput
+              icon={<Github className="h-5 w-5" />}
+              prefix="github.com/"
+              value={formData.githubUsername}
+              onChange={(value) => onFieldChange("githubUsername", value)}
+              placeholder="username"
+            />
+            <PrefixedInput
+              icon={<Linkedin className="h-5 w-5" />}
+              prefix="linkedin.com/in/"
+              value={formData.linkedinUsername}
+              onChange={(value) => onFieldChange("linkedinUsername", value)}
+              placeholder="username"
+            />
+            <PrefixedInput
+              icon={<Globe className="h-5 w-5" />}
+              prefix="https://"
+              value={formData.website}
+              onChange={(value) => onFieldChange("website", value)}
+              placeholder="website"
+            />
+          </div>
+        </div>
+      </div>
+
+      <DialogFooter className="gap-2 sm:gap-0 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => onOpenChange(false)}
+          disabled={isPending}
+          className="flex items-center gap-2"
+        >
+          <X className="h-4 w-4" />
+          Cancel
+        </Button>
+        <Button
+          onClick={onSave}
+          disabled={isPending}
+          className="flex items-center gap-2"
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Check className="h-4 w-4" />
+              Save Changes
+            </>
+          )}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);
+
 export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [optimisticUser, updateOptimisticUser] = useOptimistic(
-    user,
-    (state, update: Partial<User>) => ({ ...state, ...update })
-  );
   const { toast } = useToast();
-  
-  const [formData, setFormData] = useState({
+
+  const [optimisticUser, updateOptimisticUser] = useOptimistic<
+    User,
+    Partial<User>
+  >(user, (state, update) => ({
+    ...state,
+    ...update,
+  }));
+
+  const extractUsername = (url: string, domain: string) => {
+    if (!url) return "";
+    const pattern = new RegExp(
+      `(?:https?:\\/\\/(?:www\\.)?)?${domain}\\.com\\/(?:in\\/)?([^/?#]+)`
+    );
+    const match = url.match(pattern);
+    if (match && match[1]) return match[1];
+
+    const simpleExtract = url
+      .replace(/^https?:\/\//, "")
+      .replace(`www.${domain}.com/`, "")
+      .replace(`${domain}.com/`, "");
+    return simpleExtract.split("/")[0];
+  };
+
+  const [formData, setFormData] = useState<ProfileFormData>({
     name: user.name || "",
     title: user.title || "",
     location: user.location || "",
     email: user.email || "",
+    summary: user.summary || "",
+    githubUsername: extractUsername(user.github || "", "github"),
+    website: user.website || "",
+    linkedinUsername: extractUsername(user.linkedin || "", "linkedin"),
   });
 
+  useEffect(() => {
+    if (!editing) {
+      setFormData({
+        name: user.name || "",
+        title: user.title || "",
+        location: user.location || "",
+        email: user.email || "",
+        summary: user.summary || "",
+        githubUsername: extractUsername(user.github || "", "github"),
+        website: user.website || "",
+        linkedinUsername: extractUsername(user.linkedin || "", "linkedin"),
+      });
+    }
+  }, [user, editing]);
+
+  const formatUrl = (
+    usernameOrUrl: string,
+    basePrefix: string,
+    domain: string
+  ) => {
+    if (!usernameOrUrl) return "";
+    if (
+      usernameOrUrl.startsWith("http://") ||
+      usernameOrUrl.startsWith("https://")
+    ) {
+      return usernameOrUrl;
+    }
+    if (!domain && usernameOrUrl.includes(".")) {
+      return `${basePrefix}${usernameOrUrl}`;
+    }
+    if (domain && !usernameOrUrl.includes(domain)) {
+      return `${basePrefix}${usernameOrUrl}`;
+    }
+    if (domain && usernameOrUrl.includes(domain)) {
+      return `https://${usernameOrUrl.replace(/^https?:\/\//, "")}`;
+    }
+    return usernameOrUrl;
+  };
+
   const handleSave = () => {
-    const updatedFields = {
+    const updatedFields: Partial<User> = {
       name: formData.name,
       title: formData.title,
       location: formData.location,
-      email: formData.email,
+      summary: formData.summary,
+      github: formatUrl(
+        formData.githubUsername,
+        "https://github.com/",
+        "github"
+      ),
+      website: formatUrl(formData.website, "https://", ""),
+      linkedin: formatUrl(
+        formData.linkedinUsername,
+        "https://www.linkedin.com/in/",
+        "linkedin"
+      ),
     };
-    
+
     updateOptimisticUser(updatedFields);
-    
+
     startTransition(async () => {
       try {
         await onSave(updatedFields);
         setEditing(false);
         toast({
           title: "Profile updated",
-          description: "Your profile information has been updated successfully.",
+          description:
+            "Your profile information has been updated successfully.",
         });
       } catch (error) {
         console.error("Failed to update profile:", error);
+        updateOptimisticUser(user);
         toast({
           title: "Update failed",
-          description: "There was a problem updating your profile. Please try again.",
+          description:
+            "There was a problem updating your profile. Please try again.",
           variant: "destructive",
         });
       }
     });
   };
 
-  const handleCancel = () => {
-    setFormData({
-      name: user.name || "",
-      title: user.title || "",
-      location: user.location || "",
-      email: user.email || "",
-    });
-    setEditing(false);
+  const handleFieldChange = (field: keyof ProfileFormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleFieldChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const getJobRoleLabel = (roleValue: string) => {
+    return (
+      JOB_ROLES.find((role) => role.value === roleValue)?.label || roleValue
+    );
   };
+
+  const socialLinks = [
+    {
+      url: optimisticUser.github,
+      icon: <Github className="h-5 w-5" />,
+      label: "GitHub Profile",
+    },
+    {
+      url: optimisticUser.website,
+      icon: <Globe className="h-5 w-5" />,
+      label: "Personal Website",
+    },
+    {
+      url: optimisticUser.linkedin,
+      icon: <Linkedin className="h-5 w-5" />,
+      label: "LinkedIn Profile",
+    },
+  ];
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-center sm:items-start">
-        <div className="relative group">
-          <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-background shadow-lg ring-2 ring-primary/20 transition-all duration-300 group-hover:ring-primary/30 bg-primary/5">
-            <AvatarImage 
-              src={optimisticUser?.image ?? ""} 
-              alt={optimisticUser?.name ?? ""} 
-              className="object-cover"
-            />
-            <AvatarFallback className="text-2xl sm:text-3xl bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-medium">
-              {getInitialsFromName(optimisticUser?.name ?? "")}
-            </AvatarFallback>
-          </Avatar>
+    <Card className="border-0 shadow-lg overflow-hidden">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <span className="text-2xl font-medium text-primary">
+                {optimisticUser?.name?.[0]?.toUpperCase()}
+              </span>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">{optimisticUser?.name}</h1>
+              {optimisticUser.title && (
+                <div className="text-muted-foreground">
+                  {getJobRoleLabel(optimisticUser.title)}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setEditing(true)}
+          >
+            <Edit className="h-4 w-4 mr-1.5" />
+            Edit
+          </Button>
         </div>
 
-        <div className="flex-1 text-center sm:text-left">
-          <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-            <h1 className="text-2xl sm:text-3xl font-bold capitalize tracking-tight">
-              {optimisticUser?.name || "Add your name"}
-            </h1>
-            {!editing && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setEditing(true)}
-                className="hover:bg-primary/10 hover:text-primary transition-colors"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-          
-          <div className="text-lg sm:text-xl text-muted-foreground capitalize mb-3">
-            {optimisticUser.title || <span className="text-muted-foreground/60 italic">Add your professional title</span>}
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-center sm:items-start mt-4">
-            {optimisticUser?.location && (
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <MapPin className="h-4 w-4 text-primary/70" />
-                <span className="capitalize">{optimisticUser.location}</span>
-              </div>
-            )}
-            
-            {optimisticUser?.email && (
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Mail className="h-4 w-4 text-primary/70" />
-                <span className="lowercase break-words">{optimisticUser.email}</span>
-              </div>
-            )}
+        {optimisticUser.summary && (
+          <p className="text-muted-foreground mb-4">{optimisticUser.summary}</p>
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          {optimisticUser?.location && (
+            <Badge variant="secondary" className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5" />
+              {optimisticUser.location}
+            </Badge>
+          )}
+
+          {optimisticUser?.email && (
+            <Badge variant="secondary" className="flex items-center gap-1.5">
+              <Mail className="h-3.5 w-3.5" />
+              {optimisticUser.email}
+            </Badge>
+          )}
+
+          <div className="flex gap-3 items-center">
+            {socialLinks
+              .filter((link) => link.url)
+              .map((link, index) => (
+                <a
+                  key={index}
+                  href={link.url || ""}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center h-10 w-10 bg-primary/10 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
+                  aria-label={link.label}
+                >
+                  {link.icon}
+                </a>
+              ))}
           </div>
         </div>
-      </div>
-      
-      {editing && (
-        <div className="mt-6 sm:mt-8 rounded-xl overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
-          <ProfileSection 
-            title="Edit Profile Information" 
-            icon={<UserIcon className="h-5 w-5" />}
-          >
-            <div className="grid gap-4 sm:gap-5">
-              <InputField
-                label="Name"
-                value={formData.name}
-                onChange={(value) => handleFieldChange("name", value)}
-                required
-              />
-              <InputField
-                label="Professional Title"
-                value={formData.title}
-                onChange={(value) => handleFieldChange("title", value)}
-                placeholder="e.g. Software Engineer"
-              />
-              <InputField
-                label="Location"
-                value={formData.location}
-                onChange={(value) => handleFieldChange("location", value)}
-                placeholder="e.g. San Francisco, CA"
-              />
-              <InputField
-                label="Email"
-                value={formData.email}
-                onChange={(value) => handleFieldChange("email", value)}
-                type="email"
-                required
-              />
-              <div className="flex flex-col sm:flex-row sm:justify-end gap-2 mt-3">
-                <Button 
-                  variant="outline" 
-                  onClick={handleCancel} 
-                  disabled={isPending} 
-                  className="w-full sm:w-auto"
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={handleSave} 
-                  disabled={isPending} 
-                  className="w-full sm:w-auto"
-                >
-                  {isPending ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-            </div>
-          </ProfileSection>
-        </div>
-      )}
-    </div>
+      </CardContent>
+
+      <ProfileEditDialog
+        open={editing}
+        onOpenChange={setEditing}
+        formData={formData}
+        onFieldChange={handleFieldChange}
+        onSave={handleSave}
+        isPending={isPending}
+        user={user}
+      />
+    </Card>
   );
 }
