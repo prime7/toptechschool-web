@@ -25,6 +25,7 @@ type WorkExperienceFormData = {
   startDate: string;
   endDate: string | null;
   description: string | null;
+  points?: string[];
   displayOrder: number;
 };
 
@@ -47,6 +48,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
     startDate: "",
     endDate: null,
     description: "",
+    points: [],
     displayOrder: 0,
   });
 
@@ -83,6 +85,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
         startDate: parseMonthInput(newExperience.startDate),
         endDate: newExperience.endDate ? parseMonthInput(newExperience.endDate) : null,
         description: newExperience.description,
+        points: newExperience.points || [],
       };
     } else {
       // Add new experience
@@ -96,6 +99,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
         startDate: parseMonthInput(newExperience.startDate),
         endDate: newExperience.endDate ? parseMonthInput(newExperience.endDate) : null,
         description: newExperience.description,
+        points: newExperience.points || [],
         displayOrder: optimisticExperience.length,
       };
       updatedExperiences = [...optimisticExperience, experienceToAdd];
@@ -115,6 +119,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
           startDate: exp.startDate,
           endDate: exp.endDate,
           description: exp.description,
+          points: exp.points,
           displayOrder: exp.displayOrder,
         }));
 
@@ -156,6 +161,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
       startDate: dateToMonthString(exp.startDate),
       endDate: dateToMonthString(exp.endDate),
       description: exp.description || "",
+      points: exp.points,
       displayOrder: exp.displayOrder,
     });
     setIsDialogOpen(true);
@@ -170,6 +176,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
       startDate: "",
       endDate: null,
       description: "",
+      points: [],
       displayOrder: 0,
     });
     setEditingIndex(null);
@@ -197,6 +204,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
           startDate: exp.startDate,
           endDate: exp.endDate,
           description: exp.description,
+          points: exp.points,
           displayOrder: exp.displayOrder,
         }));
 
@@ -255,7 +263,7 @@ export default function ProfileWorkExperience({ user, onSave }: ProfileWorkExper
               title={exp.position}
               subtitle={`${exp.company}${exp.location ? ` · ${exp.location}` : ''}`}
               dateRange={formatDateRange(exp.startDate, exp.endDate)}
-              description={exp.description}
+              points={exp.points}
               onEdit={() => handleEditExperience(index)}
               onDelete={() => handleRemoveExperience(index)}
             >

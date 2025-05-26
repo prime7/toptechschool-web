@@ -6,7 +6,7 @@ interface TimelineItemProps {
   title: string;
   subtitle: string;
   dateRange: string;
-  description?: string | null;
+  points?: string[] | null;
   onEdit?: () => void;
   onDelete?: () => void;
   children?: ReactNode;
@@ -16,7 +16,7 @@ export function TimelineItem({
   title,
   subtitle,
   dateRange,
-  description,
+  points,
   onEdit,
   onDelete,
   children,
@@ -29,7 +29,15 @@ export function TimelineItem({
           <h3 className="font-semibold text-lg">{title}</h3>
           <p className="text-muted-foreground">{subtitle}</p>
           <p className="text-sm text-muted-foreground">{dateRange}</p>
-          {description && <p className="mt-2">{description}</p>}
+          {points && points.length > 0 && (
+            <ul className="mt-2 space-y-2">
+              {points.map((point, index) => (
+                <li key={index} className="text-sm text-muted-foreground">
+                  {point}
+                </li>
+              ))}
+            </ul>
+          )}
           {children}
         </div>
         <div className="flex gap-2">
@@ -47,4 +55,4 @@ export function TimelineItem({
       </div>
     </div>
   );
-} 
+}

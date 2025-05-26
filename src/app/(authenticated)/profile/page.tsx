@@ -86,7 +86,7 @@ export default async function Profile() {
               degree: edu.degree,
               startDate: new Date(edu.startDate),
               endDate: edu.endDate ? new Date(edu.endDate) : null,
-              description: edu.description,
+              points: edu.points,
               displayOrder: edu.displayOrder,
             })),
           },

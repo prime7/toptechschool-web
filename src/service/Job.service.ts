@@ -18,9 +18,8 @@ export class JobService extends BaseService {
           resumeData = ResumeService.getResumeContentString(resume as unknown as { analysis: ResumeEvaluationResult | null });
         }
 
-        const evaluation = await EvaluationService.evaluateJobMatch(
-          jobDescription,
-          resumeData,
+        const evaluation = await EvaluationService.evaluateResume(
+          resumeData || jobDescription,
           jobRole,
           userId
         );
@@ -29,9 +28,9 @@ export class JobService extends BaseService {
           data: {
             userId,
             resumeId: resumeId || null,
-            matchScore: evaluation.matchScore,
-            missingKeywords: evaluation.missingKeywords,
-            suggestions: evaluation.suggestions,
+            matchScore: evaluation.overallScore,
+            missingKeywords: evaluation.missingSkills,
+            suggestions: evaluation.detailedAreasForImprovement.map(area => area.improvedText),
           },
         });
 

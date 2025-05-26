@@ -1,7 +1,8 @@
 "use client";
 
-import { JobMatchEvaluationResult } from "@/service/Evaluation.service";
+import { ResumeEvaluationResult } from "@/service/Evaluation.service";
 import {
+  Card,
   CardContent,
   CardDescription,
   CardHeader,
@@ -9,9 +10,10 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, AlertCircle, Lightbulb, ArrowUpRight } from "lucide-react";
 
 type JobReportProps = {
-  evaluation: JobMatchEvaluationResult | null;
+  evaluation: ResumeEvaluationResult | null;
 };
 
 export default function JobReport({ evaluation }: JobReportProps) {
@@ -21,74 +23,85 @@ export default function JobReport({ evaluation }: JobReportProps) {
 
   return (
     <div className="space-y-6 mt-6">
-      <CardHeader>
-        <CardTitle>Job Match Evaluation</CardTitle>
-        <CardDescription>Match score: {evaluation.matchScore}%</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4">
-          <div className="flex justify-between mb-2">
-            <span className="font-medium">Match Score</span>
-            <span>{evaluation.matchScore}%</span>
-          </div>
-          <Progress value={evaluation.matchScore} className="h-2" />
-        </div>
-
-        {evaluation.strengths.length > 0 && (
-          <div className="mb-4">
-            <h3 className="font-semibold mb-2">Strengths</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              {evaluation.strengths.map((strength, index) => (
-                <li key={index}>{strength}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {evaluation.gaps.length > 0 && (
-          <div className="mb-4">
-            <h3 className="font-semibold mb-2">Gaps</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              {evaluation.gaps.map((gap, index) => (
-                <li key={index}>{gap}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {evaluation.missingKeywords.length > 0 && (
-          <div className="mb-4">
-            <h3 className="font-semibold mb-2">Missing Keywords</h3>
-            <div className="flex flex-wrap gap-2">
-              {evaluation.missingKeywords.map((keyword, index) => (
-                <Badge key={index} variant="outline">
-                  {keyword}
-                </Badge>
-              ))}
+      <Card className="border-2">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl">Resume Evaluation</CardTitle>
+              <CardDescription className="mt-2">Overall score</CardDescription>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-bold text-primary">{evaluation.overallScore}%</div>
+              <div className="text-sm text-muted-foreground">Match Score</div>
             </div>
           </div>
-        )}
+        </CardHeader>
+        <CardContent>
+          <Progress value={evaluation.overallScore} className="h-2" />
+        </CardContent>
+      </Card>
 
-        {evaluation.suggestions.length > 0 && (
-          <div className="mb-4">
-            <h3 className="font-semibold mb-2">Suggestions</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              {evaluation.suggestions.map((suggestion, index) => (
-                <li key={index}>{suggestion}</li>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              Areas for Improvement
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-4">
+              {evaluation.detailedAreasForImprovement.map((area, index) => (
+                <li key={index} className="space-y-2">
+                  <h4 className="font-semibold text-sm text-primary">{area.area}</h4>
+                  <div className="pl-4 border-l-2 border-muted space-y-2">
+                    <p className="text-sm text-muted-foreground">{area.referenceText}</p>
+                    <p className="text-sm">{area.improvedText}</p>
+                    <p className="text-sm italic text-primary">{area.relevanceToRoleCategory}</p>
+                  </div>
+                </li>
               ))}
             </ul>
-          </div>
-        )}
+          </CardContent>
+        </Card>
 
-        {evaluation.recommendations && (
-          <div className="mt-4">
-            <h3 className="font-semibold mb-2">Recommendations</h3>
-            <p className="text-sm text-muted-foreground">
-              {evaluation.recommendations}
-            </p>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-orange-500" />
+              Red Flags
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {evaluation.redFlags.map((flag, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <ArrowUpRight className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
+                  <span>{flag}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Lightbulb className="h-5 w-5 text-yellow-500" />
+            Missing Skills
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            {evaluation.missingSkills.map((skill, index) => (
+              <Badge key={index} variant="secondary" className="text-sm">
+                {skill}
+              </Badge>
+            ))}
           </div>
-        )}
-      </CardContent>
+        </CardContent>
+      </Card>
     </div>
   );
 }

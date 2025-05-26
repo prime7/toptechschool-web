@@ -23,6 +23,7 @@ type EducationFormData = {
   startDate: string;
   endDate: string | null;
   description: string | null;
+  points?: string[];
   displayOrder: number;
 };
 
@@ -42,7 +43,8 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
     degree: Degree.BACHELORS,
     startDate: "",
     endDate: null,
-    description: "",
+    description: null,
+    points: [],
     displayOrder: 0,
   });
 
@@ -77,9 +79,9 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
         startDate: parseMonthInput(newEducation.startDate),
         endDate: newEducation.endDate ? parseMonthInput(newEducation.endDate) : null,
         description: newEducation.description,
+        points: newEducation.points || [],
       };
     } else {
-      // Add new education
       const educationToAdd: Education = {
         id: `temp-${Date.now()}`,
         userId: user.id,
@@ -88,15 +90,14 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
         startDate: parseMonthInput(newEducation.startDate),
         endDate: newEducation.endDate ? parseMonthInput(newEducation.endDate) : null,
         description: newEducation.description,
+        points: newEducation.points || [],
         displayOrder: optimisticEducation.length,
       };
       updatedEducations = [...optimisticEducation, educationToAdd];
     }
 
-    // Update optimistic state immediately
     updateOptimisticEducation(updatedEducations);
     
-    // Save to server
     startTransition(async () => {
       try {
         const formattedEducations = updatedEducations.map(({ ...edu }) => ({
@@ -105,6 +106,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
           startDate: edu.startDate,
           endDate: edu.endDate,
           description: edu.description,
+          points: edu.points,
           displayOrder: edu.displayOrder,
         }));
 
@@ -143,7 +145,8 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
       degree: edu.degree,
       startDate: dateToMonthString(edu.startDate),
       endDate: dateToMonthString(edu.endDate),
-      description: edu.description || "",
+      description: edu.description,
+      points: edu.points,
       displayOrder: edu.displayOrder,
     });
     setIsDialogOpen(true);
@@ -155,7 +158,8 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
       degree: Degree.BACHELORS,
       startDate: "",
       endDate: null,
-      description: "",
+      description: null,
+      points: [],
       displayOrder: 0,
     });
     setEditingIndex(null);
@@ -181,6 +185,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
           startDate: edu.startDate,
           endDate: edu.endDate,
           description: edu.description,
+          points: edu.points,
           displayOrder: edu.displayOrder,
         }));
 
@@ -239,7 +244,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
               title={formatDegree(edu.degree)}
               subtitle={edu.institution}
               dateRange={formatDateRange(edu.startDate, edu.endDate)}
-              description={edu.description}
+              points={edu.points}
               onEdit={() => handleEditEducation(index)}
               onDelete={() => handleRemoveEducation(index)}
             />

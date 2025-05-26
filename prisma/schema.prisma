@@ -49,6 +49,7 @@ model WorkExperience {
   startDate      DateTime
   endDate        DateTime?
   description    String?        @db.Text
+  points         String[]
   displayOrder   Int            @default(0)
   userId         String
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -62,6 +63,7 @@ model Education {
   startDate    DateTime
   endDate      DateTime?
   description  String?   @db.Text
+  points       String[]
   displayOrder Int       @default(0)
   userId       String
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)

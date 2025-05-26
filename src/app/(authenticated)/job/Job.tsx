@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { JobMatchEvaluationResult } from "@/service/Evaluation.service";
+import { ResumeEvaluationResult } from "@/service/Evaluation.service";
 import { JobRole, Resume } from "@prisma/client";
 import JobReport from "./JobReport";
 
@@ -44,7 +44,7 @@ type JobProps = {
 
 export default function Job({ resumes }: JobProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [evaluation, setEvaluation] = useState<JobMatchEvaluationResult | null>(null);
+  const [evaluation, setEvaluation] = useState<ResumeEvaluationResult | null>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -174,7 +174,7 @@ export default function Job({ resumes }: JobProps) {
                 Evaluating...
               </>
             ) : (
-              "Evaluate Job Fit"
+              "Evaluate Resume"
             )}
           </Button>
         </form>

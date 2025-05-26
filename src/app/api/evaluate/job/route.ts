@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { JobService } from "@/service/Job.service";
 import { RateLimitKey } from "@/lib/redis/rate-limit";
 import { withRateLimit } from "@/lib/redis/rate-limit";
+import { auth } from "@/lib/auth";
+import { EvaluationService } from "@/service/Evaluation.service";
 
 export async function POST(request: NextRequest) {
-  const session = JSON.parse(request.headers.get("x-session") || "{}");
+  const session = await auth();
+  
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { jobDescription, jobRole, resumeId } = await request.json();
   if (!jobDescription) {
@@ -16,12 +21,22 @@ export async function POST(request: NextRequest) {
       RateLimitKey.JobAnalyze,
       session.user.id,
       async () => {
-        return await JobService.evaluateJobDescription(
-          session.user.id,
+        const resumeEvaluation = await EvaluationService.evaluateResume(
           jobDescription,
           jobRole,
-          resumeId
+          session.user.id
         );
+
+        return {
+          jobReview: {
+            userId: session.user.id,
+            resumeId: resumeId || null,
+            matchScore: resumeEvaluation.overallScore,
+            missingKeywords: resumeEvaluation.missingSkills,
+            suggestions: resumeEvaluation.detailedAreasForImprovement.map(area => area.improvedText),
+          },
+          evaluation: resumeEvaluation
+        };
       }
     );
 
