@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer } from 'react';
 import { ResumeData, ResumeAction } from '../types';
 import { generateId } from '../utils';
 import { defaultStyle } from '../constants'
+import { Degree } from '@prisma/client';
 
 
 export const initialResumeData: ResumeData = {
@@ -51,31 +52,29 @@ export const initialResumeData: ResumeData = {
     {
       id: generateId(),
       institution: 'University of Technology',
-      degree: 'Bachelor',
-      field: 'Computer Science',
+      degree: Degree.BACHELORS,
       startDate: '2014-09',
       endDate: '2018-06',
-      current: false,
       description: 'Graduated with honors. Specialized in software engineering and data structures.',
-      bulletPoints: [
+      points: [
         'Data Structures and Algorithms',
         'Software Engineering',
-        'Database Systems',
-        'Web Development'
+        'Database Systems'
       ],
-      gpa: '3.8'
+      displayOrder: 0
     },
     {
       id: generateId(),
       institution: 'Tech Bootcamp',
-      degree: 'Full Stack Web Development',
-      field: 'Web Development',
+      degree: Degree.BACHELORS,
       startDate: '2016-06',
       endDate: '2016-12',
-      current: false,
       description: 'Intensive 6-month bootcamp covering modern web development technologies and practices.',
-      bulletPoints: [],
-      gpa: '4.0'
+      points: [
+        'Full Stack Web Development',
+        'React',
+      ],
+      displayOrder: 1
     }
   ],
   skills: [
@@ -251,7 +250,7 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
         ...state,
         education: (state.education || []).map(item =>
           item.id === action.payload.educationId
-            ? { ...item, bulletPoints: [...(item.bulletPoints || []), action.payload.bullet] }
+            ? { ...item, points: [...(item.points || []), action.payload.bullet] }
             : item
         )
       };
@@ -262,7 +261,7 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
           item.id === action.payload.educationId
             ? {
               ...item,
-              bulletPoints: (item.bulletPoints || []).map((bullet, index) =>
+              points: (item.points || []).map((bullet, index) =>
                 index === action.payload.index
                   ? action.payload.text
                   : bullet
@@ -278,7 +277,7 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
           item.id === action.payload.educationId
             ? {
               ...item,
-              bulletPoints: (item.bulletPoints || []).filter((_, index) =>
+              points: (item.points || []).filter((_, index) =>
                 index !== action.payload.index
               )
             }
