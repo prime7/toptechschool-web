@@ -10,14 +10,14 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(cuid())
+  id              String         @id @default(cuid())
   name            String?
-  email           String           @unique
+  email           String         @unique
   emailVerified   DateTime?
-  isEmailVerified Boolean          @default(false)
+  isEmailVerified Boolean        @default(false)
   image           String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
   title           String?
   summary         String?
   github          String?
@@ -27,7 +27,7 @@ model User {
   accounts        Account[]
   resumes         Resume[]
   sessions        Session[]
-  workExperience  WorkExperience[]
+  work            Work[]
   education       Education[]
   skills          Skill[]
   practiceTests   PracticeTest[]
@@ -41,11 +41,11 @@ model Skill {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model WorkExperience {
+model Work {
   id             String         @id @default(cuid())
   company        String
-  position       String
-  location       String
+  position       JobRole        @default(SOFTWARE_ENGINEER)
+  location       LocationType   @default(REMOTE)
   startDate      DateTime
   endDate        DateTime?
   description    String?        @db.Text
