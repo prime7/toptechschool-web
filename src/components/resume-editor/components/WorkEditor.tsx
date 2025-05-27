@@ -161,7 +161,6 @@ export function WorkEditor({
         {(title || description) && (
           <div className="space-y-0.5">
             {title && <h2 className="text-xl font-semibold leading-none">{title}</h2>}
-            {description && <p className="text-sm text-muted-foreground leading-snug">{description}</p>}
           </div>
         )}
         {!isAdding && (
