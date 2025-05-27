@@ -1,3 +1,5 @@
+import { Degree, EmploymentType, JobRole, LocationType } from "@prisma/client";
+
 export type SectionType =
   | 'personal'
   | 'summary'
@@ -34,10 +36,23 @@ export interface ExperienceItem {
   bulletPoints: string[];
 }
 
+export interface WorkItem {
+  id: string;
+  company: string;
+  position: JobRole;
+  location: LocationType;
+  employmentType: EmploymentType;
+  startDate: string;
+  endDate?: string;
+  description?: string;
+  points: string[];
+  displayOrder: number;
+}
+
 export interface EducationItem {
   id: string;
   institution: string;
-  degree: string;
+  degree: Degree;
   startDate: string;
   endDate?: string;
   description?: string;
