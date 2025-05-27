@@ -38,13 +38,11 @@ export interface EducationItem {
   id: string;
   institution: string;
   degree: string;
-  field: string;
   startDate: string;
-  endDate: string;
-  current: boolean;
+  endDate?: string;
   description?: string;
-  bulletPoints: string[];
-  gpa?: string;
+  points: string[];
+  displayOrder: number;
 }
 
 export interface SkillItem {
