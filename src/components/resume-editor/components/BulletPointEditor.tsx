@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface BulletPointEditorProps {
@@ -20,6 +19,7 @@ export function BulletPointEditor({
   onReorder
 }: BulletPointEditorProps) {
   const [newBullet, setNewBullet] = useState('');
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const handleAddBullet = () => {
     if (newBullet.trim()) {
@@ -34,6 +34,9 @@ export function BulletPointEditor({
 
   const handleRemoveBullet = (index: number) => {
     onRemove(index);
+    if (focusedIndex === index) {
+      setFocusedIndex(null);
+    }
   };
 
   const handleMoveBullet = (index: number, direction: 'up' | 'down') => {
@@ -44,44 +47,66 @@ export function BulletPointEditor({
     
     if (newIndex < 0 || newIndex >= bulletPoints.length) return;
     
-    // Swap the elements
     [newBulletPoints[index], newBulletPoints[newIndex]] = 
     [newBulletPoints[newIndex], newBulletPoints[index]];
     
     onReorder(newBulletPoints);
+    setFocusedIndex(newIndex);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (index === bulletPoints.length - 1) {
+        setNewBullet(bulletPoints[index]);
+        handleRemoveBullet(index);
+        const inputElement = document.querySelector('input[placeholder="Add a new bullet point"]');
+        if (inputElement instanceof HTMLInputElement) {
+          inputElement.focus();
+        }
+      } else {
+        const nextInput = document.querySelector(`input[data-index="${index + 1}"]`);
+        if (nextInput instanceof HTMLInputElement) {
+          nextInput.focus();
+        }
+      }
+    }
   };
 
   return (
     <div className="space-y-2">
       {bulletPoints.map((bullet, index) => (
-        <div key={index} className="flex items-start gap-2">
-          <Textarea
+        <div key={index} className="flex items-center gap-2">
+          <Input
             value={bullet}
             onChange={(e) => handleUpdateBullet(index, e.target.value)}
             placeholder="Add a bullet point"
-            className="min-h-[60px] resize-vertical"
+            className={`${focusedIndex === index ? 'ring-2 ring-primary' : ''}`}
+            data-index={index}
+            onFocus={() => setFocusedIndex(index)}
             onBlur={(e) => {
-              // Ensure changes are saved on blur
               if (e.target.value !== bullet) {
                 handleUpdateBullet(index, e.target.value);
               }
+              setFocusedIndex(null);
             }}
+            onKeyDown={(e) => handleKeyDown(e, index)}
           />
           
-          <div className="flex gap-1 mt-2">
+          <div className="flex">
             {onReorder && (
               <>
                 <Button
-
                   size="icon"
+                  variant="ghost"
                   disabled={index === 0}
                   onClick={() => handleMoveBullet(index, 'up')}
                 >
                   <ArrowUp className="h-4 w-4" />
                 </Button>
                 <Button
-
                   size="icon"
+                  variant="ghost"
                   disabled={index === bulletPoints.length - 1}
                   onClick={() => handleMoveBullet(index, 'down')}
                 >
@@ -107,6 +132,7 @@ export function BulletPointEditor({
           placeholder="Add a new bullet point"
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
+              e.preventDefault();
               handleAddBullet();
             }
           }}
@@ -118,4 +144,4 @@ export function BulletPointEditor({
       </div>
     </div>
   );
-} 
+}
