@@ -39,9 +39,9 @@ export interface ExperienceItem {
 export interface WorkItem {
   id: string;
   company: string;
-  position: JobRole;
-  location: LocationType;
-  employmentType: EmploymentType;
+  position: JobRole | null;
+  location: LocationType | null;
+  employmentType: EmploymentType | null;
   startDate: string;
   endDate?: string;
   description?: string;
@@ -52,7 +52,7 @@ export interface WorkItem {
 export interface EducationItem {
   id: string;
   institution: string;
-  degree: Degree;
+  degree: Degree | null;
   startDate: string;
   endDate?: string;
   description?: string;
