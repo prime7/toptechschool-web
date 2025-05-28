@@ -3,7 +3,7 @@ import { Degree, EmploymentType, JobRole, LocationType } from "@prisma/client";
 export type SectionType =
   | 'personal'
   | 'summary'
-  | 'experience'
+  | 'work'
   | 'education'
   | 'projects';
 
@@ -21,16 +21,6 @@ export interface PersonalInfo {
   website?: string;
   linkedin?: string;
   github?: string;
-}
-
-export interface ExperienceItem {
-  id: string;
-  company: string;
-  position: string;
-  startDate: string;
-  endDate?: string;
-  description?: string;
-  bulletPoints: string[];
 }
 
 export interface WorkItem {
@@ -78,7 +68,7 @@ export interface ResumeStyle {
 export interface ResumeData {
   personal: PersonalInfo;
   summary?: string;
-  experience?: ExperienceItem[];
+  work?: WorkItem[];
   education?: EducationItem[];
   projects?: ProjectItem[];
   activeSections: SectionType[];
@@ -88,10 +78,10 @@ export interface ResumeData {
 export type ResumeAction =
   | { type: 'UPDATE_PERSONAL', payload: Partial<PersonalInfo> }
   | { type: 'UPDATE_SUMMARY', payload: string }
-  | { type: 'ADD_EXPERIENCE', payload: ExperienceItem }
-  | { type: 'UPDATE_EXPERIENCE', payload: { id: string, data: Partial<ExperienceItem> } }
+  | { type: 'ADD_EXPERIENCE', payload: WorkItem }
+  | { type: 'UPDATE_EXPERIENCE', payload: { id: string, data: Partial<WorkItem> } }
   | { type: 'REMOVE_EXPERIENCE', payload: string }
-  | { type: 'REORDER_EXPERIENCE', payload: ExperienceItem[] }
+  | { type: 'REORDER_EXPERIENCE', payload: WorkItem[] }
   | { type: 'ADD_EXPERIENCE_BULLET', payload: { experienceId: string, bullet: string } }
   | { type: 'UPDATE_EXPERIENCE_BULLET', payload: { experienceId: string, index: number, text: string } }
   | { type: 'REMOVE_EXPERIENCE_BULLET', payload: { experienceId: string, index: number } }

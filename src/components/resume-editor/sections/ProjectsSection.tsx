@@ -16,7 +16,7 @@ const emptyProject: Omit<ProjectItem, 'id'> = {
   url: ''
 };
 
-const ProjectsEditor: React.FC = () => {
+const ProjectsSection: React.FC = () => {
   const { state, dispatch } = useResume();
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
@@ -188,4 +188,4 @@ const ProjectsEditor: React.FC = () => {
   );
 };
 
-export default ProjectsEditor;
+export default ProjectsSection;

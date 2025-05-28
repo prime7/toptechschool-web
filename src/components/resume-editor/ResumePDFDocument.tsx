@@ -13,7 +13,7 @@ import {
 import { formatDate } from "@/lib/date-utils";
 import type {
   PersonalInfo,
-  ExperienceItem,
+  WorkItem,
   EducationItem,
   ProjectItem,
   ResumeStyle,
@@ -362,7 +362,7 @@ const ExperienceItem = ({
   item,
   styles,
 }: {
-  item: ExperienceItem;
+  item: WorkItem;
   styles: any;
 }) => (
   <View style={{ marginBottom: 10 }} wrap={false}>
@@ -379,8 +379,8 @@ const ExperienceItem = ({
     {item.description && (
       <Text style={styles.description}>{item.description}</Text>
     )}
-    {item.bulletPoints && item.bulletPoints.length > 0 && (
-      <BulletPointsList bulletPoints={item.bulletPoints} styles={styles} />
+    {item.points && item.points.length > 0 && (
+      <BulletPointsList bulletPoints={item.points} styles={styles} />
     )}
   </View>
 );
@@ -389,15 +389,15 @@ const ExperienceSection = ({
   experience,
   styles,
 }: {
-  experience: ExperienceItem[];
+  experience: WorkItem[];
   styles: any;
 }) => {
-  const chunks: ExperienceItem[][] = [];
-  let currentChunk: ExperienceItem[] = [];
+  const chunks: WorkItem[][] = [];
+  let currentChunk: WorkItem[] = [];
   let currentChunkLength = 0;
 
-  const estimateItemSize = (item: ExperienceItem) => {
-    return 0.5 + (item.description ? 0.2 : 0) + item.bulletPoints.length * 0.15;
+  const estimateItemSize = (item: WorkItem) => {
+    return 0.5 + (item.description ? 0.2 : 0) + item.points.length * 0.15;
   };
 
   experience.forEach((item) => {
@@ -613,7 +613,7 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
   const {
     personal,
     summary,
-    experience,
+    work,
     education,
     projects,
     style,
@@ -658,10 +658,10 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
             <SummarySection summary={summary} styles={styles} />
           )}
 
-        {activeSections.includes("experience") &&
-          experience &&
-          experience.length > 0 && (
-            <ExperienceSection experience={experience} styles={styles} />
+        {activeSections.includes("work") &&
+          work &&
+          work.length > 0 && (
+            <ExperienceSection experience={work} styles={styles} />
           )}
 
         {activeSections.includes("education") &&

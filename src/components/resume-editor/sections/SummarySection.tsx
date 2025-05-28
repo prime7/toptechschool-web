@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 
-const SummaryEditor: React.FC = () => {
+const SummarySection: React.FC = () => {
   const { state, dispatch } = useResume();
   const { summary } = state;
   const [summaryText, setSummaryText] = useState(summary || '');
@@ -57,4 +57,4 @@ const SummaryEditor: React.FC = () => {
   );
 };
 
-export default SummaryEditor;
+export default SummarySection;

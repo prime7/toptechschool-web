@@ -1,24 +1,28 @@
-import React from 'react';
-import { SectionType } from './types';
-import { ResumeProvider } from './context/ResumeContext';
-import { useResume } from './context/ResumeContext';
-import { PDFViewer } from '@react-pdf/renderer';
-import ResumePDFDocument from './ResumePDFDocument';
-import Sidebar from './Sidebar';
-import PersonalInfoEditor from './sections/PersonalInforEditor';
-import SummaryEditor from './sections/SummaryEditor';
-import ExperienceEditor from './sections/ExperienceEditor';
-import ProjectsEditor from './sections/ProjectsEditor';
-import { useDebounce } from '@/hooks/use-debounce';
-import { blankResumeData } from './context/ResumeContext';
-import EducationSection from './sections/EducationSection';
+import React from "react";
+import { SectionType } from "./types";
+import {
+  useResume,
+  blankResumeData,
+  ResumeProvider,
+} from "./context/ResumeContext";
+import { PDFViewer } from "@react-pdf/renderer";
+import ResumePDFDocument from "./ResumePDFDocument";
+import Sidebar from "./Sidebar";
+import {
+  EducationSection,
+  WorkSection,
+  PersonalInfoSection,
+  ProjectsSection,
+  SummarySection,
+} from "./sections";
+import { useDebounce } from "@/hooks/use-debounce";
 
 const SECTION_COMPONENTS: Record<SectionType, React.ComponentType> = {
-  personal: PersonalInfoEditor,
-  summary: SummaryEditor,
-  experience: ExperienceEditor,
+  personal: PersonalInfoSection,
+  summary: SummarySection,
+  work: WorkSection,
   education: EducationSection,
-  projects: ProjectsEditor,
+  projects: ProjectsSection,
 };
 
 export default function ResumeEditor() {
@@ -30,7 +34,8 @@ export default function ResumeEditor() {
 }
 
 function ResumeEditorContent() {
-  const [activeSection, setActiveSection] = React.useState<SectionType>('personal');
+  const [activeSection, setActiveSection] =
+    React.useState<SectionType>("personal");
   const { state } = useResume();
 
   const ActiveSectionComponent = SECTION_COMPONENTS[activeSection];

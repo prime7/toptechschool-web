@@ -3,7 +3,7 @@ import { useResume } from '../context/ResumeContext';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-const PersonalInfoEditor: React.FC = () => {
+const PersonalInfoSection: React.FC = () => {
   const { state, dispatch } = useResume();
   const { personal } = state;
 
@@ -119,4 +119,4 @@ const PersonalInfoEditor: React.FC = () => {
   );
 };
 
-export default PersonalInfoEditor;
+export default PersonalInfoSection;

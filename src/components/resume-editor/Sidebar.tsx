@@ -29,7 +29,7 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
   const sections: SectionInfo[] = [
     { id: 'personal', label: 'Personal Information', icon: <User className="h-4 w-4" /> },
     { id: 'summary', label: 'Professional Summary', icon: <FileText className="h-4 w-4" /> },
-    { id: 'experience', label: 'Work Experience', icon: <Briefcase className="h-4 w-4" /> },
+    { id: 'work', label: 'Work Experience', icon: <Briefcase className="h-4 w-4" /> },
     { id: 'education', label: 'Education', icon: <GraduationCap className="h-4 w-4" /> },
     { id: 'projects', label: 'Projects', icon: <Calendar className="h-4 w-4" /> },
   ];
@@ -41,8 +41,8 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
     switch (section.id) {
       case 'summary':
         return !state.summary;
-      case 'experience':
-        return !state.experience || state.experience.length === 0;
+      case 'work':
+        return !state.work || state.work.length === 0;
       case 'education':
         return !state.education || state.education.length === 0;
       case 'projects':
