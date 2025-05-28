@@ -12,8 +12,9 @@ import { Textarea } from '@/components/ui/textarea';
 const emptyProject: Omit<ProjectItem, 'id'> = {
   name: '',
   description: '',
-  bulletPoints: [],
-  url: ''
+  points: [],
+  url: '',
+  displayOrder: 0,
 };
 
 const ProjectsSection: React.FC = () => {
@@ -54,8 +55,9 @@ const ProjectsSection: React.FC = () => {
     setFormData({
       name: item.name,
       description: item.description,
-      bulletPoints: item.bulletPoints,
-      url: item.url || ''
+      points: item.points,
+      url: item.url || '',
+      displayOrder: item.displayOrder,
     });
     setIsEditing(item.id);
     setIsAdding(true);
@@ -115,10 +117,10 @@ const ProjectsSection: React.FC = () => {
               </div>
               <div className="md:col-span-2">
                 <BulletPointEditor
-                  bulletPoints={formData.bulletPoints || []}
-                  onAdd={(bullet) => setFormData(prev => ({ ...prev, bulletPoints: [...prev.bulletPoints, bullet] }))}
-                  onUpdate={(index, text) => setFormData(prev => ({ ...prev, bulletPoints: prev.bulletPoints.map((b, i) => i === index ? text : b) }))}
-                  onRemove={(index) => setFormData(prev => ({ ...prev, bulletPoints: prev.bulletPoints.filter((_, i) => i !== index) }))}
+                  bulletPoints={formData.points || []}
+                  onAdd={(bullet) => setFormData(prev => ({ ...prev, points: [...prev.points, bullet] }))}
+                  onUpdate={(index, text) => setFormData(prev => ({ ...prev, points: prev.points.map((b, i) => i === index ? text : b) }))}
+                  onRemove={(index) => setFormData(prev => ({ ...prev, points: prev.points.filter((_, i) => i !== index) }))}
                   onReorder={(newOrder) => setFormData(prev => ({ ...prev, bulletPoints: newOrder }))}
                 />
               </div>
@@ -172,9 +174,9 @@ const ProjectsSection: React.FC = () => {
                   </div>
                 )}
                 
-                {item.bulletPoints && item.bulletPoints.length > 0 && (
+                {item.points && item.points.length > 0 && (
                   <ul className="list-disc pl-5 mt-2 text-sm text-muted-foreground">
-                    {item.bulletPoints.map((point, i) => (
+                    {item.points.map((point, i) => (
                       <li key={i}>{point}</li>
                     ))}
                   </ul>

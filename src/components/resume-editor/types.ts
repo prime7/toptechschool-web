@@ -1,4 +1,4 @@
-import { Work, Education } from "@prisma/client";
+import { Degree, EmploymentType, JobRole, LocationType } from "@prisma/client";
 
 export type SectionType =
   | 'personal'
@@ -23,6 +23,39 @@ export interface PersonalInfo {
   github?: string;
 }
 
+export interface WorkItem {
+  id: string;
+  company: string;
+  position: JobRole | null;
+  location: LocationType | null;
+  employmentType: EmploymentType | null;
+  startDate: string;
+  endDate?: string;
+  description?: string;
+  points: string[];
+  displayOrder: number;
+}
+
+export interface EducationItem {
+  id: string;
+  institution: string;
+  degree: Degree | null;
+  startDate: string;
+  endDate?: string;
+  description?: string;
+  points: string[];
+  displayOrder: number;
+}
+
+export interface ProjectItem {
+  id: string;
+  name: string;
+  description?: string;
+  points: string[];
+  url?: string;
+  displayOrder: number;
+}
+
 export interface ResumeStyle {
   fontFamily: string;
   fontSize: number;
@@ -34,26 +67,12 @@ export interface ResumeStyle {
   sectionHeaderAlignment: 'left' | 'center' | 'right';
 }
 
-export type WorkItem = Omit<Work, 'userId' | 'user'>;
-
-export type EducationItem = Omit<Education, 'userId' | 'user'>;
-
-export interface ProjectItem {
-  id: string;
-  name: string;
-  description?: string;
-  points: string[];
-  url?: string;
-  displayOrder: number;
-}
-
 export interface ResumeData {
   personal: PersonalInfo;
   summary?: string;
   work?: WorkItem[];
   education?: EducationItem[];
   projects?: ProjectItem[];
-  skills?: { id: string; name: string; }[];
   activeSections: SectionType[];
   style: ResumeStyle;
 }

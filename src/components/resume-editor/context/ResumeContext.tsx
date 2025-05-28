@@ -25,8 +25,8 @@ export const initialResumeData: ResumeData = {
       position: JobRole.SOFTWARE_ENGINEER,
       location: LocationType.REMOTE,
       employmentType: EmploymentType.FULL_TIME,
-      startDate: new Date("2020-01"),
-      endDate: new Date("2020-01"),
+      startDate: "2020-01",
+      endDate: "2020-01",
       description:
         "Led development of web applications using modern technologies",
       points: [
@@ -44,8 +44,8 @@ export const initialResumeData: ResumeData = {
       position: JobRole.FRONTEND_DEVELOPER,
       location: LocationType.REMOTE,
       employmentType: EmploymentType.FULL_TIME,
-      startDate: new Date("2018-03"),
-      endDate: new Date("2019-12"),
+      startDate: "2018-03",
+      endDate: "2019-12",
       description: "Developed responsive UIs using React and Redux",
       points: [
         "Integrated third-party APIs and services",
@@ -60,8 +60,8 @@ export const initialResumeData: ResumeData = {
       id: generateId(),
       institution: "University of Technology",
       degree: Degree.BACHELORS,
-      startDate: new Date("2014-09"),
-      endDate: new Date("2018-06"),
+      startDate: "2014-09",
+      endDate: "2018-06",
       description:
         "Graduated with honors. Specialized in software engineering and data structures.",
       points: [
@@ -75,38 +75,12 @@ export const initialResumeData: ResumeData = {
       id: generateId(),
       institution: "Tech Bootcamp",
       degree: Degree.BACHELORS,
-      startDate: new Date("2016-06"),
-      endDate: new Date("2016-12"),
+      startDate: "2016-06",
+      endDate: "2016-12",
       description:
         "Intensive 6-month bootcamp covering modern web development technologies and practices.",
       points: ["Full Stack Web Development", "React"],
       displayOrder: 1,
-    },
-  ],
-  skills: [
-    {
-      id: generateId(),
-      name: "JavaScript",
-    },
-    {
-      id: generateId(),
-      name: "React",
-    },
-    {
-      id: generateId(),
-      name: "TypeScript",
-    },
-    {
-      id: generateId(),
-      name: "Node.js",
-    },
-    {
-      id: generateId(),
-      name: "GraphQL",
-    },
-    {
-      id: generateId(),
-      name: "AWS",
     },
   ],
   projects: [
@@ -152,7 +126,6 @@ export const blankResumeData: ResumeData = {
   work: [],
   education: [],
   projects: [],
-  skills: [],
   activeSections: ["personal", "summary", "work", "education"],
   style: defaultStyle,
 };

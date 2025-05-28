@@ -539,8 +539,8 @@ const ProjectItem = ({
     {project.description && (
       <Text style={styles.description}>{project.description}</Text>
     )}
-    {project.bulletPoints && project.bulletPoints.length > 0 && (
-      <BulletPointsList bulletPoints={project.bulletPoints} styles={styles} />
+    {project.points && project.points.length > 0 && (
+      <BulletPointsList bulletPoints={project.points} styles={styles} />
     )}
   </View>
 );
@@ -560,7 +560,7 @@ const ProjectsSection = ({
     return (
       0.5 +
       (item.description ? 0.2 : 0) +
-      (item.bulletPoints?.length || 0) * 0.15
+      (item.points?.length || 0) * 0.15
     );
   };
 
