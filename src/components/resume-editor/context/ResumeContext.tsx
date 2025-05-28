@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { ResumeData, ResumeAction } from "../types";
+import { ResumeData, ResumeAction, WorkItem, ProjectItem } from "../types";
 import { generateId } from "../utils";
 import { defaultStyle } from "../constants";
-import { Degree } from "@prisma/client";
+import { Degree, EmploymentType, JobRole, LocationType } from "@prisma/client";
 
 export const initialResumeData: ResumeData = {
-  activeSections: ["personal", "summary", "experience", "education"],
+  activeSections: ["personal", "summary", "work", "education"],
   personal: {
     fullName: "John Doe",
-    email: "john.doe@example.com",
+    email: "john.doe@example.com", 
     phone: "(555) 123-4567",
     location: "San Francisco, CA",
     title: "Senior Software Engineer",
@@ -18,35 +18,41 @@ export const initialResumeData: ResumeData = {
   },
   summary:
     "Experienced software engineer with 8+ years of experience in building scalable web applications. Specialized in frontend development with React and TypeScript, with a strong focus on performance optimization and user experience.",
-  experience: [
+  work: [
     {
       id: generateId(),
       company: "Tech Company",
-      position: "Senior Software Engineer",
-      startDate: "2020-01",
-      endDate: "",
+      position: JobRole.SOFTWARE_ENGINEER,
+      location: LocationType.REMOTE,
+      employmentType: EmploymentType.FULL_TIME,
+      startDate: new Date("2020-01"),
+      endDate: new Date("2020-01"),
       description:
         "Led development of web applications using modern technologies",
-      bulletPoints: [
+      points: [
         "Managed a team of 5 developers",
-        "Implemented CI/CD pipelines",
+        "Implemented CI/CD pipelines", 
         "Improved application performance by 40%",
         "Reduced deployment time by 60%",
         "Mentored junior developers",
       ],
+      displayOrder: 0,
     },
     {
       id: generateId(),
       company: "Startup Inc",
-      position: "Frontend Developer",
-      startDate: "2018-03",
-      endDate: "2019-12",
+      position: JobRole.FRONTEND_DEVELOPER,
+      location: LocationType.REMOTE,
+      employmentType: EmploymentType.FULL_TIME,
+      startDate: new Date("2018-03"),
+      endDate: new Date("2019-12"),
       description: "Developed responsive UIs using React and Redux",
-      bulletPoints: [
+      points: [
         "Integrated third-party APIs and services",
         "Optimized application load time by 30%",
         "Implemented automated testing suite",
       ],
+      displayOrder: 1,
     },
   ],
   education: [
@@ -54,8 +60,8 @@ export const initialResumeData: ResumeData = {
       id: generateId(),
       institution: "University of Technology",
       degree: Degree.BACHELORS,
-      startDate: "2014-09",
-      endDate: "2018-06",
+      startDate: new Date("2014-09"),
+      endDate: new Date("2018-06"),
       description:
         "Graduated with honors. Specialized in software engineering and data structures.",
       points: [
@@ -69,8 +75,8 @@ export const initialResumeData: ResumeData = {
       id: generateId(),
       institution: "Tech Bootcamp",
       degree: Degree.BACHELORS,
-      startDate: "2016-06",
-      endDate: "2016-12",
+      startDate: new Date("2016-06"),
+      endDate: new Date("2016-12"),
       description:
         "Intensive 6-month bootcamp covering modern web development technologies and practices.",
       points: ["Full Stack Web Development", "React"],
@@ -109,21 +115,23 @@ export const initialResumeData: ResumeData = {
       name: "E-commerce Platform",
       description:
         "Developed a full-featured e-commerce platform using React, Node.js, and MongoDB.",
-      bulletPoints: [
+      points: [
         "User authentication",
         "Product catalog with search and filtering",
         "Shopping cart and checkout process",
         "Admin dashboard for managing products and orders",
       ],
       url: "https://github.com/johndoe/ecommerce",
+      displayOrder: 0,
     },
     {
       id: generateId(),
       name: "Personal Portfolio",
       description:
         "Designed and developed a personal portfolio website to showcase my projects and skills",
-      bulletPoints: [],
+      points: [],
       url: "https://github.com/johndoe/portfolio",
+      displayOrder: 1,
     },
   ],
   style: defaultStyle,
@@ -141,13 +149,11 @@ export const blankResumeData: ResumeData = {
     github: "",
   },
   summary: "",
-  experience: [],
+  work: [],
   education: [],
-  skills: [],
   projects: [],
-  certifications: [],
-  references: [],
-  activeSections: ["personal", "summary", "experience", "education"],
+  skills: [],
+  activeSections: ["personal", "summary", "work", "education"],
   style: defaultStyle,
 };
 
@@ -174,12 +180,12 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case "ADD_EXPERIENCE":
       return {
         ...state,
-        experience: [...(state.experience || []), action.payload],
+        work: [...(state.work || []), action.payload],
       };
     case "UPDATE_EXPERIENCE":
       return {
         ...state,
-        experience: (state.experience || []).map((item) =>
+        work: (state.work || []).map((item) =>
           item.id === action.payload.id
             ? { ...item, ...action.payload.data }
             : item
@@ -188,21 +194,18 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case "REMOVE_EXPERIENCE":
       return {
         ...state,
-        experience: (state.experience || []).filter(
+        work: (state.work || []).filter(
           (item) => item.id !== action.payload
         ),
       };
     case "ADD_EXPERIENCE_BULLET":
       return {
         ...state,
-        experience: (state.experience || []).map((item) =>
+        work: (state.work || []).map((item) =>
           item.id === action.payload.experienceId
             ? {
                 ...item,
-                bulletPoints: [
-                  ...(item.bulletPoints || []),
-                  action.payload.bullet,
-                ],
+                points: [...item.points, action.payload.bullet],
               }
             : item
         ),
@@ -210,11 +213,11 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case "UPDATE_EXPERIENCE_BULLET":
       return {
         ...state,
-        experience: (state.experience || []).map((item) =>
+        work: (state.work || []).map((item: WorkItem) =>
           item.id === action.payload.experienceId
             ? {
                 ...item,
-                bulletPoints: (item.bulletPoints || []).map((bullet, index) =>
+                points: (item.points || []).map((bullet: string, index: number) =>
                   index === action.payload.index ? action.payload.text : bullet
                 ),
               }
@@ -224,12 +227,12 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case "REMOVE_EXPERIENCE_BULLET":
       return {
         ...state,
-        experience: (state.experience || []).map((item) =>
+        work: (state.work || []).map((item: WorkItem) =>
           item.id === action.payload.experienceId
             ? {
                 ...item,
-                bulletPoints: (item.bulletPoints || []).filter(
-                  (_, index) => index !== action.payload.index
+                points: (item.points || []).filter(
+                  (_: string, index: number) => index !== action.payload.index
                 ),
               }
             : item
@@ -275,7 +278,7 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
           item.id === action.payload.educationId
             ? {
                 ...item,
-                points: (item.points || []).map((bullet, index) =>
+                points: (item.points || []).map((bullet: string, index: number) =>
                   index === action.payload.index ? action.payload.text : bullet
                 ),
               }
@@ -290,31 +293,10 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
             ? {
                 ...item,
                 points: (item.points || []).filter(
-                  (_, index) => index !== action.payload.index
+                  (_: string, index: number) => index !== action.payload.index
                 ),
               }
             : item
-        ),
-      };
-    case "ADD_SKILL":
-      return {
-        ...state,
-        skills: [...(state.skills || []), action.payload],
-      };
-    case "UPDATE_SKILL":
-      return {
-        ...state,
-        skills: (state.skills || []).map((item) =>
-          item.id === action.payload.id
-            ? { ...item, ...action.payload.data }
-            : item
-        ),
-      };
-    case "REMOVE_SKILL":
-      return {
-        ...state,
-        skills: (state.skills || []).filter(
-          (item) => item.id !== action.payload
         ),
       };
     case "ADD_PROJECT":
@@ -341,12 +323,12 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case "ADD_PROJECT_BULLET":
       return {
         ...state,
-        projects: (state.projects || []).map((item) =>
+        projects: (state.projects || []).map((item: ProjectItem) =>
           item.id === action.payload.projectId
             ? {
                 ...item,
-                bulletPoints: [
-                  ...(item.bulletPoints || []),
+                points: [
+                  ...(item.points || []),
                   action.payload.bullet,
                 ],
               }
@@ -356,11 +338,11 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case "UPDATE_PROJECT_BULLET":
       return {
         ...state,
-        projects: (state.projects || []).map((item) =>
+        projects: (state.projects || []).map((item: ProjectItem) =>
           item.id === action.payload.projectId
             ? {
                 ...item,
-                bulletPoints: (item.bulletPoints || []).map((bullet, index) =>
+                points: (item.points || []).map((bullet: string, index: number) =>
                   index === action.payload.index ? action.payload.text : bullet
                 ),
               }
@@ -370,59 +352,18 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case "REMOVE_PROJECT_BULLET":
       return {
         ...state,
-        projects: (state.projects || []).map((item) =>
+        projects: (state.projects || []).map((item: ProjectItem) =>
           item.id === action.payload.projectId
             ? {
                 ...item,
-                bulletPoints: (item.bulletPoints || []).filter(
-                  (_, index) => index !== action.payload.index
+                points: (item.points || []).filter(
+                  (_: string, index: number) => index !== action.payload.index
                 ),
               }
             : item
         ),
       };
-    case "ADD_CERTIFICATION":
-      return {
-        ...state,
-        certifications: [...(state.certifications || []), action.payload],
-      };
-    case "UPDATE_CERTIFICATION":
-      return {
-        ...state,
-        certifications: (state.certifications || []).map((item) =>
-          item.id === action.payload.id
-            ? { ...item, ...action.payload.data }
-            : item
-        ),
-      };
-    case "REMOVE_CERTIFICATION":
-      return {
-        ...state,
-        certifications: (state.certifications || []).filter(
-          (item) => item.id !== action.payload
-        ),
-      };
-    case "ADD_REFERENCE":
-      return {
-        ...state,
-        references: (state.references || []).concat(action.payload),
-      };
-    case "UPDATE_REFERENCE":
-      return {
-        ...state,
-        references: (state.references || []).map((item) =>
-          item.id === action.payload.id
-            ? { ...item, ...action.payload.data }
-            : item
-        ),
-      };
-    case "REMOVE_REFERENCE":
-      return {
-        ...state,
-        references: (state.references || []).filter(
-          (item) => item.id !== action.payload
-        ),
-      };
+
     case "TOGGLE_SECTION":
       return {
         ...state,
