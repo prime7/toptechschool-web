@@ -151,12 +151,15 @@ export function EducationEditor({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between mb-1">
-        {(title || description) && (
-          <div className="space-y-0.5">
-            {title && <h2 className="text-xl font-semibold leading-none">{title}</h2>}
-          </div>
-        )}
+      <div className="grid grid-cols-[1fr,auto] gap-4 items-start mb-1">
+        <div className="space-y-0.5">
+          {title && <h2 className="text-xl font-semibold leading-none">{title}</h2>}
+          {description && (
+            <p className="text-sm text-muted-foreground">
+              {description}
+            </p>
+          )}
+        </div>
         {!isAdding && (
           <Button size="sm" onClick={() => setIsAdding(true)} className="h-8">
             <Plus className="h-4 w-4 mr-1" />Add Education
