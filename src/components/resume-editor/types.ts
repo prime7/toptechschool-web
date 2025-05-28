@@ -5,9 +5,7 @@ export type SectionType =
   | 'summary'
   | 'experience'
   | 'education'
-  | 'projects'
-  | 'certifications'
-  | 'references';
+  | 'projects';
 
 export interface ListItem {
   id: string;
@@ -58,33 +56,12 @@ export interface EducationItem {
   points: string[];
   displayOrder: number;
 }
-
-export interface SkillItem {
-  id: string;
-  name: string;
-}
-
 export interface ProjectItem {
   id: string;
   name: string;
   description?: string;
   bulletPoints: string[];
   url?: string;
-}
-
-export interface CertificationItem {
-  id: string;
-  name: string;
-  url?: string;
-}
-
-export interface ReferenceItem {
-  id: string;
-  name: string;
-  position: string;
-  company: string;
-  email: string;
-  phone?: string;
 }
 
 export interface ResumeStyle {
@@ -103,10 +80,7 @@ export interface ResumeData {
   summary?: string;
   experience?: ExperienceItem[];
   education?: EducationItem[];
-  skills?: SkillItem[];
   projects?: ProjectItem[];
-  certifications?: CertificationItem[];
-  references?: ReferenceItem[];
   activeSections: SectionType[];
   style: ResumeStyle;
 }
@@ -127,22 +101,13 @@ export type ResumeAction =
   | { type: 'ADD_EDUCATION_BULLET', payload: { educationId: string, bullet: string } }
   | { type: 'UPDATE_EDUCATION_BULLET', payload: { educationId: string, index: number, text: string } }
   | { type: 'REMOVE_EDUCATION_BULLET', payload: { educationId: string, index: number } }
-  | { type: 'ADD_SKILL', payload: SkillItem }
-  | { type: 'UPDATE_SKILL', payload: { id: string, data: Partial<SkillItem> } }
-  | { type: 'REMOVE_SKILL', payload: string }
   | { type: 'ADD_PROJECT', payload: ProjectItem }
   | { type: 'UPDATE_PROJECT', payload: { id: string, data: Partial<ProjectItem> } }
   | { type: 'REMOVE_PROJECT', payload: string }
   | { type: 'ADD_PROJECT_BULLET', payload: { projectId: string, bullet: string } }
   | { type: 'UPDATE_PROJECT_BULLET', payload: { projectId: string, index: number, text: string } }
   | { type: 'REMOVE_PROJECT_BULLET', payload: { projectId: string, index: number } }
-  | { type: 'ADD_CERTIFICATION', payload: CertificationItem }
-  | { type: 'UPDATE_CERTIFICATION', payload: { id: string, data: Partial<CertificationItem> } }
-  | { type: 'REMOVE_CERTIFICATION', payload: string }
   | { type: 'REMOVE_LANGUAGE', payload: string }
-  | { type: 'ADD_REFERENCE', payload: ReferenceItem }
-  | { type: 'UPDATE_REFERENCE', payload: { id: string, data: Partial<ReferenceItem> } }
-  | { type: 'REMOVE_REFERENCE', payload: string }
   | { type: 'TOGGLE_SECTION', payload: SectionType }
   | { type: 'REORDER_SECTIONS', payload: SectionType[] }
   | { type: 'LOAD_RESUME', payload: ResumeData }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useResume } from './context/ResumeContext';
 import { SectionType } from './types';
-import { User, FileText, Briefcase, GraduationCap, Award, Calendar, BookOpen, Users, Plus, GripVertical, Layout, Type } from 'lucide-react';
+import { User, FileText, Briefcase, GraduationCap, Calendar, Plus, GripVertical, Layout, Type } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -31,10 +31,7 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
     { id: 'summary', label: 'Professional Summary', icon: <FileText className="h-4 w-4" /> },
     { id: 'experience', label: 'Work Experience', icon: <Briefcase className="h-4 w-4" /> },
     { id: 'education', label: 'Education', icon: <GraduationCap className="h-4 w-4" /> },
-    { id: 'skills', label: 'Skills', icon: <Award className="h-4 w-4" /> },
     { id: 'projects', label: 'Projects', icon: <Calendar className="h-4 w-4" /> },
-    { id: 'certifications', label: 'Certifications', icon: <BookOpen className="h-4 w-4" /> },
-    { id: 'references', label: 'References', icon: <Users className="h-4 w-4" /> }
   ];
 
   const availableSections = sections.filter(section => {
@@ -48,14 +45,8 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
         return !state.experience || state.experience.length === 0;
       case 'education':
         return !state.education || state.education.length === 0;
-      case 'skills':
-        return !state.skills || state.skills.length === 0;
       case 'projects':
         return !state.projects || state.projects.length === 0;
-      case 'certifications':
-        return !state.certifications || state.certifications.length === 0;
-      case 'references':
-        return !state.references || state.references.length === 0;
       default:
         return true;
     }

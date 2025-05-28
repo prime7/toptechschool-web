@@ -9,8 +9,6 @@ import PersonalInfoEditor from './sections/PersonalInforEditor';
 import SummaryEditor from './sections/SummaryEditor';
 import ExperienceEditor from './sections/ExperienceEditor';
 import ProjectsEditor from './sections/ProjectsEditor';
-import CertificationsEditor from './sections/CertificationsEditor';
-import ReferencesEditor from './sections/ReferencesEditor';
 import { useDebounce } from '@/hooks/use-debounce';
 import { blankResumeData } from './context/ResumeContext';
 import EducationSection from './sections/EducationSection';
@@ -21,8 +19,6 @@ const SECTION_COMPONENTS: Record<SectionType, React.ComponentType> = {
   experience: ExperienceEditor,
   education: EducationSection,
   projects: ProjectsEditor,
-  certifications: CertificationsEditor,
-  references: ReferencesEditor,
 };
 
 export default function ResumeEditor() {
