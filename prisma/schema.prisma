@@ -29,16 +29,8 @@ model User {
   sessions        Session[]
   work            Work[]
   education       Education[]
-  skills          Skill[]
   practiceTests   PracticeTest[]
   ai              AI[]
-}
-
-model Skill {
-  id     String @id @default(cuid())
-  name   String
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Work {

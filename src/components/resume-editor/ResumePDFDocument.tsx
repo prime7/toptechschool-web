@@ -394,17 +394,16 @@ const EducationItem = ({ item, styles }: { item: EducationItem; styles: any }) =
   <View style={{ marginBottom: 10 }} wrap={false}>
     <View style={styles.row}>
       <View>
-        <Text style={styles.itemHeader}>{item.degree} in {item.field}</Text>
+        <Text style={styles.itemHeader}>{item.degree}</Text>
         <Text style={styles.itemSubHeader}>{item.institution}</Text>
       </View>
       <Text style={styles.date}>
-        {formatDate(item.startDate)} - {item.current ? 'Present' : formatDate(item.endDate)}
+        {formatDate(item.startDate)} - {item.endDate ? formatDate(item.endDate) : 'Present'}
       </Text>
     </View>
-    {item.gpa && <Text style={styles.description}>GPA: {item.gpa}</Text>}
     {item.description && <Text style={styles.description}>{item.description}</Text>}
-    {item.bulletPoints && item.bulletPoints.length > 0 && (
-      <BulletPointsList bulletPoints={item.bulletPoints} styles={styles} />
+    {item.points && item.points.length > 0 && (
+      <BulletPointsList bulletPoints={item.points} styles={styles} />
     )}
   </View>
 );
@@ -415,7 +414,7 @@ const EducationSection = ({ education, styles }: { education: EducationItem[]; s
   let currentChunkLength = 0;
   
   const estimateItemSize = (item: EducationItem) => {
-    return 0.5 + (item.description ? 0.2 : 0) + (item.bulletPoints?.length || 0) * 0.15;
+    return 0.5 + (item.description ? 0.2 : 0) + (item.points?.length || 0) * 0.15;
   };
   
   education.forEach(item => {
@@ -452,41 +451,14 @@ const EducationSection = ({ education, styles }: { education: EducationItem[]; s
 };
 
 const SkillsSection = ({ skills, styles }: { skills: SkillItem[]; styles: any }) => {
-  const groupByLevel: Record<string, string[]> = {
-    'Expert': [],
-    'Advanced': [],
-    'Intermediate': [],
-    'Beginner': []
-  };
-
-  skills.forEach(skill => {
-    const level = skill.level.charAt(0).toUpperCase() + skill.level.slice(1);
-    if (groupByLevel[level]) {
-      groupByLevel[level].push(skill.name);
-    } else {
-      groupByLevel['Other'] = groupByLevel['Other'] || [];
-      groupByLevel['Other'].push(skill.name);
-    }
-  });
-
-  const nonEmptyGroups = Object.entries(groupByLevel)
-    .filter(([_, names]) => names.length > 0);
-
+  const skillNames = skills.map(skill => skill.name);
+  
   return (
     <View style={styles.section}>
       <Text style={styles.sectionHeader}>Skills</Text>
-      <View style={styles.skillCategories}>
-        {nonEmptyGroups.map(([level, skillNames], index) => (
-          <View key={index} style={styles.skillCategory}>
-            <Text style={styles.skillCategoryName}>{level}</Text>
-            <View style={styles.skillList}>
-              {skillNames.map((skill, i) => (
-                <Text key={i} style={styles.skillItem}>{skill}</Text>
-              ))}
-            </View>
-          </View>
-        ))}
-      </View>
+      <Text style={styles.description}>
+        {skillNames.join(' • ')}
+      </Text>
     </View>
   );
 };
@@ -705,10 +677,6 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({ resumeData }) => 
 
         {activeSections.includes('education') && education && education.length > 0 && (
           <EducationSection education={education} styles={styles} />
-        )}
-
-        {activeSections.includes('skills') && skills && skills.length > 0 && (
-          <SkillsSection skills={skills} styles={styles} />
         )}
 
         {activeSections.includes('projects') && projects && projects.length > 0 && (

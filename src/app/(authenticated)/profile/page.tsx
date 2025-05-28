@@ -2,10 +2,9 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ProfileHeader from "./ProfileHeader";
 import { prisma } from "@/lib/prisma";
-import { User, Work, Education, Skill } from "@prisma/client";
+import { User, Work, Education } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import ProfileEducation from "./ProfileEducation";
-import ProfileSkills from "./ProfileSkills";
 import ProfileWork from "./ProfileWork";
 
 export default async function Profile() {
@@ -30,11 +29,6 @@ export default async function Profile() {
           startDate: "desc",
         },
       },
-      skills: {
-        orderBy: {
-          name: "asc",
-        },
-      },
     },
   });
 
@@ -47,13 +41,12 @@ export default async function Profile() {
       User & {
         work?: Omit<Work, "id">[];
         education?: Omit<Education, "id">[];
-        skills?: Omit<Skill, "id">[];
       }
     >
   ): Promise<User> {
     "use server";
 
-    const { work, education, skills, ...userData } = updatedData;
+    const { work, education, ...userData } = updatedData;
 
     const updatedUser = await prisma.user.update({
       where: { id: user?.id },
@@ -92,21 +85,10 @@ export default async function Profile() {
             })),
           },
         }),
-        ...(skills && {
-          skills: {
-            deleteMany: {
-              userId: user?.id,
-            },
-            create: skills.map((skill) => ({
-              name: skill.name,
-            })),
-          },
-        }),
       },
       include: {
         work: true,
         education: true,
-        skills: true,
       },
     });
 
@@ -122,7 +104,6 @@ export default async function Profile() {
             <ProfileHeader user={user} onSave={updateUser} />
             <ProfileWork user={user} onSave={updateUser} />
             <ProfileEducation user={user} onSave={updateUser} />
-            <ProfileSkills user={user} onSave={updateUser} />
           </div>
         </div>
       </div>

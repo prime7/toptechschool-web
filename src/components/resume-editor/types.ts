@@ -5,7 +5,6 @@ export type SectionType =
   | 'summary'
   | 'experience'
   | 'education'
-  | 'skills'
   | 'projects'
   | 'certifications'
   | 'references';
@@ -63,7 +62,6 @@ export interface EducationItem {
 export interface SkillItem {
   id: string;
   name: string;
-  level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
 }
 
 export interface ProjectItem {
