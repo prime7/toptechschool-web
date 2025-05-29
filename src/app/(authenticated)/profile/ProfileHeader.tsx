@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { InputField } from "@/components/common/FormField";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useToast } from "@/hooks/use-toast";
-import { type User, JobRole } from "@prisma/client";
+import { type User, } from "@prisma/client";
 import {
   Edit,
   MapPin,
@@ -28,6 +28,7 @@ import { PrefixedInput } from "@/components/ui/prefix-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ListContentEditor } from "@/components/resume-editor/components/ListContentEditor";
+import { JobRole } from "@/components/resume-editor/constants";
 
 const JOB_ROLES = Object.entries(JobRole).map(([key, value]) => ({
   label: key
@@ -41,8 +42,9 @@ const JOB_ROLES = Object.entries(JobRole).map(([key, value]) => ({
 
 interface ProfileFormData {
   name: string;
-  role: JobRole;
+  profession: string;
   location: string;
+  phone: string;
   email: string;
   summary: string;
   highlights: string[];
@@ -100,19 +102,27 @@ const ProfileEditDialog = ({
               placeholder="Enter your full name"
             />
             <SearchableSelect
-              label="Job Role"
+              label="Profession"
               options={JOB_ROLES}
-              value={formData.role}
-              onValueChange={(value) => onFieldChange("role", value)}
-              placeholder="Select a job role"
+              value={formData.profession}
+              onValueChange={(value) => onFieldChange("profession", value)}
+              placeholder="Select a profession"
             />
           </div>
-          <InputField
-            label="Location"
-            value={formData.location}
-            onChange={(value) => onFieldChange("location", value)}
-            placeholder="e.g. San Francisco, CA"
-          />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <InputField
+              label="Location"
+              value={formData.location}
+              onChange={(value) => onFieldChange("location", value)}
+              placeholder="e.g. San Francisco, CA"
+            />
+            <InputField
+              label="Phone Number"
+              value={formData.phone}
+              onChange={(value) => onFieldChange("phone", value)}
+              placeholder="e.g. +1234567890"
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -231,8 +241,9 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
 
   const [formData, setFormData] = useState<ProfileFormData>({
     name: user.name || "",
-    role: user.role,
+    profession: user.profession || "",
     location: user.location || "",
+    phone: user.phone || "",
     email: user.email || "",
     summary: user.summary || "",
     highlights: user.highlights || [],
@@ -245,8 +256,9 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
     if (!editing) {
       setFormData({
         name: user.name || "",
-        role: user.role,
+        profession: user.profession || "",
         location: user.location || "",
+        phone: user.phone || "",
         email: user.email || "",
         summary: user.summary || "",
         highlights: user.highlights || [],
@@ -284,8 +296,9 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
   const handleSave = () => {
     const updatedFields: Partial<User> = {
       name: formData.name,
-      role: formData.role,
+      profession: formData.profession,
       location: formData.location,
+      phone: formData.phone,
       summary: formData.summary,
       highlights: formData.highlights,
       github: formatUrl(
@@ -333,10 +346,9 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
     setFormData((prev) => ({ ...prev, highlights }));
   };
 
-  const getJobRoleLabel = (roleValue: JobRole) => {
-    return (
-      JOB_ROLES.find((role) => role.value === roleValue)?.label || roleValue
-    );
+  const getJobRoleLabel = (roleValue: string) => {
+    const role = JOB_ROLES.find((role) => role.value === roleValue);
+    return role ? role.label : roleValue;
   };
 
   const socialLinks = [
@@ -366,7 +378,6 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
     <div className="w-full sticky top-4">
       <Card className="shadow-sm bg-muted/30 rounded-lg border">
         <CardContent className="p-4">
-          {/* Edit Button */}
           <div className="flex justify-end mb-3">
             <Button
               variant="ghost"
@@ -380,7 +391,6 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
           </div>
 
           <div className="space-y-4">
-            {/* Avatar and Basic Info */}
             <div className="text-center space-y-3">
               <div className="h-16 w-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                 <span className="text-2xl font-medium text-primary">
@@ -391,15 +401,19 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
                 <h1 className="text-lg font-semibold leading-tight">
                   {optimisticUser?.name || "Name not set"}
                 </h1>
-                {optimisticUser.role && (
+                {optimisticUser.profession && (
                   <p className="text-xs text-muted-foreground">
-                    {getJobRoleLabel(optimisticUser.role)}
+                    {getJobRoleLabel(optimisticUser?.profession)}
+                  </p>
+                )}
+                {optimisticUser.phone && (
+                  <p className="text-xs text-muted-foreground">
+                    {optimisticUser.phone}
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Contact Info */}
             <div className="space-y-2 text-center">
               {optimisticUser?.location && (
                 <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
@@ -417,9 +431,6 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
 
             {socialLinks.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-xs font-medium text-center text-muted-foreground">
-                  Connect
-                </h3>
                 <div className="flex items-center justify-center gap-2">
                   {socialLinks.map((link, index) => (
                     <a
