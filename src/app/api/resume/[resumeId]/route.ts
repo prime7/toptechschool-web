@@ -62,12 +62,12 @@ export async function PATCH(
   try {
     const session = JSON.parse(request.headers.get("x-session") || "{}");
     const body = await request.json();
-    const { filename, jobRole } = body;
+    const { filename, profession } = body;
 
     const updatedResume = await ResumeService.updateResume(
       params.resumeId,
       session.user.id,
-      { filename, jobRole }
+      { filename, profession }
     );
 
     return NextResponse.json(updatedResume);

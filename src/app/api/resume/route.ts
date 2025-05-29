@@ -20,12 +20,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = JSON.parse(request.headers.get("x-session") || "{}");
-    const { filename, fileType, jobRole } = await request.json();
+    const { filename, fileType, profession } = await request.json();
     
     const result = await ResumeService.createResume(session.user.id, {
       filename,
       fileType,
-      jobRole,
+      profession,
     });
 
     return NextResponse.json(result);

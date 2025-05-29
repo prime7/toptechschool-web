@@ -69,7 +69,7 @@ export default async function UploadPage() {
                     id={resume.id}
                     filename={resume.filename}
                     createdAt={resume.createdAt}
-                    jobRole={resume.jobRole || undefined}
+                    profession={resume.profession || undefined}
                   />
                 ))}
               </div>

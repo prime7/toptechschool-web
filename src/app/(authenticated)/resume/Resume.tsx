@@ -40,14 +40,14 @@ type ResumeProps = {
   id: string;
   filename: string;
   createdAt: string | Date;
-  jobRole?: string;
+  profession?: string;
 };
 
 export default function Resume({
   id,
   filename,
   createdAt,
-  jobRole,
+  profession,
 }: ResumeProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -170,12 +170,12 @@ export default function Resume({
         </div>
       </div>
 
-      {jobRole && (
+      {profession && (
         <div className="px-4 pb-2 -mt-1">
           <div className="flex items-center text-sm">
             <BriefcaseIcon className="h-3.5 w-3.5 mr-1.5 text-primary" />
             <span className="text-primary font-medium">
-              {jobRole.replace(/_/g, " ")}
+              {profession.replace(/_/g, " ")}
             </span>
           </div>
         </div>
