@@ -314,9 +314,9 @@ const PersonalSection = ({
         <Text style={[styles.personalHeaderName, getTextAlign()]}>
           {personal.fullName}
         </Text>
-        {personal.title && (
+        {personal.profession && (
           <Text style={[styles.personalHeaderTitle, getTextAlign()]}>
-            {personal.title}
+            {personal.profession}
           </Text>
         )}
       </View>
@@ -641,7 +641,7 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
       author={documentAuthor}
       creator="Resume Editor"
       producer="Resume Editor"
-      keywords={`resume, ${personal.fullName}, ${personal.title || ""}`}
+      keywords={`resume, ${personal.fullName}, ${personal.profession || ""}`}
     >
       <Page size="A4" style={styles.page} wrap>
         {activeSections.includes("personal") && (

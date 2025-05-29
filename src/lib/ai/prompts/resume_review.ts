@@ -1,10 +1,10 @@
 export const generateResumeReviewPrompt = (
-   inputs: { resumeData: string, jobRole: string | null }
+   inputs: { resumeData: string, profession: string | null }
  ): string => {
-   const { resumeData, jobRole } = inputs;
+   const { resumeData, profession } = inputs;
  
    return `
-   As an expert Technical Recruiter and Hiring Manager, your task is to identify key missing elements in the resume. Focus on actionable improvements directly aligned with the general '${jobRole || 'software_industry'}' category.
+   As an expert Technical Recruiter and Hiring Manager, your task is to identify key missing elements in the resume. Focus on actionable improvements directly aligned with the general '${profession || 'software_industry'}' category.
    --- RESUME DATA (Parsed Text) ---
     ${resumeData}
    --- END RESUME DATA ---

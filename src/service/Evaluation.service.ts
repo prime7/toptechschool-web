@@ -1,4 +1,3 @@
-import { JobRole } from "@prisma/client";
 import { BaseService } from "./Base.service";
 import { getPracticeSet } from "@/actions/practice";
 import { ai, generateJobMatchPrompt, generateResumeReviewPrompt, generatePracticePrompt } from "@/lib/ai/index";
@@ -61,13 +60,13 @@ export class EvaluationService extends BaseService {
   static async evaluateJobMatch(
     jobDescription: string,
     resumeData: string,
-    jobRole: JobRole | null,
+    profession: string | null,
     userId: string
   ): Promise<JobMatchEvaluationResult> {
     return this.handleError(
       async () => {
         try {
-          const prompt = generateJobMatchPrompt(jobDescription, resumeData, jobRole);
+          const prompt = generateJobMatchPrompt(jobDescription, resumeData, profession);
           const response = await ai.generateResponse({
             prompt,
             model: "claude-3-haiku-20240307",
@@ -86,13 +85,13 @@ export class EvaluationService extends BaseService {
 
   static async evaluateResume(
     resumeData: string,
-    jobRole: JobRole | null,
+    profession: string | null,
     userId: string
   ): Promise<ResumeEvaluationResult> {
     return this.handleError(
       async () => {
         try {
-          const prompt = generateResumeReviewPrompt({ resumeData, jobRole });
+          const prompt = generateResumeReviewPrompt({ resumeData, profession });
           const response = await ai.generateResponse({
             prompt: prompt,
             model: 'claude-3-5-haiku-20241022',
