@@ -13,12 +13,13 @@ model User {
   id              String         @id @default(cuid())
   name            String?
   email           String         @unique
+  phone           String?
+  profession      String?
   emailVerified   DateTime?
   isEmailVerified Boolean        @default(false)
   image           String?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  role            JobRole        @default(SOFTWARE_ENGINEER)
   summary         String?
   highlights      String[]
   github          String?
@@ -36,18 +37,18 @@ model User {
 }
 
 model Work {
-  id             String         @id @default(cuid())
-  company        String
-  position       JobRole        @default(SOFTWARE_ENGINEER)
-  location       LocationType   @default(REMOTE)
-  startDate      DateTime
-  endDate        DateTime?
-  description    String?        @db.Text
-  points         String[]
-  displayOrder   Int            @default(0)
-  userId         String
-  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  }
+  id           String       @id @default(cuid())
+  company      String
+  position     String?
+  location     LocationType @default(REMOTE)
+  startDate    DateTime
+  endDate      DateTime?
+  description  String?      @db.Text
+  points       String[]
+  displayOrder Int          @default(0)
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
 model Education {
   id           String    @id @default(cuid())
@@ -63,14 +64,14 @@ model Education {
 }
 
 model Project {
-  id             String         @id @default(cuid())
-  name           String
-  url            String?
-  description    String?        @db.Text
-  points         String[]
-  displayOrder   Int            @default(0)
-  userId         String
-  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  name         String
+  url          String?
+  description  String?  @db.Text
+  points       String[]
+  displayOrder Int      @default(0)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -111,7 +112,7 @@ model Resume {
   parsed     ParsingStatus @default(NOT_STARTED)
   fileKey    String
   analysis   Json?
-  jobRole    JobRole?
+  profession String?
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   jobReviews JobReview[]
 }
@@ -175,25 +176,6 @@ enum ParsingStatus {
   STARTED
   PARSED
   ERROR
-}
-
-enum JobRole {
-  SOFTWARE_ENGINEER
-  FRONTEND_DEVELOPER
-  BACKEND_DEVELOPER
-  FULLSTACK_DEVELOPER
-  DEVOPS_ENGINEER
-  QA_ENGINEER
-  DATA_SCIENTIST
-  DATA_ENGINEER
-  MACHINE_LEARNING_ENGINEER
-  PRODUCT_MANAGER
-  PROJECT_MANAGER
-  SCRUM_MASTER
-  UI_UX_DESIGNER
-  SYSTEM_ADMINISTRATOR
-  SECURITY_ENGINEER
-  DATABASE_ADMINISTRATOR
 }
 
 enum Degree {
