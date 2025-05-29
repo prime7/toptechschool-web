@@ -1,12 +1,11 @@
 import { auth } from "@/lib/auth";
 import { ResumeService } from "@/service/Resume.service";
-import { JobRole } from "@prisma/client";
 
 export type ResumeWithJobRole = {
   id: string;
   filename: string;
   createdAt: Date;
-  jobRole: JobRole | null;
+  profession: string | null;
 };
 
 export async function getUserResumes(): Promise<ResumeWithJobRole[]> {

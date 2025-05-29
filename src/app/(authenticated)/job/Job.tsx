@@ -25,13 +25,12 @@ import {
 import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { ResumeEvaluationResult } from "@/service/Evaluation.service";
-import { JobRole, Resume } from "@prisma/client";
+import { Resume } from "@prisma/client";
 import JobReport from "./JobReport";
+import { JobRole } from "@/components/resume-editor/constants";
 
 const formSchema = z.object({
-  jobRole: z.nativeEnum(JobRole, {
-    errorMap: () => ({ message: "Please select a job role" }),
-  }),
+  profession: z.string(),
   jobDescription: z.string().min(1, "Job description is required"),
   resumeId: z.string().min(1, "Please select a resume"),
 });
@@ -44,11 +43,13 @@ type JobProps = {
 
 export default function Job({ resumes }: JobProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [evaluation, setEvaluation] = useState<ResumeEvaluationResult | null>(null);
+  const [evaluation, setEvaluation] = useState<ResumeEvaluationResult | null>(
+    null
+  );
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      jobRole: undefined,
+      profession: undefined,
       jobDescription: "",
       resumeId: "",
     },
@@ -60,7 +61,7 @@ export default function Job({ resumes }: JobProps) {
       const response = await axios.post("/api/evaluate/job", {
         jobDescription: values.jobDescription,
         resumeId: values.resumeId,
-        jobRole: values.jobRole,
+        profession: values.profession,
       });
 
       setEvaluation(response.data.evaluation);
@@ -87,7 +88,7 @@ export default function Job({ resumes }: JobProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="jobRole"
+              name="profession"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Job Role</FormLabel>
@@ -138,7 +139,7 @@ export default function Job({ resumes }: JobProps) {
                       {resumes.map((resume) => (
                         <SelectItem key={resume.id} value={resume.id}>
                           {resume.filename} (
-                          {resume.jobRole || "No role specified"})
+                          {resume.profession || "No role specified"})
                         </SelectItem>
                       ))}
                     </SelectContent>
