@@ -1,7 +1,5 @@
-import { JobRole } from "@prisma/client";
-
 export const generateResumeReviewPrompt = (
-   inputs: { resumeData: string, jobRole: JobRole | null }
+   inputs: { resumeData: string, jobRole: string | null }
  ): string => {
    const { resumeData, jobRole } = inputs;
  

@@ -1,9 +1,7 @@
-  import { JobRole } from "@prisma/client";
-
 export const generateJobMatchPrompt = (
   jobDescription: string,
   resumeData: string,
-  jobRole: JobRole | null
+  jobRole: string | null
 ): string => {
   return [
     `You are an expert job match analyzer with deep knowledge of technical roles and industry requirements.

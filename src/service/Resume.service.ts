@@ -1,4 +1,3 @@
-import { JobRole } from "@prisma/client";
 import { R2Service } from "./R2.service";
 import { ResumeWithJobRole } from "@/actions/resume";
 import { ResumeEvaluationResult } from "./Evaluation.service";
@@ -17,7 +16,7 @@ export class ResumeService extends BaseService {
           select: {
             id: true,
             filename: true,
-            jobRole: true,
+            profession: true,
             createdAt: true,
           },
           orderBy: options?.orderBy ? { createdAt: options.orderBy } : undefined,
@@ -50,7 +49,7 @@ export class ResumeService extends BaseService {
   static async createResume(userId: string, data: {
     filename: string;
     fileType: string;
-    jobRole?: JobRole;
+    profession?: string;
   }) {
     return this.handleError(
       async () => {
@@ -59,7 +58,7 @@ export class ResumeService extends BaseService {
             userId,
             filename: data.filename,
             fileKey: "",
-            jobRole: data.jobRole,
+            profession: data.profession,
           },
         });
 
@@ -80,7 +79,7 @@ export class ResumeService extends BaseService {
 
   static async updateResume(resumeId: string, userId: string, data: {
     filename?: string;
-    jobRole?: JobRole;
+    profession?: string;
   }) {
     return this.handleError(
       async () => {

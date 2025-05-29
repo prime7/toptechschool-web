@@ -1,4 +1,3 @@
-import { JobRole } from "@prisma/client";
 import { EvaluationService, ResumeEvaluationResult } from "./Evaluation.service";
 import { ResumeService } from "./Resume.service";
 import { BaseService } from "./Base.service";
@@ -7,7 +6,7 @@ export class JobService extends BaseService {
   static async evaluateJobDescription(
     userId: string,
     jobDescription: string,
-    jobRole: JobRole | null,
+    jobRole: string | null,
     resumeId?: string
   ) {
     return this.handleError(
