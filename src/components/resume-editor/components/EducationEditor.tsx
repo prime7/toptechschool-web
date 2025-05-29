@@ -281,7 +281,7 @@ export function EducationEditor({
       {education.length > 0 && (
         <div className="grid gap-1.5">
           {education.map((item) => (
-            <Card key={item.id} className="group overflow-hidden bg-card shadow-sm">
+            <Card key={item.id} className="group overflow-hidden shadow-sm">
               <CardContent className="p-3">
                 <div className="flex justify-between items-start gap-4">
                   <div>

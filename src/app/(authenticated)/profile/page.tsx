@@ -70,7 +70,6 @@ export default async function Profile() {
               location: job.location,
               points: job.points,
               description: job.description,
-              employmentType: job.employmentType,
               startDate: new Date(job.startDate),
               endDate: job.endDate ? new Date(job.endDate) : null,
               displayOrder: job.displayOrder,

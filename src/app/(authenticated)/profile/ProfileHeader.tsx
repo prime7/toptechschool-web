@@ -337,7 +337,7 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
   ];
 
   return (
-    <Card className="border-0 shadow-lg overflow-hidden">
+    <Card className="shadow-sm overflow-hidden">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
