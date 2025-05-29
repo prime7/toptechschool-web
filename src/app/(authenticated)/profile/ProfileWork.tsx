@@ -108,7 +108,7 @@ export default function ProfileWork({ user, onSave }: ProfileWorkProps) {
       onUpdate={handleUpdate}
       onRemove={handleRemove}
       title="Work Experience"
-      description="Add your work experience to showcase your professional background."
+      description=""
     />
   );
 }

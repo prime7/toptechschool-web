@@ -2,10 +2,11 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ProfileHeader from "./ProfileHeader";
 import { prisma } from "@/lib/prisma";
-import { User, Work, Education } from "@prisma/client";
+import { User, Work, Education, Project } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import ProfileEducation from "./ProfileEducation";
 import ProfileWork from "./ProfileWork";
+import ProfileProject from "./ProfileProject";
 
 export default async function Profile() {
   const session = await auth();
@@ -29,6 +30,11 @@ export default async function Profile() {
           startDate: "desc",
         },
       },
+      projects: {
+        orderBy: {
+          displayOrder: "asc",
+        },
+      },
     },
   });
 
@@ -41,12 +47,13 @@ export default async function Profile() {
       User & {
         work?: Omit<Work, "id">[];
         education?: Omit<Education, "id">[];
+        projects?: Omit<Project, "id">[];
       }
     >
   ): Promise<User> {
     "use server";
 
-    const { work, education, ...userData } = updatedData;
+    const { work, education, projects, ...userData } = updatedData;
 
     const updatedUser = await prisma.user.update({
       where: { id: user?.id },
@@ -70,6 +77,20 @@ export default async function Profile() {
             })),
           },
         }),
+        ...(projects && {
+          projects: {
+            deleteMany: {
+              userId: user?.id,
+            },
+            create: projects.map((project) => ({
+              name: project.name,
+              description: project.description,
+              points: project.points,
+              url: project.url,
+              displayOrder: project.displayOrder,
+            })),
+          },
+        }),
         ...(education && {
           education: {
             deleteMany: {
@@ -89,6 +110,7 @@ export default async function Profile() {
       include: {
         work: true,
         education: true,
+        projects: true,
       },
     });
 
@@ -104,6 +126,7 @@ export default async function Profile() {
             <ProfileHeader user={user} onSave={updateUser} />
             <ProfileWork user={user} onSave={updateUser} />
             <ProfileEducation user={user} onSave={updateUser} />
+            <ProfileProject user={user} onSave={updateUser} />
           </div>
         </div>
       </div>

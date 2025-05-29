@@ -89,7 +89,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
       onUpdate={handleUpdateEducation}
       onRemove={handleRemoveEducation}
       title="Education"
-      description="Add your educational background to showcase your qualifications."
+      description=""
     />
   );
 }

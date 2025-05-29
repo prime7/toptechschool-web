@@ -29,6 +29,7 @@ model User {
   sessions        Session[]
   work            Work[]
   education       Education[]
+  projects        Project[]
   practiceTests   PracticeTest[]
   ai              AI[]
 }
@@ -59,6 +60,17 @@ model Education {
   displayOrder Int       @default(0)
   userId       String
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id             String         @id @default(cuid())
+  name           String
+  url            String?
+  description    String?        @db.Text
+  points         String[]
+  displayOrder   Int            @default(0)
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
