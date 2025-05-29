@@ -3,9 +3,7 @@
 import { useState, useTransition, useOptimistic, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { InputField } from "@/components/common/FormField";
-import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { type User, JobRole } from "@prisma/client";
 import {
@@ -27,7 +25,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PrefixedInput } from "@/components/ui/prefix-input";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ListContentEditor } from "@/components/resume-editor/components/ListContentEditor";
@@ -119,25 +116,11 @@ const ProfileEditDialog = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="summary" className="text-sm font-medium">
-            Professional Summary
-          </Label>
-          <Textarea
-            id="summary"
-            value={formData.summary}
-            onChange={(e) => onFieldChange("summary", e.target.value)}
-            placeholder="Write a brief summary about your professional experience, skills, and career goals..."
-            className="min-h-[120px] resize-y"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">
-            Career Highlights
-          </Label>
           <ListContentEditor
             bulletPoints={formData.highlights}
-            onAdd={(highlight) => onHighlightsChange([...formData.highlights, highlight])}
+            onAdd={(highlight) =>
+              onHighlightsChange([...formData.highlights, highlight])
+            }
             onUpdate={(index, text) => {
               const updated = [...formData.highlights];
               updated[index] = text;
@@ -148,6 +131,11 @@ const ProfileEditDialog = ({
               onHighlightsChange(updated);
             }}
             onReorder={onHighlightsChange}
+            description={formData.summary}
+            onDescriptionChange={(summary) => onFieldChange("summary", summary)}
+            descriptionLabel="Professional Summary"
+            descriptionPlaceholder="Write a brief summary about your professional experience, skills, and career goals..."
+            showDescription={true}
             bulletPlaceholder="Add a career highlight or achievement"
             addButtonText="Add Highlight"
           />
@@ -354,102 +342,143 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
   const socialLinks = [
     {
       url: optimisticUser.github,
-      icon: <Github className="h-5 w-5" />,
-      label: "GitHub Profile",
+      icon: <Github className="h-4 w-4" />,
+      label: "GitHub",
+      username: extractUsername(optimisticUser.github || "", "github"),
     },
     {
       url: optimisticUser.website,
-      icon: <Globe className="h-5 w-5" />,
-      label: "Personal Website",
+      icon: <Globe className="h-4 w-4" />,
+      label: "Website",
+      username: optimisticUser.website
+        ?.replace(/^https?:\/\//, "")
+        .replace(/\/$/, ""),
     },
     {
       url: optimisticUser.linkedin,
-      icon: <Linkedin className="h-5 w-5" />,
-      label: "LinkedIn Profile",
+      icon: <Linkedin className="h-4 w-4" />,
+      label: "LinkedIn",
+      username: extractUsername(optimisticUser.linkedin || "", "linkedin"),
     },
-  ];
+  ].filter((link) => link.url);
 
   return (
-    <Card className="shadow-sm overflow-hidden">
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-2xl font-medium text-primary">
-                {optimisticUser?.name?.[0]?.toUpperCase()}
-              </span>
+    <div className="space-y-6">
+      <Card className="shadow-sm bg-muted/30">
+        <CardContent className="p-8">
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setEditing(true)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+          </div>
+          <div className="space-y-8">
+            {/* Avatar and Basic Info */}
+            <div className="text-center space-y-4">
+              <div className="h-20 w-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-3xl font-medium text-primary">
+                  {optimisticUser?.name?.[0]?.toUpperCase() || "U"}
+                </span>
+              </div>
+              <div className="space-y-1">
+                <h1 className="text-2xl font-semibold">
+                  {optimisticUser?.name || "Name not set"}
+                </h1>
+                {optimisticUser.role && (
+                  <p className="text-muted-foreground">
+                    {getJobRoleLabel(optimisticUser.role)}
+                  </p>
+                )}
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold">{optimisticUser?.name}</h1>
-              {optimisticUser.role && (
-                <div className="text-muted-foreground">
-                  {getJobRoleLabel(optimisticUser.role)}
+
+            <div className="space-y-3">
+              {optimisticUser?.location && (
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
+                  <span>{optimisticUser.location}</span>
+                </div>
+              )}
+              {optimisticUser?.email && (
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Mail className="h-4 w-4" />
+                  <span>{optimisticUser.email}</span>
                 </div>
               )}
             </div>
+
+            {socialLinks.length > 0 && (
+              <div className="pt-4 border-t border-border/50">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium text-center">Connect</h3>
+                  <div className="grid gap-2">
+                    {socialLinks.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link.url || ""}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200 group"
+                      >
+                        <div className="text-muted-foreground group-hover:text-foreground transition-colors">
+                          {link.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium">
+                            {link.label}
+                          </div>
+                          {link.username && (
+                            <div className="text-xs text-muted-foreground truncate">
+                              {link.username}
+                            </div>
+                          )}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {(optimisticUser.summary ||
+              (optimisticUser.highlights &&
+                optimisticUser.highlights.length > 0)) && (
+              <div className="pt-4 border-t border-border/50">
+                <div className="space-y-4">
+                  {optimisticUser.summary && (
+                    <div className="max-w-2xl mx-auto">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {optimisticUser.summary}
+                      </p>
+                    </div>
+                  )}
+                  {optimisticUser.highlights &&
+                    optimisticUser.highlights.length > 0 && (
+                      <div className="space-y-2">
+                        {optimisticUser.highlights.map((highlight, index) => (
+                          <div
+                            key={index}
+                            className="flex items-start gap-3 text-sm"
+                          >
+                            <div className="text-primary mt-1.5 text-xs">•</div>
+                            <span className="text-muted-foreground leading-relaxed">
+                              {highlight}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                </div>
+              </div>
+            )}
           </div>
-
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setEditing(true)}
-          >
-            <Edit className="h-4 w-4 mr-1.5" />
-            Edit
-          </Button>
-        </div>
-
-        {optimisticUser.summary && (
-          <p className="text-muted-foreground mb-4">{optimisticUser.summary}</p>
-        )}
-
-        {optimisticUser.highlights && optimisticUser.highlights.length > 0 && (
-          <div className="mb-4">
-            <h3 className="text-sm font-medium mb-2">Career Highlights</h3>
-            <ul className="space-y-1">
-              {optimisticUser.highlights.map((highlight, index) => (
-                <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-primary mt-1">•</span>
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <div className="flex flex-wrap gap-2">
-          {optimisticUser?.location && (
-            <Badge variant="secondary" className="flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5" />
-              {optimisticUser.location}
-            </Badge>
-          )}
-
-          {optimisticUser?.email && (
-            <Badge variant="secondary" className="flex items-center gap-1.5">
-              <Mail className="h-3.5 w-3.5" />
-              {optimisticUser.email}
-            </Badge>
-          )}
-
-          <div className="flex gap-3 items-center">
-            {socialLinks
-              .filter((link) => link.url)
-              .map((link, index) => (
-                <a
-                  key={index}
-                  href={link.url || ""}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center h-10 w-10 bg-primary/10 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
-                  aria-label={link.label}
-                >
-                  {link.icon}
-                </a>
-              ))}
-          </div>
-        </div>
-      </CardContent>
+        </CardContent>
+      </Card>
 
       <ProfileEditDialog
         open={editing}
@@ -461,6 +490,6 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
         isPending={isPending}
         user={user}
       />
-    </Card>
+    </div>
   );
 }

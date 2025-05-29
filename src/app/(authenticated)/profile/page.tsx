@@ -118,11 +118,16 @@ export default async function Profile() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-5rem)]">
-      <div className="container mx-auto py-6 sm:py-8 md:py-12 px-4 sm:px-6 max-w-6xl">
-        <div className="grid gap-6 sm:gap-8 md:gap-10">
-          <div className="space-y-6 sm:space-y-8">
-            <ProfileHeader user={user} onSave={updateUser} />
+    <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-background via-background to-muted/30">
+      <div className="container mx-auto py-8 px-4 max-w-7xl">
+        <div className="grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4 space-y-6">
+            <div className="sticky top-6">
+              <ProfileHeader user={user} onSave={updateUser} />
+            </div>
+          </div>
+
+          <div className="lg:col-span-8 space-y-8">
             <ProfileWork user={user} onSave={updateUser} />
             <ProfileEducation user={user} onSave={updateUser} />
             <ProfileProject user={user} onSave={updateUser} />
