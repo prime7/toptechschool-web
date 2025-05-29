@@ -363,84 +363,77 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
   ].filter((link) => link.url);
 
   return (
-    <div className="space-y-6">
-      <Card className="shadow-sm bg-muted/30">
-        <CardContent className="p-8">
-          <div className="flex justify-end mb-4">
+    <div className="w-full sticky top-4">
+      <Card className="shadow-sm bg-muted/30 rounded-lg border">
+        <CardContent className="p-4">
+          {/* Edit Button */}
+          <div className="flex justify-end mb-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setEditing(true)}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground h-8 px-2"
             >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
+              <Edit className="h-3 w-3 mr-1" />
+              <span className="text-xs">Edit</span>
             </Button>
           </div>
-          <div className="space-y-8">
+
+          <div className="space-y-4">
             {/* Avatar and Basic Info */}
-            <div className="text-center space-y-4">
-              <div className="h-20 w-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-3xl font-medium text-primary">
+            <div className="text-center space-y-3">
+              <div className="h-16 w-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-2xl font-medium text-primary">
                   {optimisticUser?.name?.[0]?.toUpperCase() || "U"}
                 </span>
               </div>
               <div className="space-y-1">
-                <h1 className="text-2xl font-semibold">
+                <h1 className="text-lg font-semibold leading-tight">
                   {optimisticUser?.name || "Name not set"}
                 </h1>
                 {optimisticUser.role && (
-                  <p className="text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {getJobRoleLabel(optimisticUser.role)}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="space-y-3">
+            {/* Contact Info */}
+            <div className="space-y-2 text-center">
               {optimisticUser?.location && (
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  <span>{optimisticUser.location}</span>
+                <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                  <MapPin className="h-3 w-3" />
+                  <span className="truncate">{optimisticUser.location}</span>
                 </div>
               )}
               {optimisticUser?.email && (
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <Mail className="h-4 w-4" />
-                  <span>{optimisticUser.email}</span>
+                <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                  <Mail className="h-3 w-3" />
+                  <span className="truncate">{optimisticUser.email}</span>
                 </div>
               )}
             </div>
 
             {socialLinks.length > 0 && (
-              <div className="pt-4 border-t border-border/50">
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium text-center">Connect</h3>
-                  <div className="grid gap-2">
-                    {socialLinks.map((link, index) => (
-                      <a
-                        key={index}
-                        href={link.url || ""}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200 group"
-                      >
-                        <div className="text-muted-foreground group-hover:text-foreground transition-colors">
-                          {link.icon}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium">
-                            {link.label}
-                          </div>
-                          {link.username && (
-                            <div className="text-xs text-muted-foreground truncate">
-                              {link.username}
-                            </div>
-                          )}
-                        </div>
-                      </a>
-                    ))}
-                  </div>
+              <div className="space-y-2">
+                <h3 className="text-xs font-medium text-center text-muted-foreground">
+                  Connect
+                </h3>
+                <div className="flex items-center justify-center gap-2">
+                  {socialLinks.map((link, index) => (
+                    <a
+                      key={index}
+                      href={link.url || ""}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 p-2 rounded-md hover:bg-muted/50 transition-colors duration-200 group"
+                    >
+                      <div className="text-muted-foreground group-hover:text-foreground transition-colors">
+                        {link.icon}
+                      </div>
+                    </a>
+                  ))}
                 </div>
               </div>
             )}
@@ -448,32 +441,30 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
             {(optimisticUser.summary ||
               (optimisticUser.highlights &&
                 optimisticUser.highlights.length > 0)) && (
-              <div className="pt-4 border-t border-border/50">
-                <div className="space-y-4">
-                  {optimisticUser.summary && (
-                    <div className="max-w-2xl mx-auto">
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {optimisticUser.summary}
-                      </p>
+              <div className="space-y-3 pt-2 border-t border-border/50">
+                {optimisticUser.summary && (
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {optimisticUser.summary}
+                  </p>
+                )}
+                {optimisticUser.highlights &&
+                  optimisticUser.highlights.length > 0 && (
+                    <div className="space-y-1">
+                      {optimisticUser.highlights.map((highlight, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-2 text-xs"
+                        >
+                          <div className="text-primary mt-0.5 text-xs flex-shrink-0">
+                            •
+                          </div>
+                          <span className="text-muted-foreground leading-relaxed">
+                            {highlight}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   )}
-                  {optimisticUser.highlights &&
-                    optimisticUser.highlights.length > 0 && (
-                      <div className="space-y-2">
-                        {optimisticUser.highlights.map((highlight, index) => (
-                          <div
-                            key={index}
-                            className="flex items-start gap-3 text-sm"
-                          >
-                            <div className="text-primary mt-1.5 text-xs">•</div>
-                            <span className="text-muted-foreground leading-relaxed">
-                              {highlight}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                </div>
               </div>
             )}
           </div>
