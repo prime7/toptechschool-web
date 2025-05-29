@@ -25,8 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { BulletPointEditor } from "./BulletPointEditor";
-import { Textarea } from "@/components/ui/textarea";
+import { ListContentEditor } from "./ListContentEditor";
 import { JobRole, LocationType } from "@prisma/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatEnumValue } from "@/lib/utils";
@@ -271,25 +270,20 @@ export function WorkEditor({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-sm">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Brief description of your role and responsibilities"
-                className="min-h-[80px]"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm">Key Achievements & Responsibilities</Label>
-              <BulletPointEditor
+              <Label className="text-sm">Description & Key Achievements</Label>
+              <ListContentEditor
+                description={formData.description}
+                onDescriptionChange={(description) => setFormData((prev) => ({ ...prev, description }))}
                 bulletPoints={formData.points}
                 onAdd={(bullet) => setFormData((prev) => ({ ...prev, points: [...prev.points, bullet] }))}
                 onUpdate={(index, text) => setFormData((prev) => ({ ...prev, points: prev.points.map((b, i) => (i === index ? text : b)) }))}
                 onRemove={(index) => setFormData((prev) => ({ ...prev, points: prev.points.filter((_, i) => i !== index) }))}
                 onReorder={(newOrder) => setFormData((prev) => ({ ...prev, points: newOrder }))}
+                showDescription={true}
+                descriptionLabel="Description"
+                descriptionPlaceholder="Brief description of your role and responsibilities"
+                bulletPlaceholder="Add a key achievement or responsibility"
+                addButtonText="Add Achievement"
               />
             </div>
           </div>

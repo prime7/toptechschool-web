@@ -3,17 +3,13 @@ import { ListContentEditor } from '../ListContentEditor';
 import { useState } from 'react';
 
 const meta: Meta<typeof ListContentEditor> = {
-  title: 'Resume/ContentEditor',
+  title: 'Resume/ListContentEditor',
   component: ListContentEditor,
   parameters: { layout: 'padded' },
   argTypes: {
     bulletPoints: {
       description: 'Array of bullet point strings',
       control: { type: 'object' }
-    },
-    showDescription: {
-      description: 'Whether to show the description field',
-      control: { type: 'boolean' }
     },
     descriptionLabel: {
       description: 'Label for the description field',
@@ -65,49 +61,6 @@ const BulletPointsOnlyTemplate = () => {
       onRemove={handleRemove}
       onReorder={handleReorder}
       showDescription={false}
-    />
-  );
-};
-
-// With description (like HighlightsEditor)
-const WithDescriptionTemplate = () => {
-  const [description, setDescription] = useState('Technical Skills & Achievements');
-  const [bulletPoints, setBulletPoints] = useState([
-    'Proficient in React, TypeScript, Node.js, and Python',
-    'Led development of 5+ high-impact web applications',
-    'Reduced application load time by 40% through performance optimization'
-  ]);
-
-  const handleAdd = (bullet: string) => {
-    setBulletPoints(prev => [...prev, bullet]);
-  };
-
-  const handleUpdate = (index: number, text: string) => {
-    setBulletPoints(prev => prev.map((item, i) => i === index ? text : item));
-  };
-
-  const handleRemove = (index: number) => {
-    setBulletPoints(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const handleReorder = (newOrder: string[]) => {
-    setBulletPoints(newOrder);
-  };
-
-  return (
-    <ListContentEditor
-      showDescription={true}
-      description={description}
-      onDescriptionChange={setDescription}
-      descriptionLabel="Section Title"
-      descriptionPlaceholder="Enter section title..."
-      bulletPoints={bulletPoints}
-      onAdd={handleAdd}
-      onUpdate={handleUpdate}
-      onRemove={handleRemove}
-      onReorder={handleReorder}
-      bulletPlaceholder="Add an achievement or skill"
-      addButtonText="Add Item"
     />
   );
 };
@@ -189,10 +142,6 @@ const CustomTemplate = () => {
 
 export const BulletPointsOnly: Story = {
   render: () => <BulletPointsOnlyTemplate />
-};
-
-export const WithDescription: Story = {
-  render: () => <WithDescriptionTemplate />
 };
 
 export const Empty: Story = {

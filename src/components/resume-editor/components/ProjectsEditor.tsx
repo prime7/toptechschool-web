@@ -5,8 +5,7 @@ import { Plus, Trash, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { BulletPointEditor } from "../components/BulletPointEditor";
-import { Textarea } from "@/components/ui/textarea";
+import { ListContentEditor } from "./ListContentEditor";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -152,44 +151,20 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-sm">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description || ""}
-                onChange={handleChange}
-                placeholder="Describe the project, its purpose, and your role"
-                className="min-h-[120px]"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm">Key Features & Achievements</Label>
-              <BulletPointEditor
+              <Label className="text-sm">Description & Key Features</Label>
+              <ListContentEditor
+                description={formData.description}
+                onDescriptionChange={(description) => setFormData((prev) => ({ ...prev, description }))}
                 bulletPoints={formData.points || []}
-                onAdd={(bullet) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    points: [...prev.points, bullet],
-                  }))
-                }
-                onUpdate={(index, text) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    points: prev.points.map((b, i) =>
-                      i === index ? text : b
-                    ),
-                  }))
-                }
-                onRemove={(index) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    points: prev.points.filter((_, i) => i !== index),
-                  }))
-                }
-                onReorder={(newOrder) =>
-                  setFormData((prev) => ({ ...prev, points: newOrder }))
-                }
+                onAdd={(bullet) => setFormData((prev) => ({ ...prev, points: [...prev.points, bullet] }))}
+                onUpdate={(index, text) => setFormData((prev) => ({ ...prev, points: prev.points.map((b, i) => (i === index ? text : b)) }))}
+                onRemove={(index) => setFormData((prev) => ({ ...prev, points: prev.points.filter((_, i) => i !== index) }))}
+                onReorder={(newOrder) => setFormData((prev) => ({ ...prev, points: newOrder }))}
+                showDescription={true}
+                descriptionLabel="Description"
+                descriptionPlaceholder="Describe the project, its purpose, and your role"
+                bulletPlaceholder="Add a key feature or achievement"
+                addButtonText="Add Feature"
               />
             </div>
           </div>
