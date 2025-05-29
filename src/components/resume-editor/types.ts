@@ -69,6 +69,7 @@ export interface ResumeStyle {
 export interface ResumeData {
   personal: PersonalInfo;
   summary?: string;
+  summaryHighlights?: string[];
   work?: WorkItem[];
   education?: EducationItem[];
   projects?: ProjectItem[];
@@ -79,6 +80,7 @@ export interface ResumeData {
 export type ResumeAction =
   | { type: 'UPDATE_PERSONAL', payload: Partial<PersonalInfo> }
   | { type: 'UPDATE_SUMMARY', payload: string }
+  | { type: 'UPDATE_SUMMARY_HIGHLIGHTS', payload: string[] }
   | { type: 'ADD_EXPERIENCE', payload: WorkItem }
   | { type: 'UPDATE_EXPERIENCE', payload: { id: string, data: Partial<WorkItem> } }
   | { type: 'REMOVE_EXPERIENCE', payload: string }

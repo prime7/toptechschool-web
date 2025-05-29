@@ -18,6 +18,12 @@ export const initialResumeData: ResumeData = {
   },
   summary:
     "Experienced software engineer with 8+ years of experience in building scalable web applications. Specialized in frontend development with React and TypeScript, with a strong focus on performance optimization and user experience.",
+  summaryHighlights: [
+    "8+ years of experience in full-stack development",
+    "Led teams of 5+ developers on multiple projects",
+    "Improved application performance by 40%",
+    "Expert in React, TypeScript, and modern web technologies"
+  ],
   work: [
     {
       id: generateId(),
@@ -121,6 +127,7 @@ export const blankResumeData: ResumeData = {
     github: "",
   },
   summary: "",
+  summaryHighlights: [],
   work: [],
   education: [],
   projects: [],
@@ -147,6 +154,11 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
       return {
         ...state,
         summary: action.payload,
+      };
+    case "UPDATE_SUMMARY_HIGHLIGHTS":
+      return {
+        ...state,
+        summaryHighlights: action.payload,
       };
     case "ADD_EXPERIENCE":
       return {

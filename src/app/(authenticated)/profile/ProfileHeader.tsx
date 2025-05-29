@@ -30,6 +30,7 @@ import { PrefixedInput } from "@/components/ui/prefix-input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ListContentEditor } from "@/components/resume-editor/components/ListContentEditor";
 
 const JOB_ROLES = Object.entries(JobRole).map(([key, value]) => ({
   label: key
@@ -43,10 +44,11 @@ const JOB_ROLES = Object.entries(JobRole).map(([key, value]) => ({
 
 interface ProfileFormData {
   name: string;
-  title: string;
+  role: JobRole;
   location: string;
   email: string;
   summary: string;
+  highlights: string[];
   githubUsername: string;
   website: string;
   linkedinUsername: string;
@@ -62,6 +64,7 @@ const ProfileEditDialog = ({
   onOpenChange,
   formData,
   onFieldChange,
+  onHighlightsChange,
   onSave,
   isPending,
   user,
@@ -70,6 +73,7 @@ const ProfileEditDialog = ({
   onOpenChange: (open: boolean) => void;
   formData: ProfileFormData;
   onFieldChange: (field: keyof ProfileFormData, value: string) => void;
+  onHighlightsChange: (highlights: string[]) => void;
   onSave: () => void;
   isPending: boolean;
   user: User;
@@ -101,8 +105,8 @@ const ProfileEditDialog = ({
             <SearchableSelect
               label="Job Role"
               options={JOB_ROLES}
-              value={formData.title}
-              onValueChange={(value) => onFieldChange("title", value)}
+              value={formData.role}
+              onValueChange={(value) => onFieldChange("role", value)}
               placeholder="Select a job role"
             />
           </div>
@@ -124,6 +128,28 @@ const ProfileEditDialog = ({
             onChange={(e) => onFieldChange("summary", e.target.value)}
             placeholder="Write a brief summary about your professional experience, skills, and career goals..."
             className="min-h-[120px] resize-y"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">
+            Career Highlights
+          </Label>
+          <ListContentEditor
+            bulletPoints={formData.highlights}
+            onAdd={(highlight) => onHighlightsChange([...formData.highlights, highlight])}
+            onUpdate={(index, text) => {
+              const updated = [...formData.highlights];
+              updated[index] = text;
+              onHighlightsChange(updated);
+            }}
+            onRemove={(index) => {
+              const updated = formData.highlights.filter((_, i) => i !== index);
+              onHighlightsChange(updated);
+            }}
+            onReorder={onHighlightsChange}
+            bulletPlaceholder="Add a career highlight or achievement"
+            addButtonText="Add Highlight"
           />
         </div>
 
@@ -217,10 +243,11 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
 
   const [formData, setFormData] = useState<ProfileFormData>({
     name: user.name || "",
-    title: user.title || "",
+    role: user.role,
     location: user.location || "",
     email: user.email || "",
     summary: user.summary || "",
+    highlights: user.highlights || [],
     githubUsername: extractUsername(user.github || "", "github"),
     website: user.website || "",
     linkedinUsername: extractUsername(user.linkedin || "", "linkedin"),
@@ -230,10 +257,11 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
     if (!editing) {
       setFormData({
         name: user.name || "",
-        title: user.title || "",
+        role: user.role,
         location: user.location || "",
         email: user.email || "",
         summary: user.summary || "",
+        highlights: user.highlights || [],
         githubUsername: extractUsername(user.github || "", "github"),
         website: user.website || "",
         linkedinUsername: extractUsername(user.linkedin || "", "linkedin"),
@@ -268,9 +296,10 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
   const handleSave = () => {
     const updatedFields: Partial<User> = {
       name: formData.name,
-      title: formData.title,
+      role: formData.role,
       location: formData.location,
       summary: formData.summary,
+      highlights: formData.highlights,
       github: formatUrl(
         formData.githubUsername,
         "https://github.com/",
@@ -312,7 +341,11 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const getJobRoleLabel = (roleValue: string) => {
+  const handleHighlightsChange = (highlights: string[]) => {
+    setFormData((prev) => ({ ...prev, highlights }));
+  };
+
+  const getJobRoleLabel = (roleValue: JobRole) => {
     return (
       JOB_ROLES.find((role) => role.value === roleValue)?.label || roleValue
     );
@@ -348,9 +381,9 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
             </div>
             <div>
               <h1 className="text-2xl font-bold">{optimisticUser?.name}</h1>
-              {optimisticUser.title && (
+              {optimisticUser.role && (
                 <div className="text-muted-foreground">
-                  {getJobRoleLabel(optimisticUser.title)}
+                  {getJobRoleLabel(optimisticUser.role)}
                 </div>
               )}
             </div>
@@ -368,6 +401,20 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
 
         {optimisticUser.summary && (
           <p className="text-muted-foreground mb-4">{optimisticUser.summary}</p>
+        )}
+
+        {optimisticUser.highlights && optimisticUser.highlights.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-sm font-medium mb-2">Career Highlights</h3>
+            <ul className="space-y-1">
+              {optimisticUser.highlights.map((highlight, index) => (
+                <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         <div className="flex flex-wrap gap-2">
@@ -409,6 +456,7 @@ export default function ProfileHeader({ user, onSave }: ProfileHeaderProps) {
         onOpenChange={setEditing}
         formData={formData}
         onFieldChange={handleFieldChange}
+        onHighlightsChange={handleHighlightsChange}
         onSave={handleSave}
         isPending={isPending}
         user={user}

@@ -1,43 +1,57 @@
 import React, { useState } from 'react';
 import { useResume } from '../context/ResumeContext';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { ListContentEditor } from '../components/ListContentEditor';
 import { Button } from '@/components/ui/button';
 
 const SummarySection: React.FC = () => {
   const { state, dispatch } = useResume();
-  const { summary } = state;
+  const { summary, summaryHighlights } = state;
   const [summaryText, setSummaryText] = useState(summary || '');
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setSummaryText(e.target.value);
-  };
+  const [highlights, setHighlights] = useState<string[]>(summaryHighlights || []);
 
   const handleUpdate = () => {
     dispatch({
       type: 'UPDATE_SUMMARY',
       payload: summaryText
     });
+    dispatch({
+      type: 'UPDATE_SUMMARY_HIGHLIGHTS',
+      payload: highlights
+    });
+  };
+
+  const handleAddHighlight = (highlight: string) => {
+    setHighlights(prev => [...prev, highlight]);
+  };
+
+  const handleUpdateHighlight = (index: number, text: string) => {
+    setHighlights(prev => prev.map((item, i) => i === index ? text : item));
+  };
+
+  const handleRemoveHighlight = (index: number) => {
+    setHighlights(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleReorderHighlights = (newOrder: string[]) => {
+    setHighlights(newOrder);
   };
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Professional Summary</h2>
-      <p className="text-sm text-muted-foreground">
-        Write a short, compelling summary of your professional background, skills, and career goals.
-        You can use new lines to format your summary for better readability.
-      </p>
-
-      <div>
-        <Label htmlFor="summary">Summary</Label>
-        <Textarea
-          id="summary"
-          value={summaryText}
-          onChange={handleChange}
-          className="min-h-[150px] resize-vertical"
-          placeholder="Experienced software engineer with a passion for creating elegant solutions to complex problems..."
-        />
-      </div>
+      <ListContentEditor
+        showDescription={true}
+        description={summaryText}
+        onDescriptionChange={setSummaryText}
+        descriptionLabel="Professional Summary"
+        descriptionPlaceholder="Write a compelling summary of your professional background, skills, and career goals..."
+        bulletPoints={highlights}
+        onAdd={handleAddHighlight}
+        onUpdate={handleUpdateHighlight}
+        onRemove={handleRemoveHighlight}
+        onReorder={handleReorderHighlights}
+        bulletPlaceholder="Add a key highlight or achievement"
+        addButtonText="Add Highlight"
+      />
 
       <div className="flex justify-end">
         <Button onClick={handleUpdate}>Update Summary</Button>
@@ -46,10 +60,10 @@ const SummarySection: React.FC = () => {
       <div className="text-sm text-muted-foreground">
         <p className="font-medium">Tips:</p>
         <ul className="list-disc pl-5 space-y-1 mt-1">
-          <li>Focus on your most relevant skills and achievements</li>
-          <li>Tailor your summary to the job you&apos;re applying for</li>
-          <li>Use action verbs and quantify your achievements when possible</li>
-          <li>Organize your summary with new lines for better readability</li>
+          <li>Focus on your most relevant skills and achievements in the summary</li>
+          <li>Use highlights to showcase specific accomplishments with numbers when possible</li>
+          <li>Tailor your summary and highlights to the job you&apos;re applying for</li>
+          <li>Keep the summary concise but impactful</li>
           <li>Avoid jargon and clichés</li>
         </ul>
       </div>
