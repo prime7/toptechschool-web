@@ -2,7 +2,8 @@ import React from "react";
 import { SectionType } from "./types";
 import {
   useResume,
-  blankResumeData,
+  // blankResumeData,
+  initialResumeData,
   ResumeProvider,
 } from "./context/ResumeContext";
 import { PDFViewer } from "@react-pdf/renderer";
@@ -27,7 +28,7 @@ const SECTION_COMPONENTS: Record<SectionType, React.ComponentType> = {
 
 export default function ResumeEditor() {
   return (
-    <ResumeProvider initialState={blankResumeData}>
+    <ResumeProvider initialState={initialResumeData}>
       <ResumeEditorContent />
     </ResumeProvider>
   );

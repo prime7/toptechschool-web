@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, useOptimistic } from "react";
-import { EmploymentType, JobRole, LocationType, User, Work } from "@prisma/client";
+import { JobRole, LocationType, User, Work } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { WorkEditor } from "@/components/resume-editor/components/WorkEditor";
 import { WorkItem } from "@/components/resume-editor/types";
@@ -16,7 +16,6 @@ const workToWorkItem = (work: Work): WorkItem => ({
   company: work.company,
   position: work.position,
   location: work.location,
-  employmentType: work.employmentType,
   startDate: dateToMonthString(work.startDate),
   endDate: work.endDate ? dateToMonthString(work.endDate) : undefined,
   description: work.description || "",
@@ -29,7 +28,6 @@ const workItemToWork = (workItem: Omit<WorkItem, "id">, userId: string): Omit<Wo
   company: workItem.company,
   position: workItem.position as JobRole,
   location: workItem.location as LocationType,
-  employmentType: workItem.employmentType as EmploymentType,
   startDate: parseMonthInput(workItem.startDate),
   endDate: workItem.endDate ? parseMonthInput(workItem.endDate) : null,
   description: workItem.description || null,

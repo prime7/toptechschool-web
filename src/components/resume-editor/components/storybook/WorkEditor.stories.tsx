@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { WorkEditor } from '../WorkEditor';
 import { useState } from 'react';
 import { WorkItem } from '../../types';
-import { EmploymentType, JobRole, LocationType } from '@prisma/client';
+import { JobRole, LocationType } from '@prisma/client';
 
 const meta: Meta<typeof WorkEditor> = {
   title: 'Resume/WorkEditor',
@@ -19,7 +19,6 @@ const WorkEditorWithState = () => {
     company: 'Google',
     position: JobRole.SOFTWARE_ENGINEER,
     location: LocationType.REMOTE,
-    employmentType: EmploymentType.FULL_TIME,
     startDate: '2020-01',
     endDate: '2023-12',
     displayOrder: 0,
