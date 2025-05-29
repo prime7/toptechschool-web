@@ -105,7 +105,7 @@ export default function ProfileWork({ user, onSave }: ProfileWorkProps) {
       onAdd={handleAdd}
       onUpdate={handleUpdate}
       onRemove={handleRemove}
-      title="Work Experience"
+      title="Work"
       description=""
     />
   );
