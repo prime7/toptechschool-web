@@ -2,9 +2,10 @@ import React from 'react';
 import { useResume } from '../context/ResumeContext';
 import { EducationEditor } from '../components/EducationEditor';
 import { EducationItem } from '../types';
+import { Button } from '@/components/ui/button';
 
 const EducationSection: React.FC = () => {
-  const { state, dispatch } = useResume();
+  const { state, dispatch, exportUtils } = useResume();
 
   const handleAddEducation = (education: EducationItem) => {
     dispatch({
@@ -27,13 +28,25 @@ const EducationSection: React.FC = () => {
     });
   };
 
+  const handleExport = () => {
+    exportUtils.exportSection('education');
+  };
+
   return (
-    <EducationEditor
-      education={state.education || []}
-      onAdd={handleAddEducation}
-      onUpdate={handleUpdateEducation}
-      onRemove={handleRemoveEducation}
-    />
+    <div className="space-y-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Education</h2>
+        <Button onClick={handleExport} size="sm">Export</Button>
+      </div>
+
+      <EducationEditor
+        description="Add your educational background, including degrees, certifications, and relevant coursework."
+        education={state.education || []}
+        onAdd={handleAddEducation}
+        onUpdate={handleUpdateEducation}
+        onRemove={handleRemoveEducation}
+      />
+    </div>
   );
 };
 

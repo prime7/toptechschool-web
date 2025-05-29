@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { ListContentEditor } from '../components/ListContentEditor';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,11 @@ const SummarySection: React.FC = () => {
   const { summary, summaryHighlights } = state;
   const [summaryText, setSummaryText] = useState(summary || '');
   const [highlights, setHighlights] = useState<string[]>(summaryHighlights || []);
+
+  useEffect(() => {
+    setSummaryText(summary || '');
+    setHighlights(summaryHighlights || []);
+  }, [summary, summaryHighlights]);
 
   const handleUpdate = () => {
     dispatch({
@@ -21,6 +26,9 @@ const SummarySection: React.FC = () => {
   };
 
   const handleExport = () => {
+    // First update the current state to the global state
+    handleUpdate();
+    // Then auto-fill from profile
     exportUtils.exportSection('summary');
   };
 
@@ -42,6 +50,11 @@ const SummarySection: React.FC = () => {
 
   return (
     <div className="space-y-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Professional Summary</h2>
+        <Button onClick={handleExport} size="sm">Export</Button>
+      </div>
+
       <ListContentEditor
         showDescription={true}
         description={summaryText}
@@ -57,8 +70,7 @@ const SummarySection: React.FC = () => {
         addButtonText="Add Highlight"
       />
 
-      <div className="flex justify-end gap-2">
-        <Button onClick={handleExport} variant="outline" size="sm">Export</Button>
+      <div className="flex justify-end">
         <Button onClick={handleUpdate}>Update Summary</Button>
       </div>
 

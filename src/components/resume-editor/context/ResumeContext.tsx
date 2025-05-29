@@ -461,7 +461,6 @@ export function ResumeProvider({
           }
         });
       } else {
-        // If no specific fields provided, auto-fill all available fields from profile
         const allPersonalFields = Object.keys(
           SECTION_VALIDATION_RULES.personal.fieldLabels
         );
@@ -484,6 +483,33 @@ export function ResumeProvider({
       dispatch({
         type: "UPDATE_SUMMARY",
         payload: userData.summary,
+      });
+      if (userData.summaryHighlights) {
+        dispatch({
+          type: "UPDATE_SUMMARY_HIGHLIGHTS",
+          payload: userData.summaryHighlights,
+        });
+      }
+    } else if (section === "work" && userData.work && userData.work.length > 0) {
+      userData.work.forEach((workItem) => {
+        dispatch({
+          type: "ADD_EXPERIENCE",
+          payload: workItem,
+        });
+      });
+    } else if (section === "education" && userData.education && userData.education.length > 0) {
+      userData.education.forEach((educationItem) => {
+        dispatch({
+          type: "ADD_EDUCATION",
+          payload: educationItem,
+        });
+      });
+    } else if (section === "projects" && userData.projects && userData.projects.length > 0) {
+      userData.projects.forEach((projectItem) => {
+        dispatch({
+          type: "ADD_PROJECT",
+          payload: projectItem,
+        });
       });
     }
   };
