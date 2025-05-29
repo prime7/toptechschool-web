@@ -1,4 +1,4 @@
-import { Degree, EmploymentType, JobRole, LocationType } from "@prisma/client";
+import { Degree, JobRole, LocationType } from "@prisma/client";
 
 export type SectionType =
   | 'personal'
@@ -28,7 +28,6 @@ export interface WorkItem {
   company: string;
   position: JobRole | null;
   location: LocationType | null;
-  employmentType: EmploymentType | null;
   startDate: string;
   endDate?: string;
   description?: string;

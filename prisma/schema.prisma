@@ -46,7 +46,6 @@ model Work {
   displayOrder   Int            @default(0)
   userId         String
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  employmentType EmploymentType @default(FULL_TIME)
 }
 
 model Education {
@@ -220,15 +219,4 @@ enum Visibility {
   PUBLIC
   PRIVATE
   CONNECTIONS_ONLY
-}
-
-enum EmploymentType {
-  FULL_TIME
-  PART_TIME
-  CONTRACT
-  FREELANCE
-  INTERNSHIP
-  APPRENTICESHIP
-  VOLUNTEER
-  SELF_EMPLOYED
 }

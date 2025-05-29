@@ -5,7 +5,7 @@ import { generateId } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
@@ -17,6 +17,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { BulletPointEditor } from "./BulletPointEditor";
 import { Textarea } from "@/components/ui/textarea";
 import { Degree } from "@prisma/client";
@@ -44,7 +52,7 @@ export function EducationEditor({
   title = "Education",
   description = "Add your educational background, including degrees, certifications, and relevant coursework.",
 }: EducationEditorProps) {
-  const [isAdding, setIsAdding] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -60,8 +68,6 @@ export function EducationEditor({
 
   const [formData, setFormData] = useState<FormData>(initialFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -106,13 +112,13 @@ export function EducationEditor({
       onAdd({ id: generateId(), ...submissionData });
     }
     setFormData(initialFormState);
-    setIsAdding(false);
+    setIsDialogOpen(false);
     setErrors({});
   };
 
   const handleCancel = () => {
     setFormData(initialFormState);
-    setIsAdding(false);
+    setIsDialogOpen(false);
     setIsEditing(null);
     setErrors({});
   };
@@ -129,7 +135,7 @@ export function EducationEditor({
       current: !item.endDate,
     });
     setIsEditing(item.id);
-    setIsAdding(true);
+    setIsDialogOpen(true);
     setErrors({});
   };
 
@@ -160,21 +166,23 @@ export function EducationEditor({
             </p>
           )}
         </div>
-        {!isAdding && (
-          <Button size="sm" onClick={() => setIsAdding(true)} className="h-8">
-            <Plus className="h-4 w-4 mr-1" />Add Education
-          </Button>
-        )}
+        <Button size="sm" onClick={() => setIsDialogOpen(true)} className="h-8">
+          <Plus className="h-4 w-4 mr-1" />Add Education
+        </Button>
       </div>
 
-      {isAdding && (
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="py-2 px-4">
-            <CardTitle className="text-base font-medium">{isEditing ? "Edit Education" : "Add Education"}</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 py-2 space-y-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div className="space-y-1">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{isEditing ? "Edit Education" : "Add Education"}</DialogTitle>
+            <DialogDescription>
+              {isEditing ? "Update your education information." : "Add a new education entry to your resume."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label htmlFor="institution" className="text-sm">Institution <span className="text-destructive">*</span></Label>
                 <Input
                   id="institution"
@@ -182,18 +190,18 @@ export function EducationEditor({
                   value={formData.institution}
                   onChange={handleChange}
                   placeholder="University or school name"
-                  className={`h-8 ${errors.institution ? "border-destructive" : ""}`}
+                  className={errors.institution ? "border-destructive" : ""}
                 />
-                {errors.institution && <p className="text-xs text-destructive mt-0.5">{errors.institution}</p>}
+                {errors.institution && <p className="text-xs text-destructive">{errors.institution}</p>}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="degree" className="text-sm">Degree <span className="text-destructive">*</span></Label>
                 <Select
                   value={formData.degree || ""}
                   onValueChange={(value) => setFormData((prev) => ({ ...prev, degree: value as Degree }))}
                 >
-                  <SelectTrigger className={`h-8 ${errors.degree ? "border-destructive" : ""}`}>
+                  <SelectTrigger className={errors.degree ? "border-destructive" : ""}>
                     <SelectValue placeholder="Select a degree" />
                   </SelectTrigger>
                   <SelectContent>
@@ -204,10 +212,10 @@ export function EducationEditor({
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.degree && <p className="text-xs text-destructive mt-0.5">{errors.degree}</p>}
+                {errors.degree && <p className="text-xs text-destructive">{errors.degree}</p>}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="startDate" className="text-sm">Start Date <span className="text-destructive">*</span></Label>
                 <Input
                   type="month"
@@ -215,12 +223,12 @@ export function EducationEditor({
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
-                  className={`h-8 ${errors.startDate ? "border-destructive" : ""}`}
+                  className={errors.startDate ? "border-destructive" : ""}
                 />
-                {errors.startDate && <p className="text-xs text-destructive mt-0.5">{errors.startDate}</p>}
+                {errors.startDate && <p className="text-xs text-destructive">{errors.startDate}</p>}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="endDate" className="text-sm">End Date {!formData.current && <span className="text-destructive">*</span>}</Label>
                 <Input
                   type="month"
@@ -229,17 +237,17 @@ export function EducationEditor({
                   value={formData.endDate || ""}
                   onChange={handleChange}
                   disabled={formData.current}
-                  className={`h-8 ${errors.endDate ? "border-destructive" : ""}`}
+                  className={errors.endDate ? "border-destructive" : ""}
                 />
-                {errors.endDate && <p className="text-xs text-destructive mt-0.5">{errors.endDate}</p>}
-                <div className="flex items-center gap-1.5 pt-0.5">
-                  <Checkbox id="current" checked={formData.current} onCheckedChange={handleCheckboxChange} className="h-3.5 w-3.5" />
-                  <Label htmlFor="current" className="text-xs">Currently studying here</Label>
+                {errors.endDate && <p className="text-xs text-destructive">{errors.endDate}</p>}
+                <div className="flex items-center gap-2 pt-1">
+                  <Checkbox id="current" checked={formData.current} onCheckedChange={handleCheckboxChange} />
+                  <Label htmlFor="current" className="text-sm">Currently studying here</Label>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="description" className="text-sm">Description</Label>
               <Textarea
                 id="description"
@@ -247,12 +255,12 @@ export function EducationEditor({
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Brief description of your education"
-                className={`min-h-[60px] ${errors.content ? "border-destructive" : ""}`}
+                className={`min-h-[80px] ${errors.content ? "border-destructive" : ""}`}
               />
             </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="content" className="text-sm">Points</Label>
+            <div className="space-y-2">
+              <Label className="text-sm">Points</Label>
               <BulletPointEditor
                 bulletPoints={formData.points}
                 onAdd={(bullet) => setFormData((prev) => ({ ...prev, points: [...prev.points, bullet] }))}
@@ -261,16 +269,16 @@ export function EducationEditor({
                 onReorder={(newOrder) => setFormData((prev) => ({ ...prev, points: newOrder }))}
               />
             </div>
+          </div>
 
-            <div className="flex justify-end gap-2 pt-1">
-              <Button variant="outline" size="sm" onClick={handleCancel} className="h-7">Cancel</Button>
-              <Button size="sm" onClick={handleSubmit} className="h-7">{isEditing ? "Update" : "Save"}</Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleSubmit}>{isEditing ? "Update" : "Save"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {education.length > 0 && !isAdding && (
+      {education.length > 0 && (
         <div className="grid gap-1.5">
           {education.map((item) => (
             <Card key={item.id} className="group overflow-hidden bg-card shadow-sm">

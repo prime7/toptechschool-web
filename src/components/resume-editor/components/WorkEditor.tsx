@@ -5,7 +5,7 @@ import { generateId } from "../utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
@@ -17,9 +17,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { BulletPointEditor } from "./BulletPointEditor";
 import { Textarea } from "@/components/ui/textarea";
-import { EmploymentType, JobRole, LocationType } from "@prisma/client";
+import { JobRole, LocationType } from "@prisma/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatEnumValue } from "@/lib/utils";
 
@@ -44,7 +52,7 @@ export function WorkEditor({
   title = "Work Experience",
   description = "Add your work experience, including your roles, responsibilities, and achievements.",
 }: WorkEditorProps) {
-  const [isAdding, setIsAdding] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -54,7 +62,6 @@ export function WorkEditor({
     company: "",
     position: null,
     location: null,
-    employmentType: null,
     startDate: "",
     endDate: undefined,
     description: "",
@@ -96,7 +103,6 @@ export function WorkEditor({
       company: formData.company,
       position: formData.position,
       location: formData.location,
-      employmentType: formData.employmentType,
       startDate: formData.startDate,
       endDate: formData.current ? undefined : formData.endDate,
       description: formData.description,
@@ -110,13 +116,13 @@ export function WorkEditor({
       onAdd({ id: generateId(), ...submissionData });
     }
     setFormData(initialFormState);
-    setIsAdding(false);
+    setIsDialogOpen(false);
     setErrors({});
   };
 
   const handleCancel = () => {
     setFormData(initialFormState);
-    setIsAdding(false);
+    setIsDialogOpen(false);
     setIsEditing(null);
     setErrors({});
   };
@@ -126,7 +132,6 @@ export function WorkEditor({
       company: item.company,
       position: item.position,
       location: item.location,
-      employmentType: item.employmentType,
       startDate: item.startDate,
       endDate: item.endDate,
       description: item.description,
@@ -135,7 +140,7 @@ export function WorkEditor({
       current: !item.endDate,
     });
     setIsEditing(item.id);
-    setIsAdding(true);
+    setIsDialogOpen(true);
     setErrors({});
   };
 
@@ -166,21 +171,23 @@ export function WorkEditor({
             </p>
           )}
         </div>
-        {!isAdding && (
-          <Button size="sm" onClick={() => setIsAdding(true)} className="h-8">
-            <Plus className="h-4 w-4 mr-1" />Add Work Experience
-          </Button>
-        )}
+        <Button size="sm" onClick={() => setIsDialogOpen(true)} className="h-8">
+          <Plus className="h-4 w-4 mr-1" />Add Work Experience
+        </Button>
       </div>
 
-      {isAdding && (
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="py-2 px-4">
-            <CardTitle className="text-base font-medium">{isEditing ? "Edit Work Experience" : "Add Work Experience"}</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 py-2 space-y-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div className="space-y-1">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{isEditing ? "Edit Work Experience" : "Add Work Experience"}</DialogTitle>
+            <DialogDescription>
+              {isEditing ? "Update your work experience information." : "Add a new work experience entry to your resume."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label htmlFor="company" className="text-sm">Company <span className="text-destructive">*</span></Label>
                 <Input
                   id="company"
@@ -188,18 +195,18 @@ export function WorkEditor({
                   value={formData.company}
                   onChange={handleChange}
                   placeholder="Company name"
-                  className={`h-8 ${errors.company ? "border-destructive" : ""}`}
+                  className={errors.company ? "border-destructive" : ""}
                 />
-                {errors.company && <p className="text-xs text-destructive mt-0.5">{errors.company}</p>}
+                {errors.company && <p className="text-xs text-destructive">{errors.company}</p>}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="position" className="text-sm">Position <span className="text-destructive">*</span></Label>
                 <Select
-                  value={formData.position || "" }
+                  value={formData.position || ""}
                   onValueChange={(value) => setFormData((prev) => ({ ...prev, position: value as JobRole }))}
                 >
-                  <SelectTrigger className="h-8">
+                  <SelectTrigger className={errors.position ? "border-destructive" : ""}>
                     <SelectValue placeholder="Select position" />
                   </SelectTrigger>
                   <SelectContent>
@@ -210,16 +217,16 @@ export function WorkEditor({
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.position && <p className="text-xs text-destructive mt-0.5">{errors.position}</p>}
+                {errors.position && <p className="text-xs text-destructive">{errors.position}</p>}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="location" className="text-sm">Location</Label>
                 <Select
                   value={formData.location || ""}
                   onValueChange={(value) => setFormData((prev) => ({ ...prev, location: value as LocationType }))}
                 >
-                  <SelectTrigger className="h-8">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select location type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -231,27 +238,7 @@ export function WorkEditor({
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="employmentType" className="text-sm">Employment Type</Label>
-                <Select
-                  value={formData.employmentType || ""}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, employmentType: value as EmploymentType }))}
-                >
-                  <SelectTrigger className="h-8">
-                    <SelectValue placeholder="Select employment type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(EmploymentType).map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {formatEnumValue(type)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="startDate" className="text-sm">Start Date <span className="text-destructive">*</span></Label>
                 <Input
                   type="month"
@@ -259,12 +246,12 @@ export function WorkEditor({
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
-                  className={`h-8 ${errors.startDate ? "border-destructive" : ""}`}
+                  className={errors.startDate ? "border-destructive" : ""}
                 />
-                {errors.startDate && <p className="text-xs text-destructive mt-0.5">{errors.startDate}</p>}
+                {errors.startDate && <p className="text-xs text-destructive">{errors.startDate}</p>}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="endDate" className="text-sm">End Date {!formData.current && <span className="text-destructive">*</span>}</Label>
                 <Input
                   type="month"
@@ -273,17 +260,17 @@ export function WorkEditor({
                   value={formData.endDate || ""}
                   onChange={handleChange}
                   disabled={formData.current}
-                  className={`h-8 ${errors.endDate ? "border-destructive" : ""}`}
+                  className={errors.endDate ? "border-destructive" : ""}
                 />
-                {errors.endDate && <p className="text-xs text-destructive mt-0.5">{errors.endDate}</p>}
-                <div className="flex items-center gap-1.5 pt-0.5">
-                  <Checkbox id="current" checked={formData.current} onCheckedChange={handleCheckboxChange} className="h-3.5 w-3.5" />
-                  <Label htmlFor="current" className="text-xs">Currently working here</Label>
+                {errors.endDate && <p className="text-xs text-destructive">{errors.endDate}</p>}
+                <div className="flex items-center gap-2 pt-1">
+                  <Checkbox id="current" checked={formData.current} onCheckedChange={handleCheckboxChange} />
+                  <Label htmlFor="current" className="text-sm">Currently working here</Label>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="description" className="text-sm">Description</Label>
               <Textarea
                 id="description"
@@ -291,12 +278,12 @@ export function WorkEditor({
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Brief description of your role and responsibilities"
-                className="min-h-[60px]"
+                className="min-h-[80px]"
               />
             </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="points" className="text-sm">Key Achievements & Responsibilities</Label>
+            <div className="space-y-2">
+              <Label className="text-sm">Key Achievements & Responsibilities</Label>
               <BulletPointEditor
                 bulletPoints={formData.points}
                 onAdd={(bullet) => setFormData((prev) => ({ ...prev, points: [...prev.points, bullet] }))}
@@ -305,16 +292,16 @@ export function WorkEditor({
                 onReorder={(newOrder) => setFormData((prev) => ({ ...prev, points: newOrder }))}
               />
             </div>
+          </div>
 
-            <div className="flex justify-end gap-2 pt-1">
-              <Button variant="outline" size="sm" onClick={handleCancel} className="h-7">Cancel</Button>
-              <Button size="sm" onClick={handleSubmit} className="h-7">{isEditing ? "Update" : "Save"}</Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleSubmit}>{isEditing ? "Update" : "Save"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {work.length > 0 && !isAdding && (
+      {work.length > 0 && (
         <div className="grid gap-1.5">
           {work.map((item) => (
             <Card key={item.id} className="group overflow-hidden bg-card shadow-sm">
@@ -329,11 +316,6 @@ export function WorkEditor({
                     </div>
                     {item.location && (
                       <p className="text-sm text-muted-foreground mt-0.5">{formatEnumValue(item.location)}</p>
-                    )}
-                    {item.employmentType && (
-                      <span className="inline-block text-xs bg-muted px-2 py-0.5 rounded-full mt-1">
-                        {formatEnumValue(item.employmentType)}
-                      </span>
                     )}
                   </div>
 

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer } from "react";
 import { ResumeData, ResumeAction, WorkItem, ProjectItem } from "../types";
 import { generateId } from "../utils";
 import { defaultStyle } from "../constants";
-import { Degree, EmploymentType, JobRole, LocationType } from "@prisma/client";
+import { Degree, JobRole, LocationType } from "@prisma/client";
 
 export const initialResumeData: ResumeData = {
   activeSections: ["personal", "summary", "work", "education"],
@@ -24,7 +24,6 @@ export const initialResumeData: ResumeData = {
       company: "Tech Company",
       position: JobRole.SOFTWARE_ENGINEER,
       location: LocationType.REMOTE,
-      employmentType: EmploymentType.FULL_TIME,
       startDate: "2020-01",
       endDate: "2020-01",
       description:
@@ -43,7 +42,6 @@ export const initialResumeData: ResumeData = {
       company: "Startup Inc",
       position: JobRole.FRONTEND_DEVELOPER,
       location: LocationType.REMOTE,
-      employmentType: EmploymentType.FULL_TIME,
       startDate: "2018-03",
       endDate: "2019-12",
       description: "Developed responsive UIs using React and Redux",
