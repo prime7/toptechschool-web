@@ -1,17 +1,24 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { ResumeData, ResumeAction, WorkItem, ProjectItem } from "../types";
+import {
+  ResumeData,
+  ResumeAction,
+  WorkItem,
+  ProjectItem,
+  SectionType,
+} from "../types";
 import { generateId } from "../utils";
 import { defaultStyle } from "../constants";
-import { Degree, JobRole, LocationType } from "@prisma/client";
+import { Degree, LocationType } from "@prisma/client";
+import { JobRole } from "../constants";
 
 export const initialResumeData: ResumeData = {
   activeSections: ["personal", "summary", "work", "education"],
   personal: {
     fullName: "John Doe",
-    email: "john.doe@example.com", 
+    email: "john.doe@example.com",
     phone: "(555) 123-4567",
     location: "San Francisco, CA",
-    title: "Senior Software Engineer",
+    profession: "Senior Software Engineer",
     website: "https://johndoe.dev",
     linkedin: "linkedin.com/in/johndoe",
     github: "github.com/johndoe",
@@ -22,7 +29,7 @@ export const initialResumeData: ResumeData = {
     "8+ years of experience in full-stack development",
     "Led teams of 5+ developers on multiple projects",
     "Improved application performance by 40%",
-    "Expert in React, TypeScript, and modern web technologies"
+    "Expert in React, TypeScript, and modern web technologies",
   ],
   work: [
     {
@@ -36,7 +43,7 @@ export const initialResumeData: ResumeData = {
         "Led development of web applications using modern technologies",
       points: [
         "Managed a team of 5 developers",
-        "Implemented CI/CD pipelines", 
+        "Implemented CI/CD pipelines",
         "Improved application performance by 40%",
         "Reduced deployment time by 60%",
         "Mentored junior developers",
@@ -121,7 +128,7 @@ export const blankResumeData: ResumeData = {
     email: "",
     phone: "",
     location: "",
-    title: "",
+    profession: "",
     website: "",
     linkedin: "",
     github: "",
@@ -135,10 +142,56 @@ export const blankResumeData: ResumeData = {
   style: defaultStyle,
 };
 
+interface SectionValidationRules {
+  requiredFields: string[];
+  fieldLabels: Record<string, string>;
+}
+
+const SECTION_VALIDATION_RULES: Record<SectionType, SectionValidationRules> = {
+  personal: {
+    requiredFields: ["fullName", "email"],
+    fieldLabels: {
+      fullName: "Full Name",
+      email: "Email",
+      phone: "Phone",
+      location: "Location",
+      profession: "Job Title",
+      website: "Website",
+      linkedin: "LinkedIn",
+      github: "GitHub",
+    },
+  },
+  summary: {
+    requiredFields: ["summary"],
+    fieldLabels: {
+      summary: "Summary",
+    },
+  },
+  work: {
+    requiredFields: [],
+    fieldLabels: {},
+  },
+  education: {
+    requiredFields: [],
+    fieldLabels: {},
+  },
+  projects: {
+    requiredFields: [],
+    fieldLabels: {},
+  },
+};
+
+interface ExportUtilities {
+  autoFillFromProfile: (section: SectionType, fields?: string[]) => void;
+  exportSection: (section: SectionType) => void;
+}
+
 const ResumeContext = createContext<
   | {
       state: ResumeData;
       dispatch: React.Dispatch<ResumeAction>;
+      userData?: ResumeData;
+      exportUtils: ExportUtilities;
     }
   | undefined
 >(undefined);
@@ -177,9 +230,7 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
     case "REMOVE_EXPERIENCE":
       return {
         ...state,
-        work: (state.work || []).filter(
-          (item) => item.id !== action.payload
-        ),
+        work: (state.work || []).filter((item) => item.id !== action.payload),
       };
     case "ADD_EXPERIENCE_BULLET":
       return {
@@ -200,8 +251,11 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
           item.id === action.payload.experienceId
             ? {
                 ...item,
-                points: (item.points || []).map((bullet: string, index: number) =>
-                  index === action.payload.index ? action.payload.text : bullet
+                points: (item.points || []).map(
+                  (bullet: string, index: number) =>
+                    index === action.payload.index
+                      ? action.payload.text
+                      : bullet
                 ),
               }
             : item
@@ -261,8 +315,11 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
           item.id === action.payload.educationId
             ? {
                 ...item,
-                points: (item.points || []).map((bullet: string, index: number) =>
-                  index === action.payload.index ? action.payload.text : bullet
+                points: (item.points || []).map(
+                  (bullet: string, index: number) =>
+                    index === action.payload.index
+                      ? action.payload.text
+                      : bullet
                 ),
               }
             : item
@@ -310,10 +367,7 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
           item.id === action.payload.projectId
             ? {
                 ...item,
-                points: [
-                  ...(item.points || []),
-                  action.payload.bullet,
-                ],
+                points: [...(item.points || []), action.payload.bullet],
               }
             : item
         ),
@@ -325,8 +379,11 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
           item.id === action.payload.projectId
             ? {
                 ...item,
-                points: (item.points || []).map((bullet: string, index: number) =>
-                  index === action.payload.index ? action.payload.text : bullet
+                points: (item.points || []).map(
+                  (bullet: string, index: number) =>
+                    index === action.payload.index
+                      ? action.payload.text
+                      : bullet
                 ),
               }
             : item
@@ -381,13 +438,67 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
 export function ResumeProvider({
   children,
   initialState,
+  userData,
 }: {
   children: React.ReactNode;
   initialState: ResumeData;
+  userData?: ResumeData;
 }) {
   const [state, dispatch] = useReducer(resumeReducer, initialState);
+
+  const autoFillFromProfile = (section: SectionType, fields?: string[]) => {
+    if (!userData) return;
+
+    if (section === "personal" && userData.personal) {
+      const updateData: Record<string, string> = {};
+
+      if (fields) {
+        fields.forEach((field) => {
+          const value =
+            userData.personal[field as keyof typeof userData.personal];
+          if (value) {
+            updateData[field] = value;
+          }
+        });
+      } else {
+        // If no specific fields provided, auto-fill all available fields from profile
+        const allPersonalFields = Object.keys(
+          SECTION_VALIDATION_RULES.personal.fieldLabels
+        );
+        allPersonalFields.forEach((field) => {
+          const value =
+            userData.personal[field as keyof typeof userData.personal];
+          if (value && !state.personal[field as keyof typeof state.personal]) {
+            updateData[field] = value;
+          }
+        });
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        dispatch({
+          type: "UPDATE_PERSONAL",
+          payload: updateData,
+        });
+      }
+    } else if (section === "summary" && userData.summary) {
+      dispatch({
+        type: "UPDATE_SUMMARY",
+        payload: userData.summary,
+      });
+    }
+  };
+
+  const exportSection = (section: SectionType) => {
+    autoFillFromProfile(section);
+  };
+
+  const exportUtils: ExportUtilities = {
+    autoFillFromProfile,
+    exportSection,
+  };
+
   return (
-    <ResumeContext.Provider value={{ state, dispatch }}>
+    <ResumeContext.Provider value={{ state, dispatch, userData, exportUtils }}>
       {children}
     </ResumeContext.Provider>
   );

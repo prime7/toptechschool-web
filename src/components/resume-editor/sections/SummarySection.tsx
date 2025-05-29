@@ -4,7 +4,7 @@ import { ListContentEditor } from '../components/ListContentEditor';
 import { Button } from '@/components/ui/button';
 
 const SummarySection: React.FC = () => {
-  const { state, dispatch } = useResume();
+  const { state, dispatch, exportUtils } = useResume();
   const { summary, summaryHighlights } = state;
   const [summaryText, setSummaryText] = useState(summary || '');
   const [highlights, setHighlights] = useState<string[]>(summaryHighlights || []);
@@ -18,6 +18,10 @@ const SummarySection: React.FC = () => {
       type: 'UPDATE_SUMMARY_HIGHLIGHTS',
       payload: highlights
     });
+  };
+
+  const handleExport = () => {
+    exportUtils.exportSection('summary');
   };
 
   const handleAddHighlight = (highlight: string) => {
@@ -53,7 +57,8 @@ const SummarySection: React.FC = () => {
         addButtonText="Add Highlight"
       />
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button onClick={handleExport} variant="outline" size="sm">Export</Button>
         <Button onClick={handleUpdate}>Update Summary</Button>
       </div>
 

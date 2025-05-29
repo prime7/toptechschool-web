@@ -22,7 +22,7 @@ export async function POST(request: Request) {
             userId: session.user.id,
             filename,
             fileKey: "",
-            jobRole,
+            profession: jobRole,
           },
         });
       }

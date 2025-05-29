@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { WorkEditor } from '../WorkEditor';
 import { useState } from 'react';
 import { WorkItem } from '../../types';
-import { JobRole, LocationType } from '@prisma/client';
+import { LocationType } from '@prisma/client';
+import { JobRole } from '../../constants';
 
 const meta: Meta<typeof WorkEditor> = {
   title: 'Resume/WorkEditor',

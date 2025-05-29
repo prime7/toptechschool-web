@@ -1,5 +1,7 @@
+"use client";
+
 import React from "react";
-import { SectionType } from "./types";
+import { SectionType, ResumeData } from "./types";
 import {
   useResume,
   blankResumeData,
@@ -26,9 +28,13 @@ const SECTION_COMPONENTS: Record<SectionType, React.ComponentType> = {
   projects: ProjectsSection,
 };
 
-export default function ResumeEditor() {
+interface ResumeEditorProps {
+  data?: ResumeData;
+}
+
+export default function ResumeEditor({ data }: ResumeEditorProps) {
   return (
-    <ResumeProvider initialState={blankResumeData}>
+    <ResumeProvider initialState={blankResumeData} userData={data}>
       <ResumeEditorContent />
     </ResumeProvider>
   );

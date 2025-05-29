@@ -2,9 +2,22 @@ import React from "react";
 import { useResume } from "../context/ResumeContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { JobRole } from "../constants";
+
+const JOB_ROLES = Object.entries(JobRole).map(([key, value]) => ({
+  label: key
+    .replace(/_/g, " ")
+    .replace(
+      /\w\S*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    ),
+  value,
+}));
 
 const PersonalInfoSection: React.FC = () => {
-  const { state, dispatch } = useResume();
+  const { state, dispatch, exportUtils } = useResume();
   const { personal } = state;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,10 +28,22 @@ const PersonalInfoSection: React.FC = () => {
     });
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    dispatch({
+      type: "UPDATE_PERSONAL",
+      payload: { [name]: value },
+    });
+  };
+
+  const handleExport = () => {
+    exportUtils.exportSection('personal');
+  };
+
   return (
     <div>
-      <div className="mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-semibold">Personal Information</h2>
+        <Button onClick={handleExport} size="sm">Export</Button>
       </div>
 
       <div className="space-y-6">
@@ -33,13 +58,19 @@ const PersonalInfoSection: React.FC = () => {
             />
           </div>
           <div>
-            <Label htmlFor="title">Job Title</Label>
-            <Input
-              id="title"
-              name="title"
-              value={personal.title}
-              onChange={handleChange}
-            />
+            <Label htmlFor="profession">Job Title</Label>
+            <Select value={personal.profession} onValueChange={(value) => handleSelectChange('profession', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a job title" />
+              </SelectTrigger>
+              <SelectContent>
+                {JOB_ROLES.map((role) => (
+                  <SelectItem key={role.value} value={role.value}>
+                    {role.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label htmlFor="email">Email</Label>

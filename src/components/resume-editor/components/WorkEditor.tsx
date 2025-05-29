@@ -26,9 +26,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ListContentEditor } from "./ListContentEditor";
-import { JobRole, LocationType } from "@prisma/client";
+import { LocationType } from "@prisma/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatEnumValue } from "@/lib/utils";
+import { JobRole } from "../constants";
 
 interface WorkEditorProps {
   work: WorkItem[];
@@ -203,7 +204,7 @@ export function WorkEditor({
                 <Label htmlFor="position" className="text-sm">Position <span className="text-destructive">*</span></Label>
                 <Select
                   value={formData.position || ""}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, position: value as JobRole }))}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, position: value }))}
                 >
                   <SelectTrigger className={errors.position ? "border-destructive" : ""}>
                     <SelectValue placeholder="Select position" />
