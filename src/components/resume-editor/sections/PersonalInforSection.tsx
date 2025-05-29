@@ -1,7 +1,7 @@
-import React from 'react';
-import { useResume } from '../context/ResumeContext';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import React from "react";
+import { useResume } from "../context/ResumeContext";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const PersonalInfoSection: React.FC = () => {
   const { state, dispatch } = useResume();
@@ -10,8 +10,8 @@ const PersonalInfoSection: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch({
-      type: 'UPDATE_PERSONAL',
-      payload: { [name]: value }
+      type: "UPDATE_PERSONAL",
+      payload: { [name]: value },
     });
   };
 
@@ -19,9 +19,6 @@ const PersonalInfoSection: React.FC = () => {
     <div>
       <div className="mb-4">
         <h2 className="text-xl font-semibold">Personal Information</h2>
-        <p className="text-sm text-muted-foreground">
-          Add your personal and contact information.
-        </p>
       </div>
 
       <div className="space-y-6">
