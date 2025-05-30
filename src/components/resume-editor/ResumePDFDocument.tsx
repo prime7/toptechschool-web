@@ -1,5 +1,5 @@
+'use client'
 /* eslint-disable */
-
 import React from "react";
 import {
   Document,
@@ -9,7 +9,7 @@ import {
   StyleSheet,
   Svg,
   Path,
-} from "@react-pdf/renderer";
+} from "@react-pdf/renderer/lib/react-pdf.browser";
 import { formatDate } from "@/lib/date-utils";
 import type {
   PersonalInfo,

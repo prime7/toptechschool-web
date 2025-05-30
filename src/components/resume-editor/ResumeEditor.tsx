@@ -8,7 +8,7 @@ import {
   // initialResumeData,
   ResumeProvider,
 } from "./context/ResumeContext";
-import { PDFViewer } from "@react-pdf/renderer";
+import { PDFViewer } from "@react-pdf/renderer/lib/react-pdf.browser";
 import ResumePDFDocument from "./ResumePDFDocument";
 import Sidebar from "./Sidebar";
 import {
