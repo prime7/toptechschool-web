@@ -15,7 +15,7 @@ export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
           <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
             🚀 Powered by Advanced AI Technology
           </div>
-          <h1 className="text-6xl md:text-6xl font-bold tracking-tight mb-6">
+          <h1 className="text-5xl font-bold tracking-tight mb-6">
             Land Your Dream Tech Job with
             <span className="text-primary relative">
               <span className="relative inline-block px-2">
