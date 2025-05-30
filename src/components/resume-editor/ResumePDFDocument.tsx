@@ -125,8 +125,10 @@ const createStyles = (style: ResumeStyle) =>
 
 const ContactItem = ({
   text,
+  isFirst = false,
 }: {
   text: string;
+  isFirst?: boolean;
 }) => (
   <View
     style={{
@@ -136,7 +138,7 @@ const ContactItem = ({
       marginBottom: 5,
     }}
   >
-    <Text style={{ marginRight: 5 }}>•</Text>
+    {!isFirst && <Text style={{ marginRight: 5 }}>•</Text>}
     <Text>{text}</Text>
   </View>
 );
@@ -199,7 +201,7 @@ const PersonalSection = ({
       </View>
 
       <View style={[styles.contactRow, getAlignmentStyles()]}>
-        {personal.email && <ContactItem text={personal.email} />}
+        {personal.email && <ContactItem text={personal.email} isFirst={true} />}
         {personal.phone && <ContactItem text={personal.phone} />}
         {personal.location && <ContactItem text={personal.location} />}
         {personal.website && <ContactItem text={personal.website} />}
