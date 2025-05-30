@@ -214,14 +214,19 @@ const PersonalSection = ({
 
 const SummarySection = ({
   summary,
+  summaryHighlights,
   styles,
 }: {
   summary: string;
+  summaryHighlights?: string[];
   styles: any;
 }) => (
   <View style={styles.section} wrap={false}>
     <Text style={styles.sectionHeader}>Summary</Text>
     <Text>{summary}</Text>
+    {summaryHighlights && summaryHighlights.length > 0 && (
+      <BulletPointsList bulletPoints={summaryHighlights} styles={styles} />
+    )}
   </View>
 );
 
@@ -480,6 +485,7 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
   const {
     personal,
     summary,
+    summaryHighlights,
     work,
     education,
     projects,
@@ -522,7 +528,11 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
         {activeSections.includes("summary") &&
           summary &&
           summary.trim() !== "" && (
-            <SummarySection summary={summary} styles={styles} />
+            <SummarySection
+              summary={summary}
+              summaryHighlights={summaryHighlights}
+              styles={styles}
+            />
           )}
 
         {activeSections.includes("work") &&
