@@ -1,7 +1,22 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { RESTRICTED_API_ROUTES, RESTRICTED_PAGES, ALLOWED_ORIGINS } from "@/lib/constants";
+import { ALLOWED_ORIGINS } from "@/lib/constants";
+
+// Internal use only
+export const RESTRICTED_PAGES = [
+  "/upload",
+  "/resume",
+  "/job",
+  "/practice/:id/start",
+] as const;
+
+export const RESTRICTED_API_ROUTES = [
+  "/api/resume",
+  "/api/evaluate/job",
+  "/api/file-upload",
+  "/api/resume/:resumeId",
+] as const;
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -37,16 +52,27 @@ export default async function middleware(req: NextRequest) {
 
   if (pathname === "/verify-email" && session?.user?.isEmailVerified) {
     return NextResponse.redirect(new URL("/", req.url));
-  } else if (pathname === '/verify-email' && !session?.user) {
+  } else if (pathname === "/verify-email" && !session?.user) {
     return NextResponse.redirect(new URL("/api/auth/signin", req.url));
-  } else if (RESTRICTED_PAGES.some((route) => pathname.startsWith(route))) {
+  } else if (
+    ["/upload", "/resume", "/job", "/practice/:id/start"].some((route) =>
+      pathname.startsWith(route)
+    )
+  ) {
     if (!session) {
       return NextResponse.redirect(new URL("/api/auth/signin", req.url));
     }
     if (!session.user.isEmailVerified) {
       return NextResponse.redirect(new URL("/verify-email", req.url));
     }
-  } else if (RESTRICTED_API_ROUTES.some((route) => pathname.startsWith(route))) {
+  } else if (
+    [
+      "/api/resume",
+      "/api/evaluate/job",
+      "/api/file-upload",
+      "/api/resume/:resumeId",
+    ].some((route) => pathname.startsWith(route))
+  ) {
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -57,8 +83,14 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    ...RESTRICTED_PAGES,
-    ...RESTRICTED_API_ROUTES,
+    "/upload",
+    "/resume",
+    "/job",
+    "/practice/:id/start",
+    "/api/resume",
+    "/api/evaluate/job",
+    "/api/file-upload",
+    "/api/resume/:resumeId",
     "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
