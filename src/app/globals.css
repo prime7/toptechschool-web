@@ -63,7 +63,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground font-geist-sans;
+    @apply bg-background text-foreground font-sans;
   }
 
   h1 {
@@ -98,7 +98,7 @@
   code,
   kbd,
   samp {
-    @apply font-geist-mono;
+    @apply font-mono;
   }
 }
 
