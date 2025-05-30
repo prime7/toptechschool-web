@@ -60,7 +60,10 @@ function ResumeEditorContent() {
       </div>
       <div className="flex-1 relative">
         <PDFViewer className="w-full h-full">
-          <ResumePDFDocument resumeData={debouncedState} />
+          <ResumePDFDocument
+            resumeData={debouncedState}
+            templateId={debouncedState.style.templateId}
+          />
         </PDFViewer>
       </div>
     </div>

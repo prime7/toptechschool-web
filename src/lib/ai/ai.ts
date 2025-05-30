@@ -30,7 +30,8 @@ export class AI {
     provider?: ProviderType;
     maxTokens?: number;
     temperature?: number;
-    requestType: 'job_evaluation' | 'resume_review' | 'practice_evaluation';
+    // TODO: Add these new request types to the Prisma schema (enum AIRequestType)
+    requestType: 'job_evaluation' | 'resume_review' | 'practice_evaluation' | 'bullet_point_suggestion' | 'summary_suggestion' | 'project_description_suggestion' | 'project_feature_suggestion';
     userId: string;
   }): Promise<{
     text: string;

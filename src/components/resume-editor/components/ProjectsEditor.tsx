@@ -7,6 +7,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ListContentEditor } from "./ListContentEditor";
 import { Label } from "@/components/ui/label";
+import { Sparkles, Loader2 } from "lucide-react"; // Added Sparkles, Loader2
+import AISuggestionsModal from "./AISuggestionsModal"; // Added AISuggestionsModal
+import { generateProjectDescriptionSuggestionPrompt, generateProjectFeatureSuggestionPrompt } from "@/lib/ai/prompts/projectPrompts";
+import { ai } from "@/lib/ai";
+import { AnthropicModels } from "@/lib/ai/providers/anthropic";
 import {
   Dialog,
   DialogContent,
@@ -55,6 +60,27 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<ProjectItem, "id">>(emptyProject);
+
+  // AI Modal State
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
+  const [aiSuggestionType, setAiSuggestionType] = useState<'projectDescription' | 'projectBullet' | null>(null);
+  const [isLoadingAiSuggestions, setIsLoadingAiSuggestions] = useState(false);
+  // TODO: Get actual userId
+  const userId = "mock-user-id";
+
+  const parseAiResponse = (responseText: string): string[] => {
+    if (!responseText) return [];
+    // Handles "Option 1:\n[Text]\nOption 2:\n[Text]" and numbered lists.
+    const options = responseText.split(/Option \d+:/g).map(s => s.trim()).filter(s => s.length > 0);
+    if (options.length > 1 && options.every(opt => opt.length > 10)) { // Check if options are substantial
+        return options;
+    }
+    return responseText
+      .split('\n')
+      .map(line => line.replace(/^\d+\.\s*/, '').trim())
+      .filter(line => line.length > 0);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -151,7 +177,44 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm">Description & Key Features</Label>
+              <div className="flex justify-between items-center">
+                <Label className="text-sm">Description & Key Features</Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  onClick={async () => {
+                    setAiSuggestionType("projectDescription");
+                    setIsLoadingAiSuggestions(true);
+                    try {
+                      const prompt = generateProjectDescriptionSuggestionPrompt(formData.description || `Project: ${formData.name}`);
+                      const response = await ai.generateResponse({
+                        prompt,
+                        model: AnthropicModels.HAIKU,
+                        requestType: 'project_description_suggestion',
+                        userId,
+                      });
+                      const suggestions = parseAiResponse(response.text);
+                      setAiSuggestions(suggestions.length > 0 ? suggestions : ["No suggestions."]);
+                    } catch (error) {
+                      console.error("Failed to get project description suggestions:", error);
+                      setAiSuggestions(["Error fetching suggestions."]);
+                    } finally {
+                      setIsLoadingAiSuggestions(false);
+                      setIsAiModalOpen(true);
+                    }
+                  }}
+                  title="Suggest Description"
+                  disabled={isLoadingAiSuggestions && aiSuggestionType === 'projectDescription'}
+                >
+                  {isLoadingAiSuggestions && aiSuggestionType === 'projectDescription' ? (
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-3 w-3 mr-1 text-yellow-500" />
+                  )}
+                  Suggest Description
+                </Button>
+              </div>
               <ListContentEditor
                 description={formData.description}
                 onDescriptionChange={(description) => setFormData((prev) => ({ ...prev, description }))}
@@ -166,6 +229,42 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
                 bulletPlaceholder="Add a key feature or achievement"
                 addButtonText="Add Feature"
               />
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full mt-1"
+                type="button"
+                onClick={async () => {
+                  setAiSuggestionType("projectBullet");
+                  setIsLoadingAiSuggestions(true);
+                  try {
+                    const prompt = generateProjectFeatureSuggestionPrompt(formData.description || `Project: ${formData.name}`);
+                    const response = await ai.generateResponse({
+                      prompt,
+                      model: AnthropicModels.HAIKU,
+                      requestType: 'project_feature_suggestion',
+                      userId,
+                    });
+                    const suggestions = parseAiResponse(response.text);
+                    setAiSuggestions(suggestions.length > 0 ? suggestions : ["No suggestions."]);
+                  } catch (error) {
+                    console.error("Failed to get project feature suggestions:", error);
+                    setAiSuggestions(["Error fetching suggestions."]);
+                  } finally {
+                    setIsLoadingAiSuggestions(false);
+                    setIsAiModalOpen(true);
+                  }
+                }}
+                title="Suggest Feature/Achievement"
+                disabled={isLoadingAiSuggestions && aiSuggestionType === 'projectBullet'}
+              >
+                {isLoadingAiSuggestions && aiSuggestionType === 'projectBullet' ? (
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-3 w-3 mr-1 text-yellow-500" />
+                )}
+                Suggest Feature/Achievement
+              </Button>
             </div>
           </div>
 
@@ -235,6 +334,30 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
           ))}
         </div>
       )}
+
+      <AISuggestionsModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        suggestions={aiSuggestions}
+        title={
+          aiSuggestionType === "projectDescription"
+            ? "AI Project Description Suggestions"
+            : "AI Project Feature/Achievement Suggestions"
+        }
+        onAccept={(suggestion) => {
+          if (aiSuggestionType === "projectDescription") {
+            setFormData((prev) => ({ ...prev, description: suggestion }));
+          } else if (aiSuggestionType === "projectBullet") {
+            setFormData((prev) => ({
+              ...prev,
+              points: [...(prev.points || []), suggestion],
+            }));
+          }
+          setIsAiModalOpen(false);
+          setAiSuggestions([]);
+          setAiSuggestionType(null);
+        }}
+      />
 
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>

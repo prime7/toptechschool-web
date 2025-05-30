@@ -281,7 +281,7 @@ const BulletPointsList = ({
   </View>
 );
 
-const PersonalSection = ({
+export const PersonalSection = ({
   personal,
   styles,
   alignment,
@@ -345,7 +345,7 @@ const PersonalSection = ({
   );
 };
 
-const SummarySection = ({
+export const SummarySection = ({
   summary,
   styles,
 }: {
@@ -385,7 +385,7 @@ const ExperienceItem = ({
   </View>
 );
 
-const ExperienceSection = ({
+export const ExperienceSection = ({
   experience,
   styles,
 }: {
@@ -466,7 +466,7 @@ const EducationItem = ({
   </View>
 );
 
-const EducationSection = ({
+export const EducationSection = ({
   education,
   styles,
 }: {
@@ -545,7 +545,7 @@ const ProjectItem = ({
   </View>
 );
 
-const ProjectsSection = ({
+export const ProjectsSection = ({
   projects,
   styles,
 }: {
@@ -603,22 +603,19 @@ const ProjectsSection = ({
   );
 };
 
+import DefaultLayout from "./layouts/DefaultLayout";
+import Template2Layout from "./layouts/Template2Layout";
+
 interface ResumePDFDocumentProps {
   resumeData: ResumeData;
+  templateId?: string; // Added templateId prop
 }
 
 const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
   resumeData,
+  templateId = "default", // Default templateId
 }) => {
-  const {
-    personal,
-    summary,
-    work,
-    education,
-    projects,
-    style,
-    activeSections,
-  } = resumeData;
+  const { personal, style } = resumeData; // Destructure only what's needed for Document & styles
 
   const styles = React.useMemo(
     () => createStyles(style),
@@ -635,6 +632,17 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
   const documentTitle = `Resume - ${personal.fullName}`;
   const documentAuthor = personal.fullName;
 
+  let LayoutComponent;
+  switch (templateId) {
+    case "template2":
+      LayoutComponent = Template2Layout;
+      break;
+    case "default":
+    default:
+      LayoutComponent = DefaultLayout;
+      break;
+  }
+
   return (
     <Document
       title={documentTitle}
@@ -643,39 +651,7 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
       producer="Resume Editor"
       keywords={`resume, ${personal.fullName}, ${personal.profession || ""}`}
     >
-      <Page size="A4" style={styles.page} wrap>
-        {activeSections.includes("personal") && (
-          <PersonalSection
-            personal={personal}
-            styles={styles}
-            alignment={style.personalSectionAlignment}
-          />
-        )}
-
-        {activeSections.includes("summary") &&
-          summary &&
-          summary.trim() !== "" && (
-            <SummarySection summary={summary} styles={styles} />
-          )}
-
-        {activeSections.includes("work") &&
-          work &&
-          work.length > 0 && (
-            <ExperienceSection experience={work} styles={styles} />
-          )}
-
-        {activeSections.includes("education") &&
-          education &&
-          education.length > 0 && (
-            <EducationSection education={education} styles={styles} />
-          )}
-
-        {activeSections.includes("projects") &&
-          projects &&
-          projects.length > 0 && (
-            <ProjectsSection projects={projects} styles={styles} />
-          )}
-      </Page>
+      <LayoutComponent resumeData={resumeData} styles={styles} />
     </Document>
   );
 };

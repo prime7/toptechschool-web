@@ -73,6 +73,84 @@
           ]
         }
       ]
+    },
+    {
+      "id": "javascript-fundamentals",
+      "createdAt": "2024-03-15",
+      "updatedAt": "2024-03-15",
+      "prompt": "You are an expert JavaScript instructor. Evaluate the user's answer for technical correctness, clarity, and understanding of core JavaScript concepts. Provide feedback on any misunderstandings, suggest best practices, and offer explanations for complex topics. If the question involves code, assess the code for efficiency and readability.",
+      "title": "JavaScript Fundamentals",
+      "description": "Test your knowledge of core JavaScript concepts, including variables, data types, functions, scope, closures, and basic DOM manipulation.",
+      "category": "Technical Skills",
+      "difficulty": "Beginner",
+      "tags": ["javascript", "programming", "frontend", "web development", "es6"],
+      "instructions": "Read each question carefully and provide your answer. For coding questions, write clear and functional JavaScript code.",
+      "tips": ["Explain your reasoning.", "Consider edge cases.", "Pay attention to syntax and best practices."],
+      "questions": [
+        {
+          "id": 1,
+          "question": "Explain the difference between 'let', 'const', and 'var' in JavaScript.",
+          "type": "text",
+          "hints": ["Scope (global, block, function)", "Reassignment", "Hoisting"]
+        },
+        {
+          "id": 2,
+          "question": "What is a closure in JavaScript? Provide a simple code example.",
+          "type": "text",
+          "hints": ["Lexical scoping", "Access to outer function's variables", "Returning a function"]
+        },
+        {
+          "id": 3,
+          "question": "Describe the main ways to iterate over an array in JavaScript. Which one do you prefer and why?",
+          "type": "text",
+          "hints": ["for loop", "forEach", "map", "for...of", "Performance considerations", "Readability"]
+        },
+        {
+          "id": 4,
+          "question": "What is the difference between '==' and '===' operators in JavaScript?",
+          "type": "text",
+          "hints": ["Type coercion", "Strict equality", "Best practices"]
+        }
+      ]
+    },
+    {
+      "id": "frontend-developer-interview",
+      "createdAt": "2024-03-15",
+      "updatedAt": "2024-03-15",
+      "prompt": "You are a senior frontend developer conducting an interview. Evaluate the candidate's answer for technical accuracy, problem-solving skills, understanding of web technologies (HTML, CSS, JavaScript, frameworks), and communication clarity. Provide feedback as if you were making a hiring recommendation, noting strengths and areas for improvement.",
+      "title": "Frontend Developer Interview Prep",
+      "description": "Practice common interview questions for frontend developer roles, covering HTML, CSS, JavaScript, accessibility, performance, and popular frameworks/libraries.",
+      "category": "Job Role Preparation",
+      "difficulty": "Intermediate",
+      "tags": ["frontend", "interview", "html", "css", "javascript", "web performance", "accessibility"],
+      "instructions": "Answer each question as you would in a real job interview. Be clear, concise, and provide examples where appropriate.",
+      "tips": ["Think aloud.", "Clarify questions if needed.", "Discuss trade-offs.", "Show enthusiasm for frontend development."],
+      "questions": [
+        {
+          "id": 1,
+          "question": "What is the CSS Box Model? Explain its components.",
+          "type": "text",
+          "hints": ["Content", "Padding", "Border", "Margin", "How they affect layout"]
+        },
+        {
+          "id": 2,
+          "question": "Describe event delegation in JavaScript and why it's useful.",
+          "type": "text",
+          "hints": ["Event bubbling/capturing", "Attaching listeners to parent elements", "Performance benefits", "Dynamically added elements"]
+        },
+        {
+          "id": 3,
+          "question": "What are some common techniques for optimizing website performance?",
+          "type": "text",
+          "hints": ["Minification", "Compression", "Caching", "Image optimization", "Lazy loading", "CDNs", "Code splitting"]
+        },
+        {
+          "id": 4,
+          "question": "Explain the concept of 'this' keyword in JavaScript. How does its value change in different contexts (e.g., global, object method, arrow function)?",
+          "type": "text",
+          "hints": ["Execution context", "Arrow functions vs. regular functions", "bind, call, apply"]
+        }
+      ]
     }
   ]
 }

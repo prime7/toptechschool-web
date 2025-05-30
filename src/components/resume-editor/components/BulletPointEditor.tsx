@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Loader2 } from 'lucide-react'; // Added Sparkles, Loader2
+import AISuggestionsModal from './AISuggestionsModal'; // Added AISuggestionsModal import
+import { generateBulletPointSuggestionPrompt } from '@/lib/ai/prompts/bulletPointPrompts';
+import { ai } from '@/lib/ai';
+import { AnthropicModels } from '@/lib/ai/providers/anthropic'; // Assuming this path
 
 interface BulletPointEditorProps {
   bulletPoints: string[];
@@ -20,6 +24,22 @@ export function BulletPointEditor({
 }: BulletPointEditorProps) {
   const [newBullet, setNewBullet] = useState('');
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+  // State for AI Suggestions Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  // TODO: Get actual userId, perhaps from a context or session
+  const userId = "mock-user-id";
+
+  const parseAiResponse = (responseText: string): string[] => {
+    if (!responseText) return [];
+    return responseText
+      .split('\n')
+      .map(line => line.replace(/^\d+\.\s*/, '').trim()) // Remove numbering like "1. "
+      .filter(line => line.length > 0);
+  };
 
   const handleAddBullet = () => {
     if (newBullet.trim()) {
@@ -92,7 +112,39 @@ export function BulletPointEditor({
             }}
             onKeyDown={(e) => handleKeyDown(e, index)}
           />
-          
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={async () => {
+              setEditingIndex(index);
+              setIsLoadingSuggestions(true);
+              try {
+                const prompt = generateBulletPointSuggestionPrompt(bulletPoints[index]);
+                const response = await ai.generateResponse({
+                  prompt,
+                  model: AnthropicModels.HAIKU,
+                  requestType: 'bullet_point_suggestion',
+                  userId,
+                });
+                const suggestions = parseAiResponse(response.text);
+                setCurrentSuggestions(suggestions.length > 0 ? suggestions : ["No suggestions generated."]);
+              } catch (error) {
+                console.error("Failed to get AI suggestions:", error);
+                setCurrentSuggestions(["Error fetching suggestions."]);
+              } finally {
+                setIsLoadingSuggestions(false);
+                setIsModalOpen(true);
+              }
+            }}
+            title="Get AI Suggestions"
+            disabled={isLoadingSuggestions && editingIndex === index}
+          >
+            {isLoadingSuggestions && editingIndex === index ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4 text-yellow-500" />
+            )}
+          </Button>
           <div className="flex">
             {onReorder && (
               <>
@@ -124,6 +176,20 @@ export function BulletPointEditor({
           </div>
         </div>
       ))}
+
+      <AISuggestionsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        suggestions={currentSuggestions}
+        onAccept={(suggestion) => {
+          if (editingIndex !== null) {
+            onUpdate(editingIndex, suggestion);
+          }
+          setIsModalOpen(false);
+          setEditingIndex(null);
+          setCurrentSuggestions([]);
+        }}
+      />
       
       <div className="flex gap-2">
         <Input

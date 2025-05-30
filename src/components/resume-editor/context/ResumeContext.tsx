@@ -120,9 +120,17 @@ export const initialResumeData: ResumeData = {
     },
   ],
   style: defaultStyle,
+  // Sharing fields for initial sample data
+  id: "sample-resume-id", // Example ID for the sample resume
+  sharedId: "sample-shared-id-cuid", // Example CUID for sample
+  isPublic: false,
+  lastSharedAt: undefined,
 };
 
 export const blankResumeData: ResumeData = {
+  // id, sharedId will be undefined for a new, unsaved resume
+  isPublic: false,
+  lastSharedAt: undefined,
   personal: {
     fullName: "",
     email: "",
@@ -198,6 +206,14 @@ const ResumeContext = createContext<
 
 function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
   switch (action.type) {
+    case "UPDATE_SHARING_SETTINGS":
+      return {
+        ...state,
+        isPublic: action.payload.isPublic,
+        // Optionally update sharedId if it's part of the payload (e.g., generated on first share server-side)
+        ...(action.payload.sharedId && { sharedId: action.payload.sharedId }),
+        lastSharedAt: action.payload.lastSharedAt,
+      };
     case "UPDATE_PERSONAL":
       return {
         ...state,

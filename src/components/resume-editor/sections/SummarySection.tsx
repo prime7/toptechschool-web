@@ -2,12 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { ListContentEditor } from '../components/ListContentEditor';
 import { Button } from '@/components/ui/button';
+import { Sparkles, Loader2 } from 'lucide-react'; // Added Sparkles, Loader2
+import AISuggestionsModal from '../components/AISuggestionsModal'; // Added AISuggestionsModal
+import { generateSummarySuggestionPrompt } from '@/lib/ai/prompts/summaryPrompts';
+import { generateProjectFeatureSuggestionPrompt } from '@/lib/ai/prompts/projectPrompts'; // Using this for highlights based on summary
+import { ai } from '@/lib/ai';
+import { AnthropicModels } from '@/lib/ai/providers/anthropic';
 
 const SummarySection: React.FC = () => {
   const { state, dispatch, exportUtils } = useResume();
-  const { summary, summaryHighlights } = state;
+  const { summary, summaryHighlights, work } = state; // Added work for summary generation
   const [summaryText, setSummaryText] = useState(summary || '');
   const [highlights, setHighlights] = useState<string[]>(summaryHighlights || []);
+
+  // AI Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
+  const [suggestionType, setSuggestionType] = useState<'summary' | 'highlight' | null>(null);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  // TODO: Get actual userId
+  const userId = "mock-user-id";
+
+  const parseAiResponse = (responseText: string): string[] => {
+    if (!responseText) return [];
+    // Handles "Option 1:\n[Text]\nOption 2:\n[Text]" and numbered lists.
+    const options = responseText.split(/Option \d+:/g).map(s => s.trim()).filter(s => s.length > 0);
+    if (options.length > 1) return options;
+
+    return responseText
+      .split('\n')
+      .map(line => line.replace(/^\d+\.\s*/, '').trim())
+      .filter(line => line.length > 0);
+  };
 
   useEffect(() => {
     setSummaryText(summary || '');
@@ -52,7 +78,43 @@ const SummarySection: React.FC = () => {
     <div className="space-y-4">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-semibold">Professional Summary</h2>
-        <Button onClick={handleExport} size="sm">Export</Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              setSuggestionType("summary");
+              setIsLoadingSuggestions(true);
+              try {
+                const prompt = generateSummarySuggestionPrompt(work || []);
+                const response = await ai.generateResponse({
+                  prompt,
+                  model: AnthropicModels.HAIKU,
+                  requestType: 'summary_suggestion',
+                  userId,
+                });
+                const suggestions = parseAiResponse(response.text);
+                setCurrentSuggestions(suggestions.length > 0 ? suggestions : ["No suggestions."]);
+              } catch (error) {
+                console.error("Failed to get summary suggestions:", error);
+                setCurrentSuggestions(["Error fetching suggestions."]);
+              } finally {
+                setIsLoadingSuggestions(false);
+                setIsModalOpen(true);
+              }
+            }}
+            title="Get AI Suggestions for Summary"
+            disabled={isLoadingSuggestions}
+          >
+            {isLoadingSuggestions && suggestionType === 'summary' ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4 mr-2 text-yellow-500" />
+            )}
+            Suggest Summary
+          </Button>
+          <Button onClick={handleExport} size="sm">Export</Button>
+        </div>
       </div>
 
       <ListContentEditor
@@ -69,10 +131,44 @@ const SummarySection: React.FC = () => {
         bulletPlaceholder="Add a key highlight or achievement"
         addButtonText="Add Highlight"
       />
-
-      <div className="flex justify-end">
-        <Button onClick={handleUpdate}>Update Summary</Button>
+      <div className="flex justify-between items-center mt-2">
+        <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSuggestionType("highlight");
+              // TODO: Replace with actual API call for highlight suggestions
+              setCurrentSuggestions([
+                "AI Suggested Highlight 1",
+                "AI Suggested Highlight 2: Impactful achievement.",
+              ]);
+              setIsModalOpen(true);
+            }}
+            title="Get AI Suggestions for Highlights"
+          >
+            <Sparkles className="h-4 w-4 mr-2 text-yellow-500" />
+            Suggest Highlight
+          </Button>
+        <Button onClick={handleUpdate}>Update Summary & Highlights</Button>
       </div>
+
+      <AISuggestionsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        suggestions={currentSuggestions}
+        title={suggestionType === 'summary' ? 'AI Summary Suggestions' : 'AI Highlight Suggestions'}
+        onAccept={(suggestion) => {
+          if (suggestionType === 'summary') {
+            setSummaryText(suggestion);
+          } else if (suggestionType === 'highlight') {
+            handleAddHighlight(suggestion);
+          }
+          // Consider calling handleUpdate() here or let user click the main update button
+          setIsModalOpen(false);
+          setCurrentSuggestions([]);
+          setSuggestionType(null);
+        }}
+      />
 
       <div className="text-sm text-muted-foreground">
         <p className="font-medium">Tips:</p>

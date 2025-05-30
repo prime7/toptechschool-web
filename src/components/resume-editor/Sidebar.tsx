@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'; // Added useState, useEffect
 import { useResume } from './context/ResumeContext';
 import { SectionType } from './types';
-import { User, FileText, Briefcase, GraduationCap, Calendar, Plus, GripVertical, Layout, Type } from 'lucide-react';
+import { User, FileText, Briefcase, GraduationCap, Calendar, Plus, GripVertical, Layout, Type, Share2, Copy, Check } from 'lucide-react'; // Added Share2, Copy, Check
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -25,6 +25,14 @@ interface SectionInfo {
 
 const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSection }) => {
   const { state, dispatch } = useResume();
+  const [isLoadingSharing, setIsLoadingSharing] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    // Ensure window.location.origin is only accessed on the client side
+    setOrigin(window.location.origin);
+  }, []);
 
   const sections: SectionInfo[] = [
     { id: 'personal', label: 'Personal Information', icon: <User className="h-4 w-4" /> },
@@ -104,14 +112,18 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
     <Card className="p-2 border-0 shadow-none h-full w-[280px] flex flex-col">
       <CardContent className="p-0 flex flex-col flex-1">
         <Tabs defaultValue="sections" className="w-full flex-1">
-          <TabsList className="w-full grid grid-cols-2">
-            <TabsTrigger value="sections" className="flex items-center gap-2">
-              <Layout className="h-4 w-4" />
+          <TabsList className="w-full grid grid-cols-3"> {/* Adjusted grid-cols */}
+            <TabsTrigger value="sections" className="flex items-center gap-2 text-xs p-1 md:p-2"> {/* Adjusted padding and text size */}
+              <Layout className="h-3 w-3 md:h-4 md:w-4" /> {/* Adjusted icon size */}
               Sections
             </TabsTrigger>
-            <TabsTrigger value="styling" className="flex items-center gap-2">
-              <Type className="h-4 w-4" />
+            <TabsTrigger value="styling" className="flex items-center gap-2 text-xs p-1 md:p-2"> {/* Adjusted padding and text size */}
+              <Type className="h-3 w-3 md:h-4 md:w-4" /> {/* Adjusted icon size */}
               Styling
+            </TabsTrigger>
+            <TabsTrigger value="share" className="flex items-center gap-2 text-xs p-1 md:p-2"> {/* Added Share Tab */}
+              <Share2 className="h-3 w-3 md:h-4 md:w-4" /> {/* Adjusted icon size */}
+              Share
             </TabsTrigger>
           </TabsList>
           <TabsContent value="sections">
@@ -303,6 +315,24 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                   </Select>
                 </div>
 
+                {/* Template Selection Dropdown */}
+                <div className="space-y-2">
+                  <Label>Resume Template</Label>
+                  <Select
+                    value={state.style.templateId || 'default'} // Ensure a default value if undefined
+                    onValueChange={(value) => handleStyleChange('templateId', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select template" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">Default</SelectItem>
+                      <SelectItem value="template2">Template 2</SelectItem>
+                      {/* Add more templates here as they are created */}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="flex items-center justify-between space-x-2">
                   <Label>Show Section Dividers</Label>
                   <Switch
@@ -321,6 +351,95 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
               </div>
             </div>
           </TabsContent>
+
+          {/* Share Tab Content START */}
+          <TabsContent value="share">
+            <div className="px-4 py-6 space-y-6">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="isPublic" className="font-medium">Make Resume Public</Label>
+                  <Switch
+                    id="isPublic"
+                    checked={state.isPublic ?? false}
+                    onCheckedChange={async (newIsPublic) => {
+                      if (!state.id) {
+                        // TODO: Show a toast message: "Please save your resume first to enable sharing."
+                        console.error("Resume ID is not available. Save the resume first.");
+                        return;
+                      }
+                      setIsLoadingSharing(true);
+                      try {
+                        const response = await fetch(`/api/resume/${state.id}/share`, {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ isPublic: newIsPublic }),
+                        });
+                        if (!response.ok) {
+                          const errorData = await response.json();
+                          throw new Error(errorData.error || 'Failed to update sharing status');
+                        }
+                        const data = await response.json();
+                        dispatch({
+                          type: 'UPDATE_SHARING_SETTINGS',
+                          payload: {
+                            isPublic: data.isPublic,
+                            sharedId: data.sharedId, // Ensure API returns sharedId
+                            lastSharedAt: data.lastSharedAt,
+                          },
+                        });
+                      } catch (error) {
+                        console.error("Error updating sharing status:", error);
+                        // TODO: Show toast error to user
+                      } finally {
+                        setIsLoadingSharing(false);
+                      }
+                    }}
+                    disabled={isLoadingSharing || !state.id}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Making your resume public will generate a shareable link. Anyone with the link will be able to view your resume.
+                </p>
+              </div>
+
+              {state.isPublic && state.sharedId && (
+                <div className="space-y-3">
+                  <Label className="font-medium">Shareable Link</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      value={`${origin}/resume/shared/${state.sharedId}`}
+                      readOnly
+                      className="text-xs"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${origin}/resume/shared/${state.sharedId}`);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                    >
+                      {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {state.lastSharedAt && (
+                    <p className="text-xs text-muted-foreground">
+                      Last updated: {new Date(state.lastSharedAt).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {!state.id && (
+                <p className="text-xs text-destructive text-center">
+                  Save your resume to enable sharing.
+                </p>
+              )}
+            </div>
+          </TabsContent>
+          {/* Share Tab Content END */}
+
         </Tabs>
       </CardContent>
     </Card>

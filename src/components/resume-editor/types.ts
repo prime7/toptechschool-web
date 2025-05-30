@@ -63,6 +63,7 @@ export interface ResumeStyle {
   showSectionHorizontalRule: boolean;
   personalSectionAlignment: "left" | "center" | "right";
   sectionHeaderAlignment: "left" | "center" | "right";
+  templateId: string; // Added for template selection
 }
 
 export interface ResumeData {
@@ -74,9 +75,16 @@ export interface ResumeData {
   projects?: ProjectItem[];
   activeSections: SectionType[];
   style: ResumeStyle;
+
+  // Metadata for the resume itself
+  id?: string; // Database ID of the resume
+  sharedId?: string; // Publicly shareable ID
+  isPublic?: boolean;
+  lastSharedAt?: Date | string;
 }
 
 export type ResumeAction =
+  | { type: "UPDATE_SHARING_SETTINGS"; payload: { isPublic: boolean; sharedId?: string; lastSharedAt?: Date | string } }
   | { type: "UPDATE_PERSONAL"; payload: Partial<PersonalInfo> }
   | { type: "UPDATE_SUMMARY"; payload: string }
   | { type: "UPDATE_SUMMARY_HIGHLIGHTS"; payload: string[] }

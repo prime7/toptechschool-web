@@ -115,6 +115,11 @@ model Resume {
   profession String?
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   jobReviews JobReview[]
+
+  // Fields for sharing
+  sharedId     String        @unique @default(cuid())
+  isPublic     Boolean       @default(false)
+  lastSharedAt DateTime?
 }
 
 model JobReview {
