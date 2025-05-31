@@ -17,10 +17,10 @@ export function formatDate(date: Date | string | null): string {
     month = d.getMonth();
   }
   
-  // Get month name using a reliable approach
+  // Use abbreviated month names
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
   
   return `${monthNames[month]} ${year}`;
@@ -55,4 +55,4 @@ export function dateToMonthString(date: Date | string | null): string {
   const monthStr = month < 10 ? `0${month}` : `${month}`;
   
   return `${year}-${monthStr}`;
-} 
+}

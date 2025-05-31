@@ -23,7 +23,12 @@ const createStyles = (style: ResumeStyle) =>
     page: {
       padding: 24,
       fontSize: style.fontSize,
+      // fontFamily: style.fontFamily,
       fontFamily: "Helvetica",
+      // "Helvetica" (default)
+      // "Times-Roman"
+      // "Courier"
+      // If you want to use a custom font (like "Open Sans" or "Roboto"), you must register it first using the Font.register API from @react-pdf/renderer, and provide the font file (usually .ttf or .otf) in your public directory or import it directly.
       lineHeight: parseFloat(style.lineHeight.toString()),
     },
     section: {
@@ -197,7 +202,7 @@ const SummarySection = ({
   styles: any;
 }) => (
   <View style={styles.section} wrap={false}>
-    <Text style={styles.sectionHeader}>Summary</Text>
+    <Text style={styles.sectionHeader}>Highlights</Text>
     <Text>{summary}</Text>
     {summaryHighlights && summaryHighlights.length > 0 && (
       <BulletPointsList bulletPoints={summaryHighlights} styles={styles} />
@@ -209,8 +214,9 @@ const ExperienceItem = ({ item, styles }: { item: WorkItem; styles: any }) => (
   <View style={{ marginBottom: 10 }} wrap={false}>
     <View style={styles.row}>
       <View>
-        <Text style={styles.itemHeader}>{item.position}</Text>
-        <Text style={styles.itemSubHeader}>{item.company}</Text>
+        <Text style={styles.itemHeader}>
+          {item.position} - {item.company}{" "}
+        </Text>
       </View>
       <Text style={styles.date}>
         {formatDate(item.startDate)} -{" "}

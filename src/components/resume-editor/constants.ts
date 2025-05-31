@@ -4,8 +4,8 @@ export const defaultStyle: ResumeStyle = {
   fontFamily: 'inter',
   fontSize: 10.6,
   accentColor: '#000',
-  sectionSpacing: 18,
-  lineHeight: 1.3,
+  sectionSpacing: 12,
+  lineHeight: 1.2,
   showSectionHorizontalRule: false,
 };
 
