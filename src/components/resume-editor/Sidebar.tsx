@@ -268,41 +268,6 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                     <span className="w-12 text-sm">{state.style.lineHeight}</span>
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Personal Info Alignment</Label>
-                  <Select 
-                    value={state.style.personalSectionAlignment}
-                    onValueChange={(value) => handleStyleChange('personalSectionAlignment', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select alignment" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="left">Left</SelectItem>
-                      <SelectItem value="center">Center</SelectItem>
-                      <SelectItem value="right">Right</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Section Header Alignment</Label>
-                  <Select 
-                    value={state.style.sectionHeaderAlignment}
-                    onValueChange={(value) => handleStyleChange('sectionHeaderAlignment', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select alignment" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="left">Left</SelectItem>
-                      <SelectItem value="center">Center</SelectItem>
-                      <SelectItem value="right">Right</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
                 <div className="flex items-center justify-between space-x-2">
                   <Label>Show Section Dividers</Label>
                   <Switch

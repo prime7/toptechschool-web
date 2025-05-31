@@ -7,8 +7,6 @@ export const defaultStyle: ResumeStyle = {
   sectionSpacing: 18,
   lineHeight: 1.3,
   showSectionHorizontalRule: false,
-  personalSectionAlignment: 'center',
-  sectionHeaderAlignment: 'left'
 };
 
 export const JobRole = {
