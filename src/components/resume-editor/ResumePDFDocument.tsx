@@ -1,4 +1,4 @@
-'use client'
+"use client";
 /* eslint-disable */
 import React from "react";
 import {
@@ -34,7 +34,6 @@ const createStyles = (style: ResumeStyle) =>
       marginBottom: 6,
       fontWeight: "bold",
       color: style.accentColor,
-      textAlign: style.sectionHeaderAlignment,
       borderBottom: style.showSectionHorizontalRule
         ? `1pt solid ${style.accentColor}`
         : undefined,
@@ -58,8 +57,7 @@ const createStyles = (style: ResumeStyle) =>
     contactRow: {
       flexDirection: "row",
       flexWrap: "wrap",
-      justifyContent: "flex-start",
-      marginBottom: 3,
+      justifyContent: "center",
     },
     contactItem: {
       flexDirection: "row",
@@ -135,7 +133,6 @@ const ContactItem = ({
       flexDirection: "row",
       alignItems: "center",
       marginRight: 10,
-      marginBottom: 5,
     }}
   >
     {!isFirst && <Text style={{ marginRight: 5 }}>•</Text>}
@@ -163,44 +160,22 @@ const BulletPointsList = ({
 const PersonalSection = ({
   personal,
   styles,
-  alignment,
 }: {
   personal: PersonalInfo;
   styles: any;
-  alignment: "left" | "center" | "right";
 }) => {
-  const getTextAlign = () => {
-    return { textAlign: alignment } as const;
-  };
-
-  const getAlignmentStyles = () => {
-    switch (alignment) {
-      case "center":
-        return { alignItems: "center", justifyContent: "center" } as const;
-      case "right":
-        return { alignItems: "flex-end", justifyContent: "flex-end" } as const;
-      default:
-        return {
-          alignItems: "flex-start",
-          justifyContent: "flex-start",
-        } as const;
-    }
-  };
-
   return (
     <View style={styles.section}>
-      <View style={getAlignmentStyles()}>
-        <Text style={[styles.personalHeaderName, getTextAlign()]}>
-          {personal.fullName}
-        </Text>
+      <View style={{ alignItems: "center" }}>
+        <Text style={[styles.personalHeaderName]}>{personal.fullName}</Text>
         {personal.profession && (
-          <Text style={[styles.personalHeaderTitle, getTextAlign()]}>
+          <Text style={[styles.personalHeaderTitle, { marginTop: 1 }]}>
             {personal.profession}
           </Text>
         )}
       </View>
 
-      <View style={[styles.contactRow, getAlignmentStyles()]}>
+      <View style={[styles.contactRow]}>
         {personal.email && <ContactItem text={personal.email} isFirst={true} />}
         {personal.phone && <ContactItem text={personal.phone} />}
         {personal.location && <ContactItem text={personal.location} />}
@@ -230,13 +205,7 @@ const SummarySection = ({
   </View>
 );
 
-const ExperienceItem = ({
-  item,
-  styles,
-}: {
-  item: WorkItem;
-  styles: any;
-}) => (
+const ExperienceItem = ({ item, styles }: { item: WorkItem; styles: any }) => (
   <View style={{ marginBottom: 10 }} wrap={false}>
     <View style={styles.row}>
       <View>
@@ -430,9 +399,7 @@ const ProjectsSection = ({
 
   const estimateItemSize = (item: ProjectItem) => {
     return (
-      0.5 +
-      (item.description ? 0.2 : 0) +
-      (item.points?.length || 0) * 0.15
+      0.5 + (item.description ? 0.2 : 0) + (item.points?.length || 0) * 0.15
     );
   };
 
@@ -493,20 +460,9 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
     activeSections,
   } = resumeData;
 
-  const styles = React.useMemo(
-    () => createStyles(style),
-    [
-      style.fontSize,
-      style.lineHeight,
-      style.sectionSpacing,
-      style.accentColor,
-      style.sectionHeaderAlignment,
-      style.showSectionHorizontalRule,
-    ]
-  );
-
-  const documentTitle = `Resume - ${personal.fullName}`;
-  const documentAuthor = personal.fullName;
+  const styles = createStyles(style);
+  const documentTitle = `Resume - ${resumeData.personal.fullName}`;
+  const documentAuthor = resumeData.personal.fullName;
 
   return (
     <Document
@@ -518,11 +474,7 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
     >
       <Page size="A4" style={styles.page} wrap>
         {activeSections.includes("personal") && (
-          <PersonalSection
-            personal={personal}
-            styles={styles}
-            alignment={style.personalSectionAlignment}
-          />
+          <PersonalSection personal={personal} styles={styles} />
         )}
 
         {activeSections.includes("summary") &&
@@ -535,11 +487,9 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
             />
           )}
 
-        {activeSections.includes("work") &&
-          work &&
-          work.length > 0 && (
-            <ExperienceSection experience={work} styles={styles} />
-          )}
+        {activeSections.includes("work") && work && work.length > 0 && (
+          <ExperienceSection experience={work} styles={styles} />
+        )}
 
         {activeSections.includes("education") &&
           education &&
