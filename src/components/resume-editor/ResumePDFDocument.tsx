@@ -7,7 +7,7 @@ import {
   Text,
   View,
   StyleSheet,
-  Font
+  Font,
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { formatDate } from "@/lib/date-utils";
 import type {
@@ -96,22 +96,20 @@ const createStyles = (style: ResumeStyle) =>
       lineHeight: parseFloat(style.lineHeight.toString()),
     },
     section: {
-      marginBottom: style.sectionSpacing
+      marginBottom: style.sectionSpacing,
     },
     sectionHeader: {
       fontSize: style.fontSize * 1.2,
-      marginBottom: 6,
       fontWeight: "bold",
       color: style.accentColor,
       borderBottom: style.showSectionHorizontalRule
-        ? `1pt solid ${style.accentColor}`
+        ? `1px solid ${style.accentColor}`
         : undefined,
-      paddingBottom: style.showSectionHorizontalRule ? 2 : undefined,
+      paddingBottom: style.showSectionHorizontalRule ? 2 : 3,
     },
     row: {
       flexDirection: "row",
       justifyContent: "space-between",
-      marginBottom: 3,
     },
     personalHeaderName: {
       fontSize: style.fontSize * 1.6,
@@ -123,7 +121,7 @@ const createStyles = (style: ResumeStyle) =>
       marginBottom: 3,
       color: style.accentColor,
     },
-    contactRow: {
+    centerRow: {
       flexDirection: "row",
       flexWrap: "wrap",
       justifyContent: "center",
@@ -143,19 +141,17 @@ const createStyles = (style: ResumeStyle) =>
     },
     date: {
       fontSize: style.fontSize * 0.85,
-      color: "#666",
     },
     description: {
       marginTop: 3,
       fontSize: style.fontSize * 0.85,
-      color: "#444",
     },
     bulletPoints: {
       marginTop: 3,
     },
     bulletPoint: {
       flexDirection: "row",
-      marginBottom: 2,
+      marginBottom: 1,
     },
     bulletMarker: {
       width: 8,
@@ -164,29 +160,6 @@ const createStyles = (style: ResumeStyle) =>
     bulletText: {
       flex: 1,
       fontSize: style.fontSize * 0.85,
-    },
-    skillCategories: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 8,
-    },
-    skillCategory: {
-      marginBottom: 4,
-    },
-    skillCategoryName: {
-      fontWeight: "bold",
-      marginBottom: 2,
-    },
-    skillList: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 4,
-    },
-    skillItem: {
-      backgroundColor: "#f0f0f0",
-      borderRadius: 2,
-      padding: "1 4",
-      fontSize: style.fontSize * 0.8,
     },
   });
 
@@ -238,13 +211,11 @@ const PersonalSection = ({
       <View style={{ alignItems: "center" }}>
         <Text style={[styles.personalHeaderName]}>{personal.fullName}</Text>
         {personal.profession && (
-          <Text style={[styles.personalHeaderTitle, { marginTop: 1 }]}>
-            {personal.profession}
-          </Text>
+          <Text style={styles.personalHeaderTitle}>{personal.profession}</Text>
         )}
       </View>
 
-      <View style={[styles.contactRow]}>
+      <View style={[styles.centerRow]}>
         {personal.email && <ContactItem text={personal.email} isFirst={true} />}
         {personal.phone && <ContactItem text={personal.phone} />}
         {personal.location && <ContactItem text={personal.location} />}
@@ -296,11 +267,11 @@ const ExperienceItem = ({ item, styles }: { item: WorkItem; styles: any }) => (
   </View>
 );
 
-const ExperienceSection = ({
-  experience,
+const WorkSection = ({
+  work,
   styles,
 }: {
-  experience: WorkItem[];
+  work: WorkItem[];
   styles: any;
 }) => {
   const chunks: WorkItem[][] = [];
@@ -311,7 +282,7 @@ const ExperienceSection = ({
     return 0.5 + (item.description ? 0.2 : 0) + item.points.length * 0.15;
   };
 
-  experience.forEach((item) => {
+  work.forEach((item) => {
     const itemSize = estimateItemSize(item);
 
     if (currentChunkLength + itemSize > 5) {
@@ -558,7 +529,7 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
           )}
 
         {activeSections.includes("work") && work && work.length > 0 && (
-          <ExperienceSection experience={work} styles={styles} />
+          <WorkSection work={work} styles={styles} />
         )}
 
         {activeSections.includes("education") &&

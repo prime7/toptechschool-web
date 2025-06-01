@@ -34,7 +34,7 @@ interface ResumeEditorProps {
 
 export default function ResumeEditor({ data }: ResumeEditorProps) {
   return (
-    <ResumeProvider initialState={blankResumeData} userData={data}>
+    <ResumeProvider initialState={data || blankResumeData} userData={data}>
       <ResumeEditorContent />
     </ResumeProvider>
   );
