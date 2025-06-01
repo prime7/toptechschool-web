@@ -217,7 +217,7 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                       onValueChange={([value]) => handleStyleChange('fontSize', value)}
                       max={13} 
                       min={10} 
-                      step={.2} 
+                      step={.1} 
                     />
                     <span className="w-12 text-sm">{state.style.fontSize}px</span>
                   </div>
@@ -247,9 +247,9 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                     <Slider 
                       value={[state.style.sectionSpacing]} 
                       onValueChange={([value]) => handleStyleChange('sectionSpacing', value)}
-                      max={18} 
-                      min={10} 
-                      step={2} 
+                      max={14} 
+                      min={6} 
+                      step={1} 
                     />
                     <span className="w-12 text-sm">{state.style.sectionSpacing}px</span>
                   </div>

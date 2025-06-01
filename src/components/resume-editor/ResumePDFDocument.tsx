@@ -7,6 +7,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Font
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { formatDate } from "@/lib/date-utils";
 import type {
@@ -17,6 +18,69 @@ import type {
   ResumeStyle,
   ResumeData,
 } from "./types";
+
+Font.register({
+  family: "Inter",
+  src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2",
+});
+
+Font.register({
+  family: "Roboto",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2",
+      fontWeight: 400,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2",
+      fontWeight: 500,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc4.woff2",
+      fontWeight: 700,
+    },
+  ],
+});
+
+Font.register({
+  family: "Poppins",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJfecg.woff2",
+      fontWeight: 400,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLGT9Z1xlFd2JQEk.woff2",
+      fontWeight: 500,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLEj6Z1xlFd2JQEk.woff2",
+      fontWeight: 600,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLCz7Z1xlFd2JQEk.woff2",
+      fontWeight: 700,
+    },
+  ],
+});
+
+Font.register({
+  family: "Open Sans",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/opensans/v35/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4gaVIUwaEQbjB_mQ.woff2",
+      fontWeight: 400,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/opensans/v35/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4gaVIGwaEQbjB_mQ.woff2",
+      fontWeight: 600,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/opensans/v35/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4gaVIZwaEQbjB_mQ.woff2",
+      fontWeight: 700,
+    },
+  ],
+});
 
 const createStyles = (style: ResumeStyle) =>
   StyleSheet.create({
@@ -32,7 +96,7 @@ const createStyles = (style: ResumeStyle) =>
       lineHeight: parseFloat(style.lineHeight.toString()),
     },
     section: {
-      marginBottom: style.sectionSpacing * 0.8,
+      marginBottom: style.sectionSpacing
     },
     sectionHeader: {
       fontSize: style.fontSize * 1.2,
