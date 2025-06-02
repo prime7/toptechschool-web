@@ -62,7 +62,6 @@ export default function QuestionDetailPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
-  const [showHints, setShowHints] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
@@ -144,13 +143,7 @@ export default function QuestionDetailPage({
         title: "Success",
         description: "Answer saved successfully!",
       });
-      
-      // Update the URL to trigger a refresh of the practice page when user goes back
-      if (typeof window !== 'undefined') {
-        const url = new URL(window.location.href);
-        url.searchParams.set('saved', Date.now().toString());
-        window.history.replaceState({}, '', url);
-      }
+
     } catch (error) {
       console.error("Error saving answer:", error);
       toast({
@@ -198,19 +191,6 @@ export default function QuestionDetailPage({
       });
     } finally {
       setIsGeneratingFeedback(false);
-    }
-  };
-
-  const getDifficultyColor = (difficulty: string): string => {
-    switch (difficulty.toLowerCase()) {
-      case "easy":
-        return "bg-green-500 text-white";
-      case "medium":
-        return "bg-yellow-500 text-white";
-      case "hard":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
     }
   };
 
@@ -267,25 +247,6 @@ export default function QuestionDetailPage({
               </p>
 
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="answer" className="text-sm font-medium">
-                    Your Answer
-                  </label>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowHints(!showHints)}
-                      className="transition-colors"
-                    >
-                      <Lightbulb
-                        className={`h-4 w-4 mr-1 ${showHints ? "text-yellow-500" : ""}`}
-                      />
-                      {showHints ? "Hide" : "Show"} Hints
-                    </Button>
-                  </div>
-                </div>
-
                 <Textarea
                   id="answer"
                   placeholder="Type your answer here..."
@@ -432,8 +393,8 @@ export default function QuestionDetailPage({
         </div>
 
         <div className="space-y-6">
-          {showHints && question.hints && question.hints.length > 0 && (
-            <Card className="animate-fadeIn">
+          {question.hints && question.hints.length > 0 && (
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Lightbulb className="h-5 w-5 text-yellow-500" />
