@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { FileQuestion, RefreshCw } from "lucide-react";
+import { FileQuestion } from "lucide-react";
 import SearchBar from "./SearchBar";
 import CategoryFilter from "./CategoryFilter";
 import StatusFilter from "./StatusFilter";
@@ -10,13 +10,7 @@ import QuestionCard from "./QuestionCard";
 import { useQuestions } from "./hooks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 
 const QuestionsPage: React.FC = () => {
   const {

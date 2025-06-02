@@ -40,7 +40,7 @@ export function QuestionsProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
       const answers = await getUserAllAnswers();
-      const attemptedIds = new Set(answers.map((answer: any) => answer.questionId));
+      const attemptedIds = new Set(answers.map((answer: { questionId: string }) => answer.questionId));
       setAttemptedQuestions(attemptedIds);
     } catch (error) {
       console.error("Error loading attempted questions:", error);
