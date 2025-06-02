@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge"
 import { getPracticeSet, getPracticeAttempt } from "@/actions/practice"
 import Link from "next/link"
 import { ArrowLeft, Play, List, Timer, Save, CheckCircle2 } from "lucide-react"
-import { getDifficultyColor } from "../utils"
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const practiceSet = await getPracticeSet(params.id)
