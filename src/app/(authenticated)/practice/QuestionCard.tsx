@@ -1,79 +1,77 @@
-import React from 'react';
-import Link from 'next/link';
-import { Bookmark, BookmarkCheck, ChevronRight } from 'lucide-react';
-import { Question } from './types';
-import { useQuestions } from './hooks';
+import React from "react";
+import {
+  ChevronRight,
+  CheckCircle2,
+} from "lucide-react";
+import { Question } from "./types";
+import { useQuestions } from "./hooks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 interface QuestionCardProps {
   question: Question;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
-  const { toggleBookmark, isBookmarked } = useQuestions();
-  const bookmarked = isBookmarked(question.id);
-  
-  const getDifficultyVariant = (difficulty: string): "default" | "secondary" | "destructive" | "outline" => {
+  const { toggleBookmark, isAttempted } = useQuestions();
+  const attempted = isAttempted(question.id);
+
+  const getDifficultyVariant = (
+    difficulty: string
+  ): "default" | "secondary" | "destructive" | "outline" => {
     switch (difficulty) {
-      case 'Easy': return 'secondary';
-      case 'Medium': return 'default';
-      case 'Hard': return 'destructive';
-      default: return 'outline';
+      case "Easy":
+        return "secondary";
+      case "Medium":
+        return "default";
+      case "Hard":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
-  
+
   return (
-    <Card className="group hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+    <Card
+      className={`group hover:shadow-md transition-all duration-200 hover:-translate-y-1 ${
+        attempted
+          ? "ring-2 ring-emerald-200 bg-emerald-50/50 dark:ring-emerald-800 dark:bg-emerald-950/50"
+          : ""
+      }`}
+    >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={getDifficultyVariant(question.difficulty)} className="font-medium">
+            <Badge variant={getDifficultyVariant(question.difficulty)}>
               {question.difficulty}
             </Badge>
-            <Badge variant="outline" className="text-muted-foreground">
-              {question.category}
-            </Badge>
-          </div>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault();
-              toggleBookmark(question.id);
-            }}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={bookmarked ? "Remove bookmark" : "Add bookmark"}
-          >
-            {bookmarked ? (
-              <BookmarkCheck className="h-4 w-4 text-primary" />
-            ) : (
-              <Bookmark className="h-4 w-4" />
+            <Badge variant="outline">{question.category}</Badge>
+            {attempted && (
+              <Badge
+                variant="secondary"
+                className="bg-emerald-100 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100"
+              >
+                <CheckCircle2 className="w-3 h-3 mr-1" />
+                Attempted
+              </Badge>
             )}
-          </Button>
+          </div>
         </div>
-        
+
         <div className="space-y-3">
-          <Link href={`/questions/${question.id}`} className="group/link">
-            <h3 className="text-lg font-semibold text-foreground group-hover/link:text-primary transition-colors leading-tight">
-              {question.title}
-            </h3>
-          </Link>
-          
+          <h3 className="text-lg font-semibold group-hover:text-primary transition-colors leading-tight">
+            {question.title}
+          </h3>
+
           <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
             {question.description}
           </p>
-          
+
           <div className="pt-2">
-            <Link
-              href={`/practice/${question.id}`}
-              className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors group/cta"
-            >
-              View Question
+            <div className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors group/cta">
+              {attempted ? "Review Answer" : "Practice Question"}
               <ChevronRight className="ml-1 h-3 w-3 transition-transform group-hover/cta:translate-x-1" />
-            </Link>
+            </div>
           </div>
         </div>
       </CardContent>
