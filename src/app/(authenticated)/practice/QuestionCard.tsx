@@ -13,7 +13,7 @@ interface QuestionCardProps {
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
-  const { toggleBookmark, isAttempted } = useQuestions();
+  const { isAttempted } = useQuestions();
   const attempted = isAttempted(question.id);
 
   const getDifficultyVariant = (
