@@ -27,12 +27,7 @@ const QuestionsPage: React.FC = () => {
     setSelectedStatus,
     stats,
     isLoading,
-    refreshAttemptedQuestions
   } = useQuestions();
-
-  const handleRefresh = async () => {
-    await refreshAttemptedQuestions();
-  };
 
   if (isLoading) {
     return (
@@ -84,15 +79,6 @@ const QuestionsPage: React.FC = () => {
             </p>
           </div>
           <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Refresh
-            </Button>
             <span className="text-sm text-muted-foreground">Sort by:</span>
             <Select defaultValue="newest">
               <SelectTrigger className="w-32">
@@ -135,7 +121,6 @@ const QuestionsPage: React.FC = () => {
                   variant="outline"
                   className="mt-4"
                   onClick={() => {
-                    // Reset all filters - you might want to implement this
                     window.location.reload();
                   }}
                 >

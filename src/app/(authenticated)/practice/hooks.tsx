@@ -21,7 +21,6 @@ interface QuestionsContextType {
     progress: number;
   };
   isLoading: boolean;
-  refreshAttemptedQuestions: () => Promise<void>;
 }
 
 const QuestionsContext = createContext<QuestionsContextType | undefined>(undefined);
@@ -93,7 +92,6 @@ export function QuestionsProvider({ children }: { children: React.ReactNode }) {
     isAttempted,
     stats,
     isLoading,
-    refreshAttemptedQuestions: loadAttemptedQuestions
   };
 
   return (
