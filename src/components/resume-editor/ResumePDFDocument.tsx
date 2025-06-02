@@ -458,10 +458,10 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
       keywords={`resume, ${personal.fullName}, ${personal.profession || ""}`}
     >
       <Page size="A4" style={styles.page} wrap>
-        {activeSections.map(section => {
+        {activeSections.map((section, idx) => {
           switch(section) {
             case "personal":
-              return <PersonalSection personal={personal} styles={styles} key={section}/>;
+              return <PersonalSection personal={personal} styles={styles} key={idx}/>;
             case "summary":
               if ((summary && summary.trim() !== "") || 
                   (summaryHighlights && summaryHighlights.length > 0)) {
@@ -470,24 +470,24 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
                     summary={summary || ""}
                     summaryHighlights={summaryHighlights}
                     styles={styles}
-                    key={section}
+                    key={idx}
                   />
                 );
               }
               break;
             case "work":
               if (work && work.length > 0) {
-                return <WorkSection work={work} styles={styles} key={section}/>;
+                return <WorkSection work={work} styles={styles} key={idx}/>;
               }
               break;
             case "education":
               if (education && education.length > 0) {
-                return <EducationSection education={education} styles={styles} key={section}/>;
+                return <EducationSection education={education} styles={styles} key={idx}/>;
               }
               break;
             case "projects":
               if (projects && projects.length > 0) {
-                return <ProjectsSection projects={projects} styles={styles} key={section}/>;
+                return <ProjectsSection projects={projects} styles={styles} key={idx}/>;
               }
               break;
           }
