@@ -1,5 +1,4 @@
 import { getPosts } from '@/actions/blog';
-import { getPracticeSets } from '@/actions/practice';
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -11,15 +10,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(post.frontmatter.date),
     priority: 0.8
   }));
-
-  const practiceSets = await getPracticeSets();
-  const practiceSetsRoutes = practiceSets.map((practiceSet) => ({
-    url: `${siteUrl}/practice/${practiceSet.id}`,
-    lastModified: new Date(practiceSet.updatedAt),
-    changeFrequency: 'weekly',
-    priority: 0.8
-  }));
-
 
   const latestPostDate = posts.length > 0 
     ? new Date(Math.max(...posts.map(post => new Date(post.frontmatter.date).getTime())))
@@ -52,5 +42,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route.priority,
   }));
 
-  return [...routes, ...postsRoutes, ...practiceSetsRoutes];
+  return [...routes, ...postsRoutes];
 }

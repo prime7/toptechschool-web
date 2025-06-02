@@ -1,6 +1,10 @@
 import { BaseService } from "./Base.service";
-import { getPracticeSet } from "@/actions/practice";
-import { ai, generateJobMatchPrompt, generateResumeReviewPrompt, generatePracticePrompt } from "@/lib/ai/index";
+import {
+  ai,
+  generateJobMatchPrompt,
+  generateResumeReviewPrompt,
+  generatePracticePrompt,
+} from "@/lib/ai/index";
 
 export interface JobMatchEvaluationResult {
   matchScore: number;
@@ -23,15 +27,10 @@ export interface ResumeEvaluationResult {
   redFlags: string[];
 }
 
-export interface QuestionAnalysis {
-  questionText: string;
-  answer: string;
+export interface PracticeAnswerAnalysisResult {
+  score: number;
   feedback: string;
-  improvement: string;
-}
-
-export interface PracticeTestAnalysisResult {
-  questionAnalysis: QuestionAnalysis[];
+  suggestions: string[];
 }
 
 export class EvaluationService extends BaseService {
@@ -42,19 +41,21 @@ export class EvaluationService extends BaseService {
       suggestions: [],
       strengths: [],
       gaps: [],
-      recommendations: "Unable to generate recommendations due to an error."
+      recommendations: "Unable to generate recommendations due to an error.",
     } as JobMatchEvaluationResult,
 
     resume: {
       overallScore: 0,
       detailedAreasForImprovement: [],
       missingSkills: [],
-      redFlags: []
+      redFlags: [],
     } as ResumeEvaluationResult,
 
     practice: {
-      questionAnalysis: []
-    } as PracticeTestAnalysisResult
+      score: 0,
+      feedback: "",
+      suggestions: [],
+    } as PracticeAnswerAnalysisResult,
   };
 
   static async evaluateJobMatch(
@@ -63,24 +64,25 @@ export class EvaluationService extends BaseService {
     profession: string | null,
     userId: string
   ): Promise<JobMatchEvaluationResult> {
-    return this.handleError(
-      async () => {
-        try {
-          const prompt = generateJobMatchPrompt(jobDescription, resumeData, profession);
-          const response = await ai.generateResponse({
-            prompt,
-            model: "claude-3-haiku-20240307",
-            requestType: "job_evaluation",
-            maxTokens: 4096,
-            userId
-          });
-          return JSON.parse(response.text) as JobMatchEvaluationResult;
-        } catch {
-          return this.DEFAULT_RESPONSES.jobMatch;
-        }
-      },
-      "Failed to evaluate job match"
-    );
+    return this.handleError(async () => {
+      try {
+        const prompt = generateJobMatchPrompt(
+          jobDescription,
+          resumeData,
+          profession
+        );
+        const response = await ai.generateResponse({
+          prompt,
+          model: "claude-3-haiku-20240307",
+          requestType: "job_evaluation",
+          maxTokens: 4096,
+          userId,
+        });
+        return JSON.parse(response.text) as JobMatchEvaluationResult;
+      } catch {
+        return this.DEFAULT_RESPONSES.jobMatch;
+      }
+    }, "Failed to evaluate job match");
   }
 
   static async evaluateResume(
@@ -88,53 +90,42 @@ export class EvaluationService extends BaseService {
     profession: string | null,
     userId: string
   ): Promise<ResumeEvaluationResult> {
-    return this.handleError(
-      async () => {
-        try {
-          const prompt = generateResumeReviewPrompt({ resumeData, profession });
-          const response = await ai.generateResponse({
-            prompt: prompt,
-            model: 'claude-3-5-haiku-20241022',
-            requestType: "resume_review",
-            userId,
-            provider: "anthropic"
-          });
-          return JSON.parse(response.text) as ResumeEvaluationResult;
-        } catch (error) {
-          console.error("Error evaluating resume", error);
-          return this.DEFAULT_RESPONSES.resume;
-        }
-      },
-      "Failed to evaluate resume"
-    );
+    return this.handleError(async () => {
+      try {
+        const prompt = generateResumeReviewPrompt({ resumeData, profession });
+        const response = await ai.generateResponse({
+          prompt: prompt,
+          model: "claude-3-5-haiku-20241022",
+          requestType: "resume_review",
+          userId,
+          provider: "anthropic",
+        });
+        return JSON.parse(response.text) as ResumeEvaluationResult;
+      } catch (error) {
+        console.error("Error evaluating resume", error);
+        return this.DEFAULT_RESPONSES.resume;
+      }
+    }, "Failed to evaluate resume");
   }
 
-  static async analyzePracticeTest(
-    practiceTestId: string,
-    items: { question: string; answer: string }[],
+  static async analyzePracticeAnswer(
+    questionId: string,
+    answer: string,
     userId: string
-  ): Promise<PracticeTestAnalysisResult> {
-    return this.handleError(
-      async () => {
-        try {
-          const practiceSet = await getPracticeSet(practiceTestId);
-          if (!practiceSet) {
-            throw new Error("Practice set not found");
-          }
-
-          const prompt = generatePracticePrompt(practiceSet.prompt, items);
-          const response = await ai.generateResponse({
-            prompt,
-            model: "claude-3-haiku-20240307",
-            requestType: "practice_evaluation",
-            userId
-          });
-          return JSON.parse(response.text) as PracticeTestAnalysisResult;
-        } catch {
-          return this.DEFAULT_RESPONSES.practice;
-        }
-      },
-      "Failed to analyze practice test"
-    );
+  ): Promise<PracticeAnswerAnalysisResult> {
+    return this.handleError(async () => {
+      try {
+        const prompt = generatePracticePrompt(questionId, answer);
+        const response = await ai.generateResponse({
+          prompt,
+          model: "claude-3-haiku-20240307",
+          requestType: "practice_evaluation",
+          userId,
+        });
+        return JSON.parse(response.text) as PracticeAnswerAnalysisResult;
+      } catch {
+        return this.DEFAULT_RESPONSES.practice;
+      }
+    }, "Failed to analyze practice answer");
   }
-} 
+}

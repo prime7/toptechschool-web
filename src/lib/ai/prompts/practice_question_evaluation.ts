@@ -1,21 +1,27 @@
 export const generatePracticePrompt = (
-  practiceSetPrompt: string,
-  items: { question: string; answer: string }[]
+  question: string,
+  answer: string
 ): string => {
   return [
-    `You are an expert practice question evaluator with deep knowledge in technical assessments.
-    Analyze each question and answer pair with the following criteria:
-    - Technical accuracy and correctness
-    - Completeness of the response
-    - Clarity and communication
-    - Best practices and patterns
-    - Code quality (if applicable)
-
-    Provide specific, actionable feedback that helps improve understanding and performance.
-
-    Your response must be valid JSON matching the PracticeTestAnalysisResult type.`,
-    practiceSetPrompt,
-    ...items.map(item => `Question: ${item.question}\nAnswer: ${item.answer}`)
+    `You are an expert interview coach providing feedback on behavioral interview answers. 
+    Analyze the answer and provide constructive feedback focusing on:
+    1. Overall quality and structure
+    2. Use of STAR method (Situation, Task, Action, Result) if applicable
+    3. Specific examples and details
+    4. Areas for improvement
+    5. Strengths demonstrated
+    
+    Provide a score from 1-10 and specific, actionable suggestions.
+    
+    Return your response as a JSON object with the following structure:
+    {
+      "feedback": "Overall feedback text",
+      "score": 8,
+      "suggestions": ["suggestion1", "suggestion2"]
+    }`,
+    `Please provide feedback on this interview answer:
+    
+    Question: ${question}`,
+    `Answer: ${answer}`,
   ].join("\n\n");
-}
-
+};

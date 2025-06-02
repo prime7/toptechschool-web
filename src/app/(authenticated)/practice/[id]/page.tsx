@@ -16,11 +16,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  saveAnswer,
-  getAnswer,
-  generateFeedback,
-} from "@/actions/practice";
+import { getAnswer, saveAnswer } from "@/actions/practice";
 import { questions } from "../data";
 import { Question } from "../types";
 
@@ -143,7 +139,6 @@ export default function QuestionDetailPage({
         title: "Success",
         description: "Answer saved successfully!",
       });
-
     } catch (error) {
       console.error("Error saving answer:", error);
       toast({
@@ -174,9 +169,34 @@ export default function QuestionDetailPage({
       return;
     }
 
+    if (!savedAnswer?.userId) {
+      toast({
+        title: "Error",
+        description: "Please save your answer first before generating feedback",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsGeneratingFeedback(true);
-      const feedbackResult = await generateFeedback(params.id, answer);
+
+      const response = await fetch("/api/evaluate/practice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          questionId: params.id,
+          answer: answer,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate feedback");
+      }
+
+      const feedbackResult = await response.json();
       setFeedback(feedbackResult);
       toast({
         title: "Success",
