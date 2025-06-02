@@ -131,14 +131,6 @@ const createStyles = (style: ResumeStyle) =>
       alignItems: "center",
       fontSize: style.fontSize * 0.85,
     },
-    itemHeader: {
-      fontWeight: "bold",
-      fontSize: style.fontSize * 1.05,
-    },
-    itemSubHeader: {
-      fontSize: style.fontSize * 0.85,
-      color: "#666",
-    },
     date: {
       fontSize: style.fontSize * 0.85,
     },
@@ -154,13 +146,18 @@ const createStyles = (style: ResumeStyle) =>
       marginBottom: 1,
     },
     bulletMarker: {
-      width: 8,
-      fontSize: style.fontSize * 0.85,
+      width: 16,
+      fontSize: style.fontSize,
     },
     bulletText: {
       flex: 1,
-      fontSize: style.fontSize * 0.85,
+      fontSize: style.fontSize,
     },
+    title: {
+      flexDirection: 'row',
+      fontWeight: "semibold",
+      fontSize: style.fontSize * 1.05,
+    }
   });
 
 const ContactItem = ({
@@ -245,8 +242,8 @@ const SummarySection = ({
   </View>
 );
 
-const ExperienceItem = ({ item, styles }: { item: WorkItem; styles: any }) => (
-  <View style={{ marginBottom: 10 }} wrap={false}>
+const WorkItem = ({ item, styles }: { item: WorkItem; styles: any }) => (
+  <View style={{ marginBottom: styles.sectionSpacing * 0.5 }} wrap={false}>
     <View style={styles.row}>
       <View>
         <Text style={styles.itemHeader}>
@@ -313,7 +310,7 @@ const WorkSection = ({
             <Text style={styles.sectionHeader}>Experience</Text>
           )}
           {chunk.map((item, index) => (
-            <ExperienceItem key={index} item={item} styles={styles} />
+            <WorkItem key={index} item={item} styles={styles} />
           ))}
         </View>
       ))}
@@ -331,8 +328,8 @@ const EducationItem = ({
   <View style={{ marginBottom: 10 }} wrap={false}>
     <View style={styles.row}>
       <View>
-        <Text style={styles.itemHeader}>{item.degree}</Text>
-        <Text style={styles.itemSubHeader}>{item.institution}</Text>
+        <Text style={styles.title}>{item.degree}</Text>
+        <Text>{item.institution}</Text>
       </View>
       <Text style={styles.date}>
         {formatDate(item.startDate)} -{" "}
@@ -411,10 +408,10 @@ const ProjectItem = ({
   project: ProjectItem;
   styles: any;
 }) => (
-  <View style={{ marginBottom: 10 }} wrap={false}>
+  <View wrap={false}>
     <View style={styles.row}>
       <View>
-        <Text style={styles.itemHeader}>{project.name}</Text>
+        <Text style={styles.title}>{project.name}</Text>
       </View>
       {project.url && <Text style={styles.date}>{project.url}</Text>}
     </View>
@@ -519,10 +516,10 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
         )}
 
         {activeSections.includes("summary") &&
-          summary &&
-          summary.trim() !== "" && (
+          ((summary && summary.trim() !== "") ||
+           (summaryHighlights && summaryHighlights.length > 0)) && (
             <SummarySection
-              summary={summary}
+              summary={summary || ""}
               summaryHighlights={summaryHighlights}
               styles={styles}
             />

@@ -8,7 +8,7 @@ import {
 } from "../types";
 import { generateId } from "../utils";
 import { defaultStyle } from "../constants";
-import { Degree, LocationType } from "@prisma/client";
+import { LocationType } from "@prisma/client";
 import { JobRole } from "../constants";
 
 export const initialResumeData: ResumeData = {
@@ -70,7 +70,7 @@ export const initialResumeData: ResumeData = {
     {
       id: generateId(),
       institution: "University of Technology",
-      degree: Degree.BACHELORS,
+      degree: "Bachelor's Degree",
       startDate: "2014-09",
       endDate: "2018-06",
       description:
@@ -85,7 +85,7 @@ export const initialResumeData: ResumeData = {
     {
       id: generateId(),
       institution: "Tech Bootcamp",
-      degree: Degree.BACHELORS,
+      degree: "Bachelor's Degree",
       startDate: "2016-06",
       endDate: "2016-12",
       description:

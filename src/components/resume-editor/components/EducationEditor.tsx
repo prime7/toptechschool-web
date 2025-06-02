@@ -26,8 +26,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ListContentEditor } from "./ListContentEditor";
-import { Degree } from "@prisma/client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatEnumValue } from "@/lib/utils";
 
 interface EducationEditorProps {
@@ -57,7 +55,7 @@ export function EducationEditor({
 
   const initialFormState: FormData = {
     institution: "",
-    degree: null,
+    degree: "",
     startDate: "",
     endDate: undefined,
     points: [],
@@ -196,21 +194,14 @@ export function EducationEditor({
 
               <div className="space-y-2">
                 <Label htmlFor="degree" className="text-sm">Degree <span className="text-destructive">*</span></Label>
-                <Select
-                  value={formData.degree || ""}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, degree: value as Degree }))}
-                >
-                  <SelectTrigger className={errors.degree ? "border-destructive" : ""}>
-                    <SelectValue placeholder="Select a degree" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(Degree).map((degree) => (
-                      <SelectItem key={degree} value={degree}>
-                        {formatEnumValue(degree)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  id="degree"
+                  name="degree"
+                  value={formData.degree}
+                  onChange={handleChange}
+                  placeholder="Enter your degree"
+                  className={errors.degree ? "border-destructive" : ""}
+                />
                 {errors.degree && <p className="text-xs text-destructive">{errors.degree}</p>}
               </div>
 

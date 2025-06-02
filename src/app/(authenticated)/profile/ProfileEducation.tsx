@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { User, Education, Degree } from "@prisma/client";
+import { User, Education } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { EducationEditor } from "@/components/resume-editor/components/EducationEditor";
 import { EducationItem } from "@/components/resume-editor/types";
@@ -29,7 +29,7 @@ export default function ProfileEducation({ user, onSave }: ProfileEducationProps
   const convertToPrismaEducation = (item: EducationItem): Omit<Education, "id"> => ({
     userId: user.id,
     institution: item.institution,
-    degree: item.degree as Degree,
+    degree: item.degree || "",
     startDate: new Date(item.startDate + "-15"),
     endDate: item.endDate ? new Date(item.endDate + "-15") : null,
     description: item.description || null,

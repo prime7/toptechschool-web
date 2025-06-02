@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { EducationEditor } from '../EducationEditor';
 import { useState } from 'react';
 import { EducationItem } from '../../types';
-import { Degree } from '@prisma/client';
 
 const meta: Meta<typeof EducationEditor> = {
   title: 'Resume/EducationEditor',
@@ -17,7 +16,7 @@ const EducationEditorWithState = () => {
   const [education, setEducation] = useState<EducationItem[]>([{
     id: '1',
     institution: 'Stanford University',
-    degree: Degree.BACHELORS, 
+    degree: "Bachelor's Degree", 
     startDate: '2018-09',
     endDate: '2022-06',
     displayOrder: 0,

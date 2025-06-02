@@ -2,12 +2,6 @@
 CREATE TYPE "ParsingStatus" AS ENUM ('NOT_STARTED', 'STARTED', 'PARSED', 'ERROR');
 
 -- CreateEnum
-CREATE TYPE "JobRole" AS ENUM ('SOFTWARE_ENGINEER', 'FRONTEND_DEVELOPER', 'BACKEND_DEVELOPER', 'FULLSTACK_DEVELOPER', 'DEVOPS_ENGINEER', 'QA_ENGINEER', 'DATA_SCIENTIST', 'DATA_ENGINEER', 'MACHINE_LEARNING_ENGINEER', 'PRODUCT_MANAGER', 'PROJECT_MANAGER', 'SCRUM_MASTER', 'UI_UX_DESIGNER', 'SYSTEM_ADMINISTRATOR', 'SECURITY_ENGINEER', 'DATABASE_ADMINISTRATOR');
-
--- CreateEnum
-CREATE TYPE "Platform" AS ENUM ('LINKEDIN', 'GITHUB', 'X', 'FACEBOOK', 'YOUTUBE', 'STACKOVERFLOW', 'PERSONAL_WEBSITE', 'PORTFOLIO');
-
--- CreateEnum
 CREATE TYPE "Degree" AS ENUM ('ASSOCIATE', 'BACHELORS', 'MASTERS', 'PHD', 'MBA', 'DIPLOMA', 'CERTIFICATE', 'HIGH_SCHOOL', 'BOOTCAMP', 'SELF_TAUGHT', 'OTHER');
 
 -- CreateEnum
@@ -16,76 +10,70 @@ CREATE TYPE "LocationType" AS ENUM ('REMOTE', 'HYBRID', 'ON_SITE');
 -- CreateEnum
 CREATE TYPE "Visibility" AS ENUM ('PUBLIC', 'PRIVATE', 'CONNECTIONS_ONLY');
 
--- CreateEnum
-CREATE TYPE "EmploymentType" AS ENUM ('FULL_TIME', 'PART_TIME', 'CONTRACT', 'FREELANCE', 'INTERNSHIP', 'APPRENTICESHIP', 'VOLUNTEER', 'SELF_EMPLOYED');
-
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "name" TEXT,
     "email" TEXT NOT NULL,
+    "phone" TEXT,
+    "profession" TEXT,
     "emailVerified" TIMESTAMP(3),
     "isEmailVerified" BOOLEAN NOT NULL DEFAULT false,
     "image" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "title" TEXT,
-    "bio" TEXT,
+    "summary" TEXT,
+    "highlights" TEXT[],
+    "github" TEXT,
+    "website" TEXT,
+    "linkedin" TEXT,
     "location" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "SocialLink" (
-    "id" TEXT NOT NULL,
-    "platform" "Platform" NOT NULL,
-    "url" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "displayOrder" INTEGER NOT NULL DEFAULT 0,
-    "userId" TEXT NOT NULL,
-
-    CONSTRAINT "SocialLink_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Skill" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-
-    CONSTRAINT "Skill_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "WorkExperience" (
+CREATE TABLE "Work" (
     "id" TEXT NOT NULL,
     "company" TEXT NOT NULL,
-    "position" TEXT NOT NULL,
-    "location" TEXT NOT NULL,
+    "position" TEXT,
+    "location" "LocationType" NOT NULL DEFAULT 'REMOTE',
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3),
     "description" TEXT,
+    "points" TEXT[],
     "displayOrder" INTEGER NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
-    "employmentType" "EmploymentType" NOT NULL DEFAULT 'FULL_TIME',
 
-    CONSTRAINT "WorkExperience_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Work_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Education" (
     "id" TEXT NOT NULL,
     "institution" TEXT NOT NULL,
-    "degree" "Degree" NOT NULL,
+    "degree" TEXT NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3),
     "description" TEXT,
+    "points" TEXT[],
     "displayOrder" INTEGER NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Education_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Project" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "url" TEXT,
+    "description" TEXT,
+    "points" TEXT[],
+    "displayOrder" INTEGER NOT NULL DEFAULT 0,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -127,7 +115,7 @@ CREATE TABLE "Resume" (
     "parsed" "ParsingStatus" NOT NULL DEFAULT 'NOT_STARTED',
     "fileKey" TEXT NOT NULL,
     "analysis" JSONB,
-    "jobRole" "JobRole",
+    "profession" TEXT,
 
     CONSTRAINT "Resume_pkey" PRIMARY KEY ("id")
 );
@@ -188,7 +176,7 @@ CREATE TABLE "AI" (
     "totalTokens" INTEGER NOT NULL,
     "cost" DOUBLE PRECISION NOT NULL,
     "requestType" TEXT NOT NULL,
-    "time" INTEGER,
+    "time" DOUBLE PRECISION,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "AI_pkey" PRIMARY KEY ("id")
@@ -216,16 +204,13 @@ CREATE INDEX "AI_requestType_idx" ON "AI"("requestType");
 CREATE INDEX "AI_provider_idx" ON "AI"("provider");
 
 -- AddForeignKey
-ALTER TABLE "SocialLink" ADD CONSTRAINT "SocialLink_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Skill" ADD CONSTRAINT "Skill_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WorkExperience" ADD CONSTRAINT "WorkExperience_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Work" ADD CONSTRAINT "Work_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Education" ADD CONSTRAINT "Education_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Project" ADD CONSTRAINT "Project_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

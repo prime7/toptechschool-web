@@ -1,4 +1,4 @@
-import { Degree, LocationType } from "@prisma/client";
+import { LocationType } from "@prisma/client";
 
 export type SectionType =
   | "personal"
@@ -37,7 +37,7 @@ export interface WorkItem {
 export interface EducationItem {
   id: string;
   institution: string;
-  degree: Degree | null;
+  degree: string;
   startDate: string;
   endDate?: string;
   description?: string;

@@ -53,7 +53,7 @@ model Work {
 model Education {
   id           String    @id @default(cuid())
   institution  String
-  degree       Degree
+  degree       String
   startDate    DateTime
   endDate      DateTime?
   description  String?   @db.Text
