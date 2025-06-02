@@ -1,11 +1,21 @@
 "use client";
 
 import React, { useRef } from "react";
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 import { Hero } from "./Hero";
 
-const Features = dynamic(() => import('./Features').then(mod => mod.Features), { ssr: false })
-const FormSubmission = dynamic(() => import('./Form').then(mod => mod.FormSubmission), { ssr: false })
+const Features = dynamic(
+  () => import("./Features").then((mod) => mod.Features),
+  { ssr: false }
+);
+const HowItWorks = dynamic(
+  () => import("./HowItWorks").then((mod) => mod.HowItWorks),
+  { ssr: false }
+);
+const FormSubmission = dynamic(
+  () => import("./Form").then((mod) => mod.FormSubmission),
+  { ssr: false }
+);
 
 export default function Home() {
   const waitlistRef = useRef<HTMLDivElement>(null);
@@ -19,6 +29,7 @@ export default function Home() {
       <div className="container mx-auto">
         <Hero onJoinWaitlist={scrollToWaitlist} />
         <Features />
+        <HowItWorks />
         <section ref={waitlistRef} className="mb-24">
           <FormSubmission />
         </section>
