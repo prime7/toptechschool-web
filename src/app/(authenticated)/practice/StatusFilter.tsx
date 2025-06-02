@@ -47,7 +47,7 @@ const StatusFilter: React.FC<StatusFilterProps> = ({
   return (
     <div className="w-full max-w-2xl">
       <div className="flex flex-col gap-4">
-        <div className="bg-card p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border border-border">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium">Progress</span>
             <span className="text-sm text-muted-foreground">
