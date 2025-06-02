@@ -32,7 +32,7 @@ model User {
   work            Work[]
   education       Education[]
   projects        Project[]
-  practiceTests   PracticeTest[]
+  practiceAnswers PracticeAnswer[]
   ai              AI[]
 }
 
@@ -140,17 +140,6 @@ model TemplateRequests {
   createdAt DateTime @default(now())
 }
 
-model PracticeTest {
-  id            String   @id @default(cuid())
-  userId        String
-  practiceSetId String
-  items         Json[]
-  totalTime     Int
-  createdAt     DateTime @default(now())
-  aiAnalysis    Json?
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model AI {
   id               String   @id @default(cuid())
   createdAt        DateTime @default(now())
@@ -169,6 +158,22 @@ model AI {
   @@index([userId])
   @@index([requestType])
   @@index([provider])
+}
+
+model PracticeAnswer {
+  id              String        @id @default(cuid())
+  userId          String
+  questionId      String
+  answer          String        @db.Text
+  feedback        String?       @db.Text
+  score           Int?
+  suggestions     String[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+  @@index([userId])
 }
 
 enum ParsingStatus {
