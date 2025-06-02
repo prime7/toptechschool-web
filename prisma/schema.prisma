@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  // directUrl = env("DIRECT_URL") // Commented out to avoid issues if not set
 }
 
 model User {
@@ -31,9 +31,10 @@ model User {
   sessions        Session[]
   work            Work[]
   education       Education[]
-  projects        Project[]
-  practiceTests   PracticeTest[]
-  ai              AI[]
+  projects            Project[]
+  practiceTests       PracticeTest[]
+  ai                  AI[]
+  questionAttempts    UserQuestionAttempt[] // Added relation to UserQuestionAttempt
 }
 
 model Work {
@@ -202,4 +203,19 @@ enum Visibility {
   PUBLIC
   PRIVATE
   CONNECTIONS_ONLY
+}
+
+model UserQuestionAttempt {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId   String     // Stores the unique ID from practice-sets.json
+  answer       String     @db.Text
+  savedAt      DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  evaluations  Json[]     // Array of AI evaluation objects { evaluatedAt: DateTime, feedback: String }
+
+  @@index([userId])
+  @@index([questionId])
+  @@index([userId, questionId]) // For efficient querying of user's attempts for a question
 }

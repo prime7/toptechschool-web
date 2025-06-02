@@ -310,4 +310,33 @@ func ErrorHandler(next http.Handler) http.Handler {
 3. **Performance**
    - Edge computing
    - GraphQL adoption
-   - Database optimization 
+   - Database optimization
+
+## Practice Question Data Management
+
+Currently, practice questions are sourced from a static JSON file (`public/data/practice-sets.json`). While this is suitable for the initial version, it has limitations for scalability, advanced search/filtering, and content management (e.g., CRUD operations for questions by administrators).
+
+**Future Recommendation:**
+If the question bank is expected to grow significantly or if more advanced features (e.g., admin interface for managing questions, complex querying, user-generated content, linking questions to specific learning objectives) are desired, it is strongly recommended to migrate these questions into a dedicated database table.
+
+A new Prisma model, for example `PracticeQuestionData`, could be created with fields such as:
+- `id` (globally unique identifier)
+- `text` (the question content)
+- `type` (e.g., 'text', 'multiple_choice')
+- `hints` (array of strings or JSON)
+- `categories` (array of strings or relation to a Category table)
+- `difficulty` (enum: 'beginner', 'intermediate', 'advanced')
+- `options` (for multiple choice, array of strings or JSON)
+- `correctAnswer` (string or JSON)
+- `explanation` (string)
+- `sourceSetId` (optional, to link back to an original set if needed for organization)
+- `createdAt`, `updatedAt`
+
+**Benefits of Database Migration:**
+- **Improved Data Management:** Centralized and structured storage, easier updates, and data integrity.
+- **Enhanced Query Performance:** Efficient querying for large datasets, enabling complex filtering and sorting.
+- **Scalability:** Better support for a growing number of questions and users.
+- **Easier Admin Interface Development:** Standard CRUD operations can be built more easily on top of a database table.
+- **Relational Capabilities:** Ability to link questions to other data entities (e.g., authors, sources, user progress at a granular level).
+
+The action functions `getAllQuestions()` and `getPracticeSets()` in `src/actions/practice.ts` would then be refactored to fetch data from this new database table instead of the JSON file.

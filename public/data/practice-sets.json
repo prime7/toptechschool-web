@@ -23,54 +23,59 @@
       ],
       "questions": [
         {
-          "id": 1,
+          "id": "behavioral-interview-A7f3K9b_1",
           "question": "Tell me about a time when you had to work under pressure",
           "type": "text",
           "hints": [
             "Focus on the specific situation",
             "Explain your thought process",
             "Highlight the outcome"
-          ]
+          ],
+          "categories": ["Problem Solving", "Resilience", "Time Management"]
         },
         {
-          "id": 2,
+          "id": "behavioral-interview-A7f3K9b_2",
           "question": "Describe a situation where you had to resolve a conflict with a team member",
           "type": "text",
           "hints": [
             "Be specific about the conflict",
             "Explain your approach to resolution",
             "Share what you learned"
-          ]
+          ],
+          "categories": ["Teamwork", "Communication", "Conflict Resolution"]
         },
         {
-          "id": 3,
+          "id": "behavioral-interview-A7f3K9b_3",
           "question": "Give an example of a time when you had to make a difficult decision",
           "type": "text",
           "hints": [
             "Describe the context",
             "Explain your decision-making process",
             "Share the results"
-          ]
+          ],
+          "categories": ["Decision Making", "Leadership", "Problem Solving"]
         },
         {
-          "id": 4,
+          "id": "behavioral-interview-A7f3K9b_4",
           "question": "Tell me about a time when you failed and how you handled it",
           "type": "text",
           "hints": [
             "Be honest about the failure",
             "Focus on what you learned",
             "Show how you improved"
-          ]
+          ],
+          "categories": ["Adaptability", "Resilience", "Learning from Mistakes"]
         },
         {
-          "id": 5,
+          "id": "behavioral-interview-A7f3K9b_5",
           "question": "Describe a situation where you had to adapt to a significant change",
           "type": "text",
           "hints": [
             "Explain the change",
             "Describe your adaptation process",
             "Share the outcome"
-          ]
+          ],
+          "categories": ["Adaptability", "Flexibility"]
         }
       ]
     }
