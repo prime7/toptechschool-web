@@ -26,9 +26,7 @@ const SummarySection: React.FC = () => {
   };
 
   const handleExport = () => {
-    // First update the current state to the global state
     handleUpdate();
-    // Then auto-fill from profile
     exportUtils.exportSection('summary');
   };
 

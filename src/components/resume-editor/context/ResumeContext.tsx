@@ -447,7 +447,9 @@ export function ResumeProvider({
   const [state, dispatch] = useReducer(resumeReducer, initialState);
 
   const autoFillFromProfile = (section: SectionType, fields?: string[]) => {
-    if (!userData) return;
+    if (!userData) {
+      return;
+    }
 
     if (section === "personal" && userData.personal) {
       const updateData: Record<string, string> = {};
@@ -479,12 +481,12 @@ export function ResumeProvider({
           payload: updateData,
         });
       }
-    } else if (section === "summary" && userData.summary) {
+    } else if (section === "summary" && userData.summary !== undefined) {
       dispatch({
         type: "UPDATE_SUMMARY",
         payload: userData.summary,
       });
-      if (userData.summaryHighlights) {
+      if (userData.summaryHighlights && userData.summaryHighlights.length > 0) {
         dispatch({
           type: "UPDATE_SUMMARY_HIGHLIGHTS",
           payload: userData.summaryHighlights,
