@@ -31,7 +31,7 @@ const PersonalInfoSection: React.FC = () => {
   const handleSelectChange = (name: string, value: string) => {
     dispatch({
       type: "UPDATE_PERSONAL",
-      payload: { [name]: value },
+      payload: { [name]: value === "none" ? null : value },
     });
   };
 
@@ -59,11 +59,12 @@ const PersonalInfoSection: React.FC = () => {
           </div>
           <div>
             <Label htmlFor="profession">Job Title</Label>
-            <Select value={personal.profession} onValueChange={(value) => handleSelectChange('profession', value)}>
+            <Select value={personal.profession || "none"} onValueChange={(value) => handleSelectChange('profession', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a job title" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">None</SelectItem>
                 {JOB_ROLES.map((role) => (
                   <SelectItem key={role.value} value={role.value}>
                     {role.label}
