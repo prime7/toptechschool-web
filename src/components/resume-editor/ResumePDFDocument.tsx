@@ -106,6 +106,7 @@ const createStyles = (style: ResumeStyle) =>
         ? `1px solid ${style.accentColor}`
         : undefined,
       paddingBottom: style.showSectionHorizontalRule ? 2 : 3,
+      marginBottom: 3
     },
     row: {
       flexDirection: "row",
@@ -139,7 +140,7 @@ const createStyles = (style: ResumeStyle) =>
       fontSize: style.fontSize * 0.85,
     },
     bulletPoints: {
-      marginTop: 3,
+      marginTop: 1,
     },
     bulletPoint: {
       flexDirection: "row",
@@ -245,8 +246,8 @@ const SummarySection = ({
 const WorkItem = ({ item, styles }: { item: WorkItem; styles: any }) => (
   <View style={{ marginBottom: styles.sectionSpacing * 0.5 }} wrap={false}>
     <View style={styles.row}>
-      <View>
-        <Text style={styles.itemHeader}>
+      <View style={styles.title}>
+        <Text>
           {item.position} - {item.company}{" "}
         </Text>
       </View>

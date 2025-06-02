@@ -4,9 +4,9 @@ export const defaultStyle: ResumeStyle = {
   fontFamily: "inter",
   fontSize: 11,
   accentColor: '#000',
-  sectionSpacing: 12,
+  sectionSpacing: 8,
   lineHeight: 1.2,
-  showSectionHorizontalRule: false,
+  showSectionHorizontalRule: true,
 };
 
 export const JobRole = {
