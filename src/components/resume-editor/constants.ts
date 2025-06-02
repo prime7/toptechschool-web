@@ -3,15 +3,9 @@ import { ResumeStyle } from "./types";
 export const defaultStyle: ResumeStyle = {
   fontFamily: "inter",
   fontSize: 11,
-<<<<<<< HEAD
   accentColor: '#000',
   sectionSpacing: 12,
   lineHeight: 1.2,
-=======
-  accentColor: "#000",
-  sectionSpacing: 8,
-  lineHeight: 1.3,
->>>>>>> 300ac61 (finalized)
   showSectionHorizontalRule: false,
 };
 
