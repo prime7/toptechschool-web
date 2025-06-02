@@ -404,13 +404,37 @@ function resumeReducer(state: ResumeData, action: ResumeAction): ResumeData {
         ),
       };
 
-    case "TOGGLE_SECTION":
-      return {
-        ...state,
-        activeSections: state.activeSections.includes(action.payload)
-          ? state.activeSections.filter((section) => section !== action.payload)
-          : [...state.activeSections, action.payload],
-      };
+    case "TOGGLE_SECTION": {
+      const newActiveSections = state.activeSections.includes(action.payload)
+        ? state.activeSections.filter((section) => section !== action.payload)
+        : [...state.activeSections, action.payload];
+
+      const newState = { ...state, activeSections: newActiveSections };
+
+      // Clear data for removed section
+      if (!newActiveSections.includes(action.payload)) {
+        switch (action.payload) {
+          case "personal":
+            newState.personal = blankResumeData.personal;
+            break;
+          case "summary":
+            newState.summary = blankResumeData.summary;
+            newState.summaryHighlights = blankResumeData.summaryHighlights;
+            break;
+          case "work":
+            newState.work = blankResumeData.work;
+            break;
+          case "education":
+            newState.education = blankResumeData.education;
+            break;
+          case "projects":
+            newState.projects = blankResumeData.projects;
+            break;
+        }
+      }
+
+      return newState;
+    }
     case "REORDER_SECTIONS":
       return {
         ...state,
