@@ -1,7 +1,7 @@
 import { ResumeStyle } from "./types";
 
 export const defaultStyle: ResumeStyle = {
-  fontFamily: "inter",
+  fontFamily: "Helvetica",
   fontSize: 11,
   accentColor: '#000',
   sectionSpacing: 8,

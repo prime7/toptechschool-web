@@ -20,66 +20,18 @@ import type {
 } from "./types";
 
 Font.register({
-  family: "Inter",
-  src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2",
+  family: 'Anonymous Pro',
+  src: '/fonts/AnonymousPro-Regular.ttf',
 });
 
 Font.register({
-  family: "Roboto",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2",
-      fontWeight: 400,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2",
-      fontWeight: 500,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc4.woff2",
-      fontWeight: 700,
-    },
-  ],
+  family: 'Open Sans',
+  src: '/fonts/OpenSans-Regular.ttf',
 });
 
 Font.register({
-  family: "Poppins",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJfecg.woff2",
-      fontWeight: 400,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLGT9Z1xlFd2JQEk.woff2",
-      fontWeight: 500,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLEj6Z1xlFd2JQEk.woff2",
-      fontWeight: 600,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v20/pxiByp8kv8JHgFVrLCz7Z1xlFd2JQEk.woff2",
-      fontWeight: 700,
-    },
-  ],
-});
-
-Font.register({
-  family: "Open Sans",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/opensans/v35/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4gaVIUwaEQbjB_mQ.woff2",
-      fontWeight: 400,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/opensans/v35/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4gaVIGwaEQbjB_mQ.woff2",
-      fontWeight: 600,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/opensans/v35/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4gaVIZwaEQbjB_mQ.woff2",
-      fontWeight: 700,
-    },
-  ],
+  family: 'Poppins',
+  src: '/fonts/Poppins-Regular.ttf',
 });
 
 const createStyles = (style: ResumeStyle) =>
@@ -87,12 +39,7 @@ const createStyles = (style: ResumeStyle) =>
     page: {
       padding: 24,
       fontSize: style.fontSize,
-      // fontFamily: style.fontFamily,
-      fontFamily: "Helvetica",
-      // "Helvetica" (default)
-      // "Times-Roman"
-      // "Courier"
-      // If you want to use a custom font (like "Open Sans" or "Roboto"), you must register it first using the Font.register API from @react-pdf/renderer, and provide the font file (usually .ttf or .otf) in your public directory or import it directly.
+      fontFamily: style.fontFamily,
       lineHeight: parseFloat(style.lineHeight.toString()),
     },
     section: {
@@ -137,7 +84,6 @@ const createStyles = (style: ResumeStyle) =>
     },
     description: {
       marginTop: 3,
-      fontSize: style.fontSize * 0.85,
     },
     bulletPoints: {
       marginTop: 1,
@@ -512,35 +458,41 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
       keywords={`resume, ${personal.fullName}, ${personal.profession || ""}`}
     >
       <Page size="A4" style={styles.page} wrap>
-        {activeSections.includes("personal") && (
-          <PersonalSection personal={personal} styles={styles} />
-        )}
-
-        {activeSections.includes("summary") &&
-          ((summary && summary.trim() !== "") ||
-           (summaryHighlights && summaryHighlights.length > 0)) && (
-            <SummarySection
-              summary={summary || ""}
-              summaryHighlights={summaryHighlights}
-              styles={styles}
-            />
-          )}
-
-        {activeSections.includes("work") && work && work.length > 0 && (
-          <WorkSection work={work} styles={styles} />
-        )}
-
-        {activeSections.includes("education") &&
-          education &&
-          education.length > 0 && (
-            <EducationSection education={education} styles={styles} />
-          )}
-
-        {activeSections.includes("projects") &&
-          projects &&
-          projects.length > 0 && (
-            <ProjectsSection projects={projects} styles={styles} />
-          )}
+        {activeSections.map(section => {
+          switch(section) {
+            case "personal":
+              return <PersonalSection personal={personal} styles={styles} key={section}/>;
+            case "summary":
+              if ((summary && summary.trim() !== "") || 
+                  (summaryHighlights && summaryHighlights.length > 0)) {
+                return (
+                  <SummarySection
+                    summary={summary || ""}
+                    summaryHighlights={summaryHighlights}
+                    styles={styles}
+                    key={section}
+                  />
+                );
+              }
+              break;
+            case "work":
+              if (work && work.length > 0) {
+                return <WorkSection work={work} styles={styles} key={section}/>;
+              }
+              break;
+            case "education":
+              if (education && education.length > 0) {
+                return <EducationSection education={education} styles={styles} key={section}/>;
+              }
+              break;
+            case "projects":
+              if (projects && projects.length > 0) {
+                return <ProjectsSection projects={projects} styles={styles} key={section}/>;
+              }
+              break;
+          }
+          return null;
+        })}
       </Page>
     </Document>
   );

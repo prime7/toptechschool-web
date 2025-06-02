@@ -201,10 +201,11 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                       <SelectValue placeholder="Select font" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="inter">Inter</SelectItem>
-                      <SelectItem value="roboto">Roboto</SelectItem>
-                      <SelectItem value="poppins">Poppins</SelectItem>
-                      <SelectItem value="opensans">Open Sans</SelectItem>
+                      <SelectItem value="Helvetica">Helvetica</SelectItem>
+                      <SelectItem value="Times-Roman">Times-Roman</SelectItem>
+                      <SelectItem value="Anonymous Pro">Anonymous Pro</SelectItem>
+                      <SelectItem value="Open Sans">Open Sans</SelectItem>
+                      <SelectItem value="Poppins">Poppins</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
