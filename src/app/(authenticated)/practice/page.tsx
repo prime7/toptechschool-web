@@ -2,12 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
-import { FileQuestion } from "lucide-react";
+import { FileQuestion, RefreshCw } from "lucide-react";
 import SearchBar from "./SearchBar";
 import CategoryFilter from "./CategoryFilter";
+import StatusFilter from "./StatusFilter";
 import QuestionCard from "./QuestionCard";
 import { useQuestions } from "./hooks";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -17,7 +19,33 @@ import {
 } from "@/components/ui/select";
 
 const QuestionsPage: React.FC = () => {
-  const { filteredQuestions, searchQuery, selectedCategory } = useQuestions();
+  const { 
+    filteredQuestions, 
+    searchQuery, 
+    selectedCategory, 
+    selectedStatus,
+    setSelectedStatus,
+    stats,
+    isLoading,
+    refreshAttemptedQuestions
+  } = useQuestions();
+
+  const handleRefresh = async () => {
+    await refreshAttemptedQuestions();
+  };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Loading your practice progress...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -27,31 +55,44 @@ const QuestionsPage: React.FC = () => {
         </h1>
         <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">
           Sharpen your skills with our comprehensive collection of interview
-          questions. Filter by category, search for specific topics, and track
-          your progress.
+          questions. Practice individual questions, save your answers, and get AI feedback.
         </p>
       </div>
 
       <div className="flex flex-col items-center mb-8 space-y-6">
         <SearchBar />
         <CategoryFilter />
+        <StatusFilter 
+          selectedStatus={selectedStatus}
+          onStatusChange={setSelectedStatus}
+          stats={stats}
+        />
       </div>
 
       <div className="w-full">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-              {searchQuery || selectedCategory
-                ? "Search Results"
+              {searchQuery || selectedCategory !== "All" || selectedStatus !== "All"
+                ? "Filtered Results"
                 : "All Questions"}
             </h2>
             <p className="text-muted-foreground mt-1">
               {filteredQuestions.length}{" "}
               {filteredQuestions.length === 1 ? "question" : "questions"}{" "}
-              found
+              {selectedStatus !== "All" ? selectedStatus.toLowerCase() : "found"}
             </p>
           </div>
           <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
             <span className="text-sm text-muted-foreground">Sort by:</span>
             <Select defaultValue="newest">
               <SelectTrigger className="w-32">
@@ -84,9 +125,23 @@ const QuestionsPage: React.FC = () => {
                 No questions found
               </h3>
               <p className="text-muted-foreground">
-                Try adjusting your search or filter to find what you're
-                looking for.
+                {selectedStatus !== "All" 
+                  ? `No ${selectedStatus.toLowerCase()} questions match your current filters.`
+                  : "Try adjusting your search or filter to find what you're looking for."
+                }
               </p>
+              {(searchQuery || selectedCategory !== "All" || selectedStatus !== "All") && (
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => {
+                    // Reset all filters - you might want to implement this
+                    window.location.reload();
+                  }}
+                >
+                  Clear All Filters
+                </Button>
+              )}
             </CardContent>
           </Card>
         )}
