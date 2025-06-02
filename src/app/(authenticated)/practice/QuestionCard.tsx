@@ -16,21 +16,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
   const { isAttempted } = useQuestions();
   const attempted = isAttempted(question.id);
 
-  const getDifficultyVariant = (
-    difficulty: string
-  ): "default" | "secondary" | "destructive" | "outline" => {
-    switch (difficulty) {
-      case "Easy":
-        return "secondary";
-      case "Medium":
-        return "default";
-      case "Hard":
-        return "destructive";
-      default:
-        return "outline";
-    }
-  };
-
   return (
     <Card
       className={`group hover:shadow-md transition-all duration-200 hover:-translate-y-1 ${
@@ -42,9 +27,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={getDifficultyVariant(question.difficulty)}>
-              {question.difficulty}
-            </Badge>
             <Badge variant="outline">{question.category}</Badge>
             {attempted && (
               <Badge

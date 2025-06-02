@@ -258,9 +258,6 @@ export default function QuestionDetailPage({
             <CardHeader>
               <div className="flex items-center justify-between">
                 <Badge variant="outline">{question.category}</Badge>
-                <Badge className={getDifficultyColor(question.difficulty)}>
-                  {question.difficulty}
-                </Badge>
               </div>
               <CardTitle className="text-2xl">{question.title}</CardTitle>
             </CardHeader>

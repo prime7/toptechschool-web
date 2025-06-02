@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/select";
 
 const QuestionsPage: React.FC = () => {
-  const { 
-    filteredQuestions, 
-    searchQuery, 
-    selectedCategory, 
+  const {
+    filteredQuestions,
+    searchQuery,
+    selectedCategory,
     selectedStatus,
     setSelectedStatus,
     stats,
@@ -50,14 +50,15 @@ const QuestionsPage: React.FC = () => {
         </h1>
         <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">
           Sharpen your skills with our comprehensive collection of interview
-          questions. Practice individual questions, save your answers, and get AI feedback.
+          questions. Practice individual questions, save your answers, and get
+          AI feedback.
         </p>
       </div>
 
       <div className="flex flex-col items-center mb-8 space-y-6">
         <SearchBar />
         <CategoryFilter />
-        <StatusFilter 
+        <StatusFilter
           selectedStatus={selectedStatus}
           onStatusChange={setSelectedStatus}
           stats={stats}
@@ -65,34 +66,6 @@ const QuestionsPage: React.FC = () => {
       </div>
 
       <div className="w-full">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-              {searchQuery || selectedCategory !== "All" || selectedStatus !== "All"
-                ? "Filtered Results"
-                : "All Questions"}
-            </h2>
-            <p className="text-muted-foreground mt-1">
-              {filteredQuestions.length}{" "}
-              {filteredQuestions.length === 1 ? "question" : "questions"}{" "}
-              {selectedStatus !== "All" ? selectedStatus.toLowerCase() : "found"}
-            </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-muted-foreground">Sort by:</span>
-            <Select defaultValue="newest">
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest</SelectItem>
-                <SelectItem value="difficulty">Difficulty</SelectItem>
-                <SelectItem value="category">Category</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
         {filteredQuestions.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredQuestions.map((question) => (
@@ -111,12 +84,13 @@ const QuestionsPage: React.FC = () => {
                 No questions found
               </h3>
               <p className="text-muted-foreground">
-                {selectedStatus !== "All" 
+                {selectedStatus !== "All"
                   ? `No ${selectedStatus.toLowerCase()} questions match your current filters.`
-                  : "Try adjusting your search or filter to find what you're looking for."
-                }
+                  : "Try adjusting your search or filter to find what you're looking for."}
               </p>
-              {(searchQuery || selectedCategory !== "All" || selectedStatus !== "All") && (
+              {(searchQuery ||
+                selectedCategory !== "All" ||
+                selectedStatus !== "All") && (
                 <Button
                   variant="outline"
                   className="mt-4"

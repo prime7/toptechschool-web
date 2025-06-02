@@ -28,7 +28,7 @@ const QuestionsContext = createContext<QuestionsContextType | undefined>(undefin
 export function QuestionsProvider({ children }: { children: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<QuestionCategory | "All">("All");
-  const [selectedStatus, setSelectedStatus] = useState<"All" | "Attempted" | "Unattempted">("All");
+  const [selectedStatus, setSelectedStatus] = useState<"All" | "Attempted" | "Unattempted">("Unattempted");
   const [attemptedQuestions, setAttemptedQuestions] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 

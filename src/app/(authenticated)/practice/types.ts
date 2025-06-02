@@ -2,7 +2,6 @@ export interface Question {
   id: string;
   title: string;
   category: string;
-  difficulty: "Easy" | "Medium" | "Hard";
   description: string;
   instructions: string;
   hints: string[];
