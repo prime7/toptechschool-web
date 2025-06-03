@@ -13,7 +13,12 @@ const CategoryFilter = dynamic(() => import("./CategoryFilter"), {
   ssr: false,
 });
 const StatusFilter = dynamic(() => import("./StatusFilter"), { ssr: false });
-const QuestionCard = dynamic(() => import("./QuestionCard"), { ssr: false });
+const QuestionCard = dynamic(() => import("./QuestionCard"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-48 w-full bg-muted animate-pulse rounded-md" />
+  ),
+});
 
 const QuestionsPage: React.FC = () => {
   const {
@@ -23,21 +28,7 @@ const QuestionsPage: React.FC = () => {
     selectedStatus,
     setSelectedStatus,
     stats,
-    isLoading,
   } = useQuestions();
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p>Loading your practice progress...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
