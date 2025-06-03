@@ -1,16 +1,19 @@
 "use client";
 
 import React from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { FileQuestion } from "lucide-react";
-import SearchBar from "./SearchBar";
-import CategoryFilter from "./CategoryFilter";
-import StatusFilter from "./StatusFilter";
-import QuestionCard from "./QuestionCard";
 import { useQuestions } from "./hooks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+const SearchBar = dynamic(() => import("./SearchBar"), { ssr: false });
+const CategoryFilter = dynamic(() => import("./CategoryFilter"), {
+  ssr: false,
+});
+const StatusFilter = dynamic(() => import("./StatusFilter"), { ssr: false });
+const QuestionCard = dynamic(() => import("./QuestionCard"), { ssr: false });
 
 const QuestionsPage: React.FC = () => {
   const {
