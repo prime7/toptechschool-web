@@ -5,6 +5,7 @@ export enum RateLimitKey {
   ResumeUpload = 'resume_upload',
   JobAnalyze = 'job_analyze',
   EmailVerification = 'email_verification',
+  PracticeAnalyze = 'practice_analyze',
 }
 
 type Duration = '1m' | '5m' | '15m' | '1h' | '1d';
@@ -17,19 +18,24 @@ interface RateLimitConfig {
 
 const rateLimitConfig: Record<RateLimitKey, RateLimitConfig> = {
   [RateLimitKey.ResumeUpload]: {
-    limit: 20, // 2  
+    limit: 2,   
     duration: '1d',
     errorMessage: 'You can only upload 2 resumes per day'
   },
   [RateLimitKey.JobAnalyze]: {
-    limit: 30, // 3 jobs per hour
+    limit: 3, 
     duration: '1h',
     errorMessage: 'You can analyze 3 jobs per hour'
   },
   [RateLimitKey.EmailVerification]: {
-    limit: 30, // 3 times per hour
+    limit: 3, 
     duration: '1h',
     errorMessage: 'You can request email verification 3 times per hour'
+  },
+  [RateLimitKey.PracticeAnalyze]: {
+    limit: 1, 
+    duration: '1d',
+    errorMessage: 'You can analyze 1 practice answer per day'
   }
 }
 

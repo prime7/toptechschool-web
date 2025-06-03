@@ -118,7 +118,7 @@ export class EvaluationService extends BaseService {
         const prompt = generatePracticePrompt(questionId, answer);
         const response = await ai.generateResponse({
           prompt,
-          model: "claude-3-haiku-20240307",
+          model: "claude-3-5-haiku-20241022",
           requestType: "practice_evaluation",
           userId,
         });

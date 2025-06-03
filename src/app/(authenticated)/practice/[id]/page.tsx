@@ -19,6 +19,7 @@ import Link from "next/link";
 import { getAnswer, saveAnswer } from "@/actions/practice";
 import { questions } from "../data";
 import { Question } from "../types";
+import axios from "axios";
 
 interface QuestionDetailPageProps {
   params: {
@@ -178,40 +179,32 @@ export default function QuestionDetailPage({
       return;
     }
 
-    try {
-      setIsGeneratingFeedback(true);
+    setIsGeneratingFeedback(true);
 
-      const response = await fetch("/api/evaluate/practice", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          questionId: params.id,
-          answer: answer,
-        }),
+    axios
+      .post("/api/evaluate/practice", {
+        questionId: params.id,
+        answer: answer,
+      })
+      .then((response) => {
+        setFeedback(response.data);
+        toast({
+          title: "Success",
+          description: "AI feedback generated!",
+        });
+      })
+      .catch((error) => {
+        console.error("Error generating feedback:", error);
+        const errorMessage =
+          error.response?.data?.message || "Failed to generate feedback";
+        toast({
+          description: errorMessage,
+          variant: "destructive",
+        });
+      })
+      .finally(() => {
+        setIsGeneratingFeedback(false);
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate feedback");
-      }
-
-      const feedbackResult = await response.json();
-      setFeedback(feedbackResult);
-      toast({
-        title: "Success",
-        description: "AI feedback generated!",
-      });
-    } catch (error) {
-      console.error("Error generating feedback:", error);
-      toast({
-        title: "Error",
-        description: "Failed to generate feedback",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGeneratingFeedback(false);
-    }
   };
 
   if (isLoading) {
