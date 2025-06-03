@@ -20,6 +20,7 @@ import { getAnswer, saveAnswer } from "@/actions/practice";
 import { questions } from "../data";
 import { Question } from "../types";
 import axios from "axios";
+import { useCallback } from "react";
 
 interface QuestionDetailPageProps {
   params: {
@@ -61,20 +62,7 @@ export default function QuestionDetailPage({
   const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  useEffect(() => {
-    loadData();
-
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasUnsavedChanges) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [params.id, hasUnsavedChanges]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -114,7 +102,20 @@ export default function QuestionDetailPage({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [params.id, toast, router]);
+
+  useEffect(() => {
+    loadData();
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [params.id, hasUnsavedChanges, loadData]);
 
   const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAnswer(e.target.value);
