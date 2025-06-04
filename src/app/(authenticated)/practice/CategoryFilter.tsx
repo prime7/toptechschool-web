@@ -21,7 +21,6 @@ const CategoryFilter: React.FC = () => {
     <div className="flex flex-wrap gap-2 justify-center">
       {categories.map((category) => {
         const isSelected = category === selectedCategory;
-        
         return (
           <Button
             key={category}

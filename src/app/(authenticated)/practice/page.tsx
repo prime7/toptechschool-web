@@ -31,9 +31,9 @@ const QuestionsPage: React.FC = () => {
   } = useQuestions();
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 w-full">
       <div className="flex flex-col items-center text-center mb-8">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground mb-4">
+        <h1 className="text-4xl font-bold tracking-tight mb-4">
           Practice Interview Questions
         </h1>
         <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">
@@ -43,55 +43,57 @@ const QuestionsPage: React.FC = () => {
         </p>
       </div>
 
-      <div className="flex flex-col items-center mb-8 space-y-6">
-        <SearchBar />
-        <CategoryFilter />
-        <StatusFilter
-          selectedStatus={selectedStatus}
-          onStatusChange={setSelectedStatus}
-          stats={stats}
-        />
-      </div>
+      <div className="flex gap-8">
+        <Card className="w-64 shrink-0 space-y-6 sticky top-8 self-start">
+          <SearchBar />
+          <CategoryFilter />
+          <StatusFilter
+            selectedStatus={selectedStatus}
+            onStatusChange={setSelectedStatus}
+            stats={stats}
+          />
+        </Card>
 
-      <div className="w-full">
-        {filteredQuestions.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredQuestions.map((question) => (
-              <Link key={question.id} href={`/practice/${question.id}`}>
-                <QuestionCard question={question} />
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="py-16 text-center">
-              <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                <FileQuestion className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                No questions found
-              </h3>
-              <p className="text-muted-foreground">
-                {selectedStatus !== "All"
-                  ? `No ${selectedStatus.toLowerCase()} questions match your current filters.`
-                  : "Try adjusting your search or filter to find what you're looking for."}
-              </p>
-              {(searchQuery ||
-                selectedCategory !== "All" ||
-                selectedStatus !== "All") && (
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => {
-                    window.location.reload();
-                  }}
-                >
-                  Clear All Filters
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        )}
+        <div className="flex-1">
+          {filteredQuestions.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredQuestions.map((question) => (
+                <Link key={question.id} href={`/practice/${question.id}`}>
+                  <QuestionCard question={question} />
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-16 text-center">
+                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                  <FileQuestion className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  No questions found
+                </h3>
+                <p className="text-muted-foreground">
+                  {selectedStatus !== "All"
+                    ? `No ${selectedStatus.toLowerCase()} questions match your current filters.`
+                    : "Try adjusting your search or filter to find what you're looking for."}
+                </p>
+                {(searchQuery ||
+                  selectedCategory !== "All" ||
+                  selectedStatus !== "All") && (
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => {
+                      window.location.reload();
+                    }}
+                  >
+                    Clear All Filters
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Question } from "./types";
 import { useQuestions } from "./hooks";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -35,7 +35,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
           <div className="flex items-center justify-between text-sm font-medium text-primary hover:text-primary/80 transition-colors group/cta">
             <div className="flex items-center">
               {attempted ? "Review Answer" : "Practice Question"}
-              <ChevronRight className="ml-1 h-3 w-3 transition-transform group-hover/cta:translate-x-1" />
+              <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover/cta:translate-x-1" />
             </div>
           </div>
         </div>
