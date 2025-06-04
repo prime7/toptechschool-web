@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { useQuestions } from './hooks';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useDebounce } from '@/hooks/use-debounce';
 
 const SearchBar: React.FC = () => {
   const { searchQuery, setSearchQuery } = useQuestions();
   const [inputValue, setInputValue] = useState(searchQuery);
-  
-  // Debounce the search query
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearchQuery(inputValue);
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [inputValue, setSearchQuery]);
+  const debouncedValue = useDebounce(inputValue, 300);
+
+  if (debouncedValue.debouncedValue !== searchQuery) {
+    setSearchQuery(debouncedValue.debouncedValue);
+  }
   
   return (
     <div className="relative w-full max-w-lg">
