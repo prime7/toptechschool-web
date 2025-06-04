@@ -20,18 +20,18 @@ import type {
 } from "./types";
 
 Font.register({
-  family: 'Anonymous Pro',
-  src: '/fonts/AnonymousPro-Regular.ttf',
+  family: "Anonymous Pro",
+  src: "/fonts/AnonymousPro-Regular.ttf",
 });
 
 Font.register({
-  family: 'Open Sans',
-  src: '/fonts/OpenSans-Regular.ttf',
+  family: "Open Sans",
+  src: "/fonts/OpenSans-Regular.ttf",
 });
 
 Font.register({
-  family: 'Poppins',
-  src: '/fonts/Poppins-Regular.ttf',
+  family: "Poppins",
+  src: "/fonts/Poppins-Regular.ttf",
 });
 
 const createStyles = (style: ResumeStyle) =>
@@ -53,7 +53,7 @@ const createStyles = (style: ResumeStyle) =>
         ? `1px solid ${style.accentColor}`
         : undefined,
       paddingBottom: style.showSectionHorizontalRule ? 2 : 3,
-      marginBottom: 3
+      marginBottom: 3,
     },
     row: {
       flexDirection: "row",
@@ -101,10 +101,10 @@ const createStyles = (style: ResumeStyle) =>
       fontSize: style.fontSize,
     },
     title: {
-      flexDirection: 'row',
+      flexDirection: "row",
       fontWeight: "semibold",
       fontSize: style.fontSize * 1.05,
-    }
+    },
   });
 
 const ContactItem = ({
@@ -150,22 +150,32 @@ const PersonalSection = ({
   personal: PersonalInfo;
   styles: any;
 }) => {
+  const {
+    fullName,
+    profession,
+    email,
+    phone,
+    location,
+    website,
+    linkedin,
+    github,
+  } = personal;
   return (
     <View style={styles.section}>
       <View style={{ alignItems: "center" }}>
-        <Text style={[styles.personalHeaderName]}>{personal.fullName}</Text>
-        {personal.profession && (
-          <Text style={styles.personalHeaderTitle}>{personal.profession}</Text>
+        <Text style={[styles.personalHeaderName]}>{fullName}</Text>
+        {profession && (
+          <Text style={styles.personalHeaderTitle}>{profession}</Text>
         )}
       </View>
 
       <View style={[styles.centerRow]}>
-        {personal.email && <ContactItem text={personal.email} isFirst={true} />}
-        {personal.phone && <ContactItem text={personal.phone} />}
-        {personal.location && <ContactItem text={personal.location} />}
-        {personal.website && <ContactItem text={personal.website} />}
-        {personal.linkedin && <ContactItem text={personal.linkedin} />}
-        {personal.github && <ContactItem text={personal.github} />}
+        {email && <ContactItem text={email} isFirst={true} />}
+        {phone && <ContactItem text={phone} />}
+        {location && <ContactItem text={location} />}
+        {website && <ContactItem text={website} />}
+        {linkedin && <ContactItem text={linkedin} />}
+        {github && <ContactItem text={github} />}
       </View>
     </View>
   );
@@ -211,13 +221,7 @@ const WorkItem = ({ item, styles }: { item: WorkItem; styles: any }) => (
   </View>
 );
 
-const WorkSection = ({
-  work,
-  styles,
-}: {
-  work: WorkItem[];
-  styles: any;
-}) => {
+const WorkSection = ({ work, styles }: { work: WorkItem[]; styles: any }) => {
   const chunks: WorkItem[][] = [];
   let currentChunk: WorkItem[] = [];
   let currentChunkLength = 0;
@@ -459,12 +463,20 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
     >
       <Page size="A4" style={styles.page} wrap>
         {activeSections.map((section, idx) => {
-          switch(section) {
+          switch (section) {
             case "personal":
-              return <PersonalSection personal={personal} styles={styles} key={idx}/>;
+              return (
+                <PersonalSection
+                  personal={personal}
+                  styles={styles}
+                  key={idx}
+                />
+              );
             case "summary":
-              if ((summary && summary.trim() !== "") || 
-                  (summaryHighlights && summaryHighlights.length > 0)) {
+              if (
+                (summary && summary.trim() !== "") ||
+                (summaryHighlights && summaryHighlights.length > 0)
+              ) {
                 return (
                   <SummarySection
                     summary={summary || ""}
@@ -477,17 +489,29 @@ const ResumePDFDocument: React.FC<ResumePDFDocumentProps> = ({
               break;
             case "work":
               if (work && work.length > 0) {
-                return <WorkSection work={work} styles={styles} key={idx}/>;
+                return <WorkSection work={work} styles={styles} key={idx} />;
               }
               break;
             case "education":
               if (education && education.length > 0) {
-                return <EducationSection education={education} styles={styles} key={idx}/>;
+                return (
+                  <EducationSection
+                    education={education}
+                    styles={styles}
+                    key={idx}
+                  />
+                );
               }
               break;
             case "projects":
               if (projects && projects.length > 0) {
-                return <ProjectsSection projects={projects} styles={styles} key={idx}/>;
+                return (
+                  <ProjectsSection
+                    projects={projects}
+                    styles={styles}
+                    key={idx}
+                  />
+                );
               }
               break;
           }
