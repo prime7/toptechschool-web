@@ -33,7 +33,7 @@ const rateLimitConfig: Record<RateLimitKey, RateLimitConfig> = {
     errorMessage: 'You can request email verification 3 times per hour'
   },
   [RateLimitKey.PracticeAnalyze]: {
-    limit: 1, 
+    limit: 10, 
     duration: '1d',
     errorMessage: 'You can analyze 1 practice answer per day'
   }
