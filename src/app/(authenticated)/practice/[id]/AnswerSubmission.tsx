@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface AnswerSubmissionProps {
   questionId: string;
@@ -30,33 +30,31 @@ export default function AnswerSubmission({
         title: "Submitting answer...",
         description: "Please wait while we process your submission.",
       });
-      await axios
-        .post("/api/evaluate/practice", {
-          questionId,
-          answer,
-        })
-        .then(() => {
-          toast({
-            title: "Success!",
-            description: "Your answer has been submitted successfully.",
-          });
-          router.refresh();
-          setAnswer("");
-        })
-        .catch((error) => {
-          if (error.response?.status === 429) {
-            throw new Error("Rate limit exceeded. Please wait before trying again.");
-          }
-          throw new Error("Failed to submit answer");
-        });
+
+      await axios.post("/api/evaluate/practice", {
+        questionId,
+        answer,
+      });
+
+      toast({
+        title: "Success!",
+        description: "Your answer has been submitted and evaluated successfully.",
+      });
+      
+      router.refresh();
+      setAnswer("");
+      
     } catch (error) {
       console.error("Error submitting answer:", error);
+      
+      const axiosError = error as AxiosError<{ error?: string; message?: string }>;
+      const errorMessage = axiosError.response?.data?.error 
+        || axiosError.response?.data?.message 
+        || "Failed to submit answer. Please try again.";
+
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to submit answer. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

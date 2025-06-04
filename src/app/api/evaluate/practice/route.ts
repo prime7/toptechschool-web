@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { EvaluationService } from "@/service/Evaluation.service";
 import { RateLimitError, withRateLimit, RateLimitKey } from "@/lib/redis/rate-limit";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,6 +36,31 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    // Save the evaluation results to the database
+    await prisma.practiceAnswer.upsert({
+      where: {
+        userId_questionId: {
+          userId: session.user.id,
+          questionId,
+        },
+      },
+      update: {
+        answer,
+        feedback: result.feedback,
+        score: result.score,
+        suggestions: result.suggestions,
+        updatedAt: new Date(),
+      },
+      create: {
+        userId: session.user.id,
+        questionId,
+        answer,
+        feedback: result.feedback,
+        score: result.score,
+        suggestions: result.suggestions,
+      },
+    });
+
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof RateLimitError) {
@@ -44,6 +70,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.error("Error processing practice answer:", error);
     return NextResponse.json(
       { message: "Failed to evaluate practice answer" },
       { status: 500 }

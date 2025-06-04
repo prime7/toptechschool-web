@@ -85,7 +85,7 @@ export default async function QuestionDetailPage({
                     <div>
                       <div className="flex items-center gap-3 mb-4">
                         <div className="h-6 w-1 bg-primary rounded-full" />
-                        <h3 className="text-xl font-semibold text-foreground">
+                        <h3 className="text-lg font-semibold text-muted-foreground">
                           Saved Answer
                         </h3>
                       </div>
@@ -98,11 +98,11 @@ export default async function QuestionDetailPage({
                       <div>
                         <div className="flex items-center gap-3 mb-4">
                           <div className="h-6 w-1 bg-primary rounded-full" />
-                          <h3 className="text-xl font-semibold text-foreground">
+                          <h3 className="text-lg font-semibold text-muted-foreground">
                             Feedback
                           </h3>
                         </div>
-                        <div className="p-4 bg-muted/30 rounded-lg ml-4">
+                        <div className="ml-4">
                           <p className="text-muted-foreground leading-relaxed">
                             {question.savedAnswer.feedback}
                           </p>
@@ -114,7 +114,7 @@ export default async function QuestionDetailPage({
                       <div>
                         <div className="flex items-center gap-3 mb-4">
                           <div className="h-6 w-1 bg-primary rounded-full" />
-                          <h3 className="text-xl font-semibold text-foreground">
+                          <h3 className="text-lg font-semibold text-muted-foreground">
                             Suggestions
                           </h3>
                         </div>
