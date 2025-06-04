@@ -1,23 +1,20 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { Question } from "../types";
+import { PracticeAnswer } from "@prisma/client";
 import AnswerSubmission from "./AnswerSubmission";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface QuestionWithAnswer extends Question {
-  savedAnswer?: {
-    id: string;
-    answer: string;
-    feedback: string | null;
-    score: number | null;
-    suggestions: string[];
-    createdAt: Date;
-    updatedAt: Date;
-  };
+interface QuestionData {
+  id: string;
+  title: string;
+  description: string;
+  instructions: string;
+  hints: string[];
+  savedAnswer?: PracticeAnswer;
 }
 
-async function getQuestionData(id: string): Promise<QuestionWithAnswer> {
+async function getQuestionData(id: string): Promise<QuestionData> {
   const { questions } = await import("../data");
   const questionData = questions.find((q) => q.id === id);
 
@@ -60,37 +57,43 @@ export default async function QuestionDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <AnswerSubmission
+              answer={question.savedAnswer?.answer || ""}
               questionId={params.id}
               question={question.title}
             />
 
-            {question.savedAnswer && (
+            {question.savedAnswer?.aiAnswer && (
               <Card>
                 <CardContent className="mt-4 relative">
-                  {question.savedAnswer.score !== null && (
-                    <div className="absolute top-2 right-2">
-                      <div className="flex items-center justify-center h-14 w-14 rounded-full border-2 border-primary bg-background shadow-sm">
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-foreground">
-                            {question.savedAnswer.score} / 10
+                  {question.savedAnswer.score !== null &&
+                    question.savedAnswer.score > 0 &&
+                    question.savedAnswer.feedback &&
+                    question.savedAnswer.suggestions.length > 0 && (
+                      <div className="absolute top-2 right-2">
+                        <div className="flex items-center justify-center h-14 w-14 rounded-full border-2 border-primary bg-background shadow-sm">
+                          <div className="text-center">
+                            <div className="text-lg font-bold text-foreground">
+                              {question.savedAnswer.score} / 10
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   <div className="space-y-8 pt-2">
-                    <div>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="h-6 w-1 bg-primary rounded-full" />
-                        <h3 className="text-lg font-semibold text-muted-foreground">
-                          Saved Answer
-                        </h3>
+                    {question.savedAnswer.aiAnswer && (
+                      <div>
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="h-6 w-1 bg-primary rounded-full" />
+                          <h3 className="text-lg font-semibold text-muted-foreground">
+                            AI Answer
+                          </h3>
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap pl-4">
+                          {question.savedAnswer.aiAnswer}
+                        </p>
                       </div>
-                      <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap pl-4">
-                        {question.savedAnswer.answer}
-                      </p>
-                    </div>
+                    )}
 
                     {question.savedAnswer.feedback && (
                       <div>
@@ -118,7 +121,7 @@ export default async function QuestionDetailPage({
                         </div>
                         <ul className="space-y-3 pl-4">
                           {question.savedAnswer.suggestions.map(
-                            (suggestion, index) => (
+                            (suggestion: string, index: number) => (
                               <li
                                 key={index}
                                 className="flex items-start gap-3 text-muted-foreground"
