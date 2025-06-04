@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { Question } from "../types";
 import AnswerSubmission from "./AnswerSubmission";
-import { Toaster } from "@/components/ui/toaster";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface QuestionWithAnswer extends Question {
@@ -57,7 +56,6 @@ export default async function QuestionDetailPage({
 
   return (
     <>
-      <Toaster />
       <div className="container mx-auto py-8 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
@@ -145,6 +143,9 @@ export default async function QuestionDetailPage({
             <div className="sticky top-6">
               <Card>
                 <CardContent className="space-y-6 pt-6">
+                  <p className="text-muted-foreground leading-relaxed">
+                    {question.description}
+                  </p>
                   <p className="text-muted-foreground leading-relaxed">
                     {question.instructions}
                   </p>

@@ -28,9 +28,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
         </h3>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground text-sm">
-          {question.description}
-        </p>
         <div className="pt-2">
           <div className="flex items-center justify-between text-sm font-medium text-primary hover:text-primary/80 transition-colors group/cta">
             <div className="flex items-center">
