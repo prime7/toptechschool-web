@@ -4,10 +4,15 @@ import { EvaluationService } from "@/service/Evaluation.service";
 import { RateLimitError, withRateLimit, RateLimitKey } from "@/lib/redis/rate-limit";
 import { prisma } from "@/lib/prisma";
 
+interface PracticeAnswerResult {
+  feedback: string;
+  score: number;
+  suggestions: string[];
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-    
     if (!session?.user?.id) {
       return NextResponse.json(
         { message: "Unauthorized" },
@@ -15,7 +20,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { questionId, answer } = await request.json();
+    const requestData = await request.json();
+    const { questionId, answer, withAIFeedback = false } = requestData;
 
     if (!questionId || !answer) {
       return NextResponse.json(
@@ -24,20 +30,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await withRateLimit(
-      RateLimitKey.PracticeAnalyze,
-      session.user.id,
-      async () => {
-        return await EvaluationService.analyzePracticeAnswer(
-          questionId,
-          answer,
-          session.user.id
-        );
-      }
-    );
+    let result: PracticeAnswerResult = {
+      feedback: "",
+      score: 0,
+      suggestions: [],
+    };
 
-    // Save the evaluation results to the database
-    await prisma.practiceAnswer.upsert({
+    if (withAIFeedback) {
+      result = await withRateLimit(
+        RateLimitKey.PracticeAnalyze,
+        session.user.id,
+        async () => {
+          return await EvaluationService.analyzePracticeAnswer(
+            questionId,
+            answer,
+            session.user.id
+          );
+        }
+      );
+    }
+
+    const savedAnswer = await prisma.practiceAnswer.upsert({
       where: {
         userId_questionId: {
           userId: session.user.id,
@@ -46,9 +59,11 @@ export async function POST(request: NextRequest) {
       },
       update: {
         answer,
-        feedback: result.feedback,
-        score: result.score,
-        suggestions: result.suggestions,
+        ...(withAIFeedback && {
+          feedback: result.feedback,
+          score: result.score,
+          suggestions: result.suggestions,
+        }),
         updatedAt: new Date(),
       },
       create: {
@@ -61,7 +76,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(withAIFeedback ? result : { 
+      message: "Answer saved successfully",
+      answer: savedAnswer 
+    });
   } catch (error) {
     if (error instanceof RateLimitError) {
       return NextResponse.json(
@@ -70,9 +88,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error("Error processing practice answer:", error);
     return NextResponse.json(
-      { message: "Failed to evaluate practice answer" },
+      { 
+        message:  "Something went wrong", 
+        error: error,
+      },
       { status: 500 }
     );
   }
