@@ -1,34 +1,116 @@
-import { RefreshCcw } from "lucide-react";
+  import { BookOpen, Target, TrendingUp } from "lucide-react";
+  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  import { auth } from "@/lib/auth";
+  import { getUserAllAnswers } from "@/actions/practice";
+  import { questions } from "@/app/(authenticated)/practice/data";
+  import { Button } from "@/components/ui/button";
 
-export default function Dashboard() {
-  return (
-    <div className="container mx-auto py-8">
-      <div className="grid gap-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <RefreshCcw className="h-4 w-4" />
-            Refresh
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="p-6 bg-card rounded-lg border border-border shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-            <p className="text-muted-foreground">No recent activity to display.</p>
+  interface PracticeAnswer {
+    id: string;
+    userId: string;
+    questionId: string;
+    answer: string;
+    score: number | null;
+    updatedAt: Date;
+  }
+
+  interface DashboardStats {
+    totalQuestions: number;
+    attemptedQuestions: number;
+    unattemptedQuestions: number;
+    averageScore: number;
+    progressPercentage: number;
+  }
+
+  async function getDashboardStats(): Promise<DashboardStats> {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return {
+        totalQuestions: questions.length,
+        attemptedQuestions: 0,
+        unattemptedQuestions: questions.length,
+        averageScore: 0,
+        progressPercentage: 0,
+      };
+    }
+
+    const answers = await getUserAllAnswers() as PracticeAnswer[];
+    const scoresOnly = answers.filter((answer: PracticeAnswer) => answer.score !== null);
+    const averageScore = scoresOnly.length > 0 
+      ? scoresOnly.reduce((sum: number, answer: PracticeAnswer) => sum + (answer.score || 0), 0) / scoresOnly.length
+      : 0;
+
+    const progressPercentage = Math.round((answers.length / questions.length) * 100);
+
+    return {
+      totalQuestions: questions.length,
+      attemptedQuestions: answers.length,
+      unattemptedQuestions: questions.length - answers.length,
+      averageScore: Math.round(averageScore * 10) / 10,
+      progressPercentage,
+    };
+  }
+
+  export default async function Dashboard() {
+    const stats = await getDashboardStats();
+
+    return (
+      <div className="container mx-auto py-8">
+        <div className="grid gap-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           </div>
           
-          <div className="p-6 bg-card rounded-lg border border-border shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Quick Stats</h2>
-            <p className="text-muted-foreground">No stats available yet.</p>
-          </div>
-          
-          <div className="p-6 bg-card rounded-lg border border-border shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Upcoming Tasks</h2>
-            <p className="text-muted-foreground">No upcoming tasks.</p>
-          </div>
+          <section>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Progress</CardTitle>
+                  <Target className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.progressPercentage}%</div>
+                  <p className="text-xs text-muted-foreground">
+                    {stats.attemptedQuestions} of {stats.totalQuestions} completed
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Performance</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {stats.averageScore > 0 ? `${stats.averageScore}/10` : 'N/A'}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Average score from AI feedback
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Next Steps</CardTitle>
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.unattemptedQuestions}</div>
+                  <p className="text-xs text-muted-foreground mb-4">Questions remaining</p>
+                  <Button 
+                    asChild
+                    className="w-full"
+                  >
+                    <a href="/practice">Continue Practice</a>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
