@@ -1,17 +1,25 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { PracticeAnswer } from "@prisma/client";
 import AnswerSubmission from "./AnswerSubmission";
 import { Card, CardContent } from "@/components/ui/card";
+import { Question } from "../types";
 
-interface QuestionData {
+interface SavedAnswer {
   id: string;
-  title: string;
-  description: string;
-  instructions: string;
-  hints: string[];
-  savedAnswer?: PracticeAnswer;
+  userId: string;
+  questionId: string;
+  answer: string;
+  aiAnswer: string | null;
+  feedback: string | null;
+  score: number | null;
+  suggestions: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface QuestionData extends Question {
+  savedAnswer?: SavedAnswer;
 }
 
 async function getQuestionData(id: string): Promise<QuestionData> {
@@ -50,7 +58,6 @@ export default async function QuestionDetailPage({
   params: { id: string };
 }) {
   const question = await getQuestionData(params.id);
-
   return (
     <>
       <div className="container mx-auto py-8 px-4">
@@ -62,7 +69,7 @@ export default async function QuestionDetailPage({
               question={question.title}
             />
 
-            {question.savedAnswer?.aiAnswer && (
+            {question.savedAnswer?.feedback && (
               <Card>
                 <CardContent className="mt-4 relative">
                   {question.savedAnswer.score !== null &&
@@ -81,20 +88,6 @@ export default async function QuestionDetailPage({
                     )}
 
                   <div className="space-y-8 pt-2">
-                    {question.savedAnswer.aiAnswer && (
-                      <div>
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="h-6 w-1 bg-primary rounded-full" />
-                          <h3 className="text-lg font-semibold text-muted-foreground">
-                            AI Answer
-                          </h3>
-                        </div>
-                        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap pl-4">
-                          {question.savedAnswer.aiAnswer}
-                        </p>
-                      </div>
-                    )}
-
                     {question.savedAnswer.feedback && (
                       <div>
                         <div className="flex items-center gap-3 mb-4">
@@ -134,6 +127,22 @@ export default async function QuestionDetailPage({
                             )
                           )}
                         </ul>
+                      </div>
+                    )}
+
+                    {question.savedAnswer.aiAnswer && (
+                      <div>
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="h-6 w-1 bg-primary rounded-full" />
+                          <h3 className="text-lg font-semibold text-muted-foreground">
+                            Answer
+                          </h3>
+                        </div>
+                        <div className="ml-4">
+                          <p className="text-muted-foreground leading-relaxed">
+                            {question.savedAnswer.aiAnswer}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

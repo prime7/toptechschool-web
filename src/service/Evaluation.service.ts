@@ -109,16 +109,17 @@ export class EvaluationService extends BaseService {
   }
 
   static async analyzePracticeAnswer(
-    questionId: string,
+    question: string,
     answer: string,
     userId: string
   ): Promise<PracticeAnswerAnalysisResult> {
     return this.handleError(async () => {
       try {
-        const prompt = generatePracticePrompt(questionId, answer);
+        const prompt = generatePracticePrompt(question, answer);
         const response = await ai.generateResponse({
           prompt,
-          model: "claude-3-5-haiku-20241022",
+          model: "gpt-4.1-2025-04-14",
+          provider: "openai",
           requestType: "practice_evaluation",
           userId,
         });
