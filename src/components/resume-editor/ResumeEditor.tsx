@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { SectionType, ResumeData } from "./types";
+import { SectionType, ResumeData, PersonalInfo } from "./types";
 import {
   useResume,
   blankResumeData,
@@ -41,13 +41,31 @@ export default function ResumeEditor({ data }: ResumeEditorProps) {
 }
 
 function ResumeEditorContent() {
-  const [activeSection, setActiveSection] =
-    React.useState<SectionType>("personal");
+  const [activeSection, setActiveSection] = React.useState<SectionType>("personal");
   const { state } = useResume();
+  const [key, setKey] = React.useState(0);
+  const { debouncedValue: debouncedState } = useDebounce(state, 500); // Reduced debounce time for better responsiveness
+  const prevDebouncedStateRef = React.useRef("");
+
+  // Force PDF re-render on any state changes
+  React.useEffect(() => {
+    const newStateString = JSON.stringify({
+      personal: debouncedState.personal,
+      summary: debouncedState.summary,
+      summaryHighlights: debouncedState.summaryHighlights,
+      work: debouncedState.work,
+      education: debouncedState.education,
+      projects: debouncedState.projects,
+      activeSections: debouncedState.activeSections
+    });
+
+    if (newStateString !== prevDebouncedStateRef.current) {
+      setKey(prev => prev + 1);
+      prevDebouncedStateRef.current = newStateString;
+    }
+  }, [debouncedState]);
 
   const ActiveSectionComponent = SECTION_COMPONENTS[activeSection];
-
-  const { debouncedValue: debouncedState } = useDebounce(state, 1500);
 
   return (
     <div className="h-[calc(100vh-5rem)] flex flex-row">
@@ -59,7 +77,7 @@ function ResumeEditorContent() {
         <ActiveSectionComponent />
       </div>
       <div className="flex-1 relative">
-        <PDFViewer className="w-full h-full">
+        <PDFViewer key={key} className="w-full h-full">
           <ResumePDFDocument resumeData={debouncedState} />
         </PDFViewer>
       </div>
