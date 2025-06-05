@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth";
 import AnswerSubmission from "./AnswerSubmission";
 import { Card, CardContent } from "@/components/ui/card";
 import { Question } from "../types";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 interface SavedAnswer {
   id: string;
@@ -61,6 +63,13 @@ export default async function QuestionDetailPage({
   return (
     <>
       <div className="container mx-auto py-8 px-4">
+        <Link
+          href="/practice"
+          className="inline-flex items-center gap-2 mb-6 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          <span>Back to Practice</span>
+        </Link>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <AnswerSubmission
