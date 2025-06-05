@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { SectionType, ResumeData, PersonalInfo } from "./types";
+import { SectionType, ResumeData } from "./types";
 import {
   useResume,
   blankResumeData,
@@ -41,7 +41,8 @@ export default function ResumeEditor({ data }: ResumeEditorProps) {
 }
 
 function ResumeEditorContent() {
-  const [activeSection, setActiveSection] = React.useState<SectionType>("personal");
+  const [activeSection, setActiveSection] =
+    React.useState<SectionType>("personal");
   const { state } = useResume();
   const [key, setKey] = React.useState(0);
   const { debouncedValue: debouncedState } = useDebounce(state, 500); // Reduced debounce time for better responsiveness
@@ -56,11 +57,11 @@ function ResumeEditorContent() {
       work: debouncedState.work,
       education: debouncedState.education,
       projects: debouncedState.projects,
-      activeSections: debouncedState.activeSections
+      activeSections: debouncedState.activeSections,
     });
 
     if (newStateString !== prevDebouncedStateRef.current) {
-      setKey(prev => prev + 1);
+      setKey((prev) => prev + 1);
       prevDebouncedStateRef.current = newStateString;
     }
   }, [debouncedState]);
