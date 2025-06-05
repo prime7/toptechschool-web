@@ -19,6 +19,7 @@ const QuestionCard = dynamic(() => import("./QuestionCard"), {
     <div className="h-48 w-full bg-muted animate-pulse rounded-md" />
   ),
 });
+const ReviewModal = dynamic(() => import("./ReviewModal"), { ssr: false });
 
 const QuestionsPage: React.FC = () => {
   const {
@@ -52,6 +53,7 @@ const QuestionsPage: React.FC = () => {
             onStatusChange={setSelectedStatus}
             stats={stats}
           />
+          <ReviewModal />
         </Card>
 
         <div className="flex-1">
