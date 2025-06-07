@@ -27,9 +27,16 @@ import {
 } from "@/components/ui/dialog";
 import { ListContentEditor } from "./ListContentEditor";
 import { LocationType } from "@prisma/client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatEnumValue } from "@/lib/utils";
 import { JobRole } from "../constants";
+import { formatDate } from "@/lib/date-utils";
 
 interface WorkEditorProps {
   work: WorkItem[];
@@ -72,7 +79,9 @@ export function WorkEditor({
 
   const [formData, setFormData] = useState<FormData>(initialFormState);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -84,7 +93,8 @@ export function WorkEditor({
       current: checked,
       endDate: checked ? undefined : prev.endDate,
     }));
-    if (checked && errors.endDate) setErrors((prev) => ({ ...prev, endDate: "" }));
+    if (checked && errors.endDate)
+      setErrors((prev) => ({ ...prev, endDate: "" }));
   };
 
   const validateForm = () => {
@@ -92,7 +102,8 @@ export function WorkEditor({
     if (!formData.company.trim()) newErrors.company = "Company is required";
     if (!formData.position) newErrors.position = "Position is required";
     if (!formData.startDate) newErrors.startDate = "Start date is required";
-    if (!formData.current && !formData.endDate) newErrors.endDate = "End date is required if not currently working";
+    if (!formData.current && !formData.endDate)
+      newErrors.endDate = "End date is required if not currently working";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -153,42 +164,42 @@ export function WorkEditor({
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("default", {
-      month: "short",
-      year: "numeric",
-    });
-  };
-
   return (
     <div className="space-y-2">
       <div className="grid grid-cols-[1fr,auto] gap-4 items-start mb-1">
         <div className="space-y-0.5">
-          {title && <h2 className="text-xl font-semibold leading-none">{title}</h2>}
+          {title && (
+            <h2 className="text-xl font-semibold leading-none">{title}</h2>
+          )}
           {description && (
-            <p className="text-sm text-muted-foreground">
-              {description}
-            </p>
+            <p className="text-sm text-muted-foreground">{description}</p>
           )}
         </div>
         <Button size="sm" onClick={() => setIsDialogOpen(true)} className="h-8">
-          <Plus className="h-4 w-4 mr-1" />Add Work Experience
+          <Plus className="h-4 w-4 mr-1" />
+          Add Work Experience
         </Button>
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Edit Work Experience" : "Add Work Experience"}</DialogTitle>
+            <DialogTitle>
+              {isEditing ? "Edit Work Experience" : "Add Work Experience"}
+            </DialogTitle>
             <DialogDescription>
-              {isEditing ? "Update your work experience information." : "Add a new work experience entry to your resume."}
+              {isEditing
+                ? "Update your work experience information."
+                : "Add a new work experience entry to your resume."}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="company" className="text-sm">Company <span className="text-destructive">*</span></Label>
+                <Label htmlFor="company" className="text-sm">
+                  Company <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="company"
                   name="company"
@@ -197,16 +208,24 @@ export function WorkEditor({
                   placeholder="Company name"
                   className={errors.company ? "border-destructive" : ""}
                 />
-                {errors.company && <p className="text-xs text-destructive">{errors.company}</p>}
+                {errors.company && (
+                  <p className="text-xs text-destructive">{errors.company}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="position" className="text-sm">Position <span className="text-destructive">*</span></Label>
+                <Label htmlFor="position" className="text-sm">
+                  Position <span className="text-destructive">*</span>
+                </Label>
                 <Select
                   value={formData.position || ""}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, position: value }))}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, position: value }))
+                  }
                 >
-                  <SelectTrigger className={errors.position ? "border-destructive" : ""}>
+                  <SelectTrigger
+                    className={errors.position ? "border-destructive" : ""}
+                  >
                     <SelectValue placeholder="Select position" />
                   </SelectTrigger>
                   <SelectContent>
@@ -217,14 +236,23 @@ export function WorkEditor({
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.position && <p className="text-xs text-destructive">{errors.position}</p>}
+                {errors.position && (
+                  <p className="text-xs text-destructive">{errors.position}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location" className="text-sm">Location</Label>
+                <Label htmlFor="location" className="text-sm">
+                  Location
+                </Label>
                 <Select
                   value={formData.location || ""}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, location: value as LocationType }))}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      location: value as LocationType,
+                    }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select location type" />
@@ -239,7 +267,9 @@ export function WorkEditor({
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="startDate" className="text-sm">Start Date <span className="text-destructive">*</span></Label>
+                <Label htmlFor="startDate" className="text-sm">
+                  Start Date <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   type="month"
                   id="startDate"
@@ -248,11 +278,18 @@ export function WorkEditor({
                   onChange={handleChange}
                   className={errors.startDate ? "border-destructive" : ""}
                 />
-                {errors.startDate && <p className="text-xs text-destructive">{errors.startDate}</p>}
+                {errors.startDate && (
+                  <p className="text-xs text-destructive">{errors.startDate}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="endDate" className="text-sm">End Date {!formData.current && <span className="text-destructive">*</span>}</Label>
+                <Label htmlFor="endDate" className="text-sm">
+                  End Date{" "}
+                  {!formData.current && (
+                    <span className="text-destructive">*</span>
+                  )}
+                </Label>
                 <Input
                   type="month"
                   id="endDate"
@@ -262,10 +299,18 @@ export function WorkEditor({
                   disabled={formData.current}
                   className={errors.endDate ? "border-destructive" : ""}
                 />
-                {errors.endDate && <p className="text-xs text-destructive">{errors.endDate}</p>}
+                {errors.endDate && (
+                  <p className="text-xs text-destructive">{errors.endDate}</p>
+                )}
                 <div className="flex items-center gap-2 pt-1">
-                  <Checkbox id="current" checked={formData.current} onCheckedChange={handleCheckboxChange} />
-                  <Label htmlFor="current" className="text-sm">Currently working here</Label>
+                  <Checkbox
+                    id="current"
+                    checked={formData.current}
+                    onCheckedChange={handleCheckboxChange}
+                  />
+                  <Label htmlFor="current" className="text-sm">
+                    Currently working here
+                  </Label>
                 </div>
               </div>
             </div>
@@ -274,12 +319,31 @@ export function WorkEditor({
               <Label className="text-sm">Description & Key Achievements</Label>
               <ListContentEditor
                 description={formData.description}
-                onDescriptionChange={(description) => setFormData((prev) => ({ ...prev, description }))}
+                onDescriptionChange={(description) =>
+                  setFormData((prev) => ({ ...prev, description }))
+                }
                 bulletPoints={formData.points}
-                onAdd={(bullet) => setFormData((prev) => ({ ...prev, points: [...prev.points, bullet] }))}
-                onUpdate={(index, text) => setFormData((prev) => ({ ...prev, points: prev.points.map((b, i) => (i === index ? text : b)) }))}
-                onRemove={(index) => setFormData((prev) => ({ ...prev, points: prev.points.filter((_, i) => i !== index) }))}
-                onReorder={(newOrder) => setFormData((prev) => ({ ...prev, points: newOrder }))}
+                onAdd={(bullet) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: [...prev.points, bullet],
+                  }))
+                }
+                onUpdate={(index, text) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: prev.points.map((b, i) => (i === index ? text : b)),
+                  }))
+                }
+                onRemove={(index) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: prev.points.filter((_, i) => i !== index),
+                  }))
+                }
+                onReorder={(newOrder) =>
+                  setFormData((prev) => ({ ...prev, points: newOrder }))
+                }
                 showDescription={true}
                 descriptionLabel="Description"
                 descriptionPlaceholder="Brief description of your role and responsibilities"
@@ -290,8 +354,12 @@ export function WorkEditor({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
-            <Button onClick={handleSubmit}>{isEditing ? "Update" : "Save"}</Button>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              {isEditing ? "Update" : "Save"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -306,24 +374,38 @@ export function WorkEditor({
                     <div className="flex items-center gap-1.5">
                       <Briefcase className="h-4 w-4 text-primary shrink-0" />
                       <h3 className="font-medium leading-none">
-                        {item.position ? formatEnumValue(item.position) : ''} • {item.company}
+                        {item.position ? formatEnumValue(item.position) : ""} •{" "}
+                        {item.company}
                       </h3>
                     </div>
                     {item.location && (
-                      <p className="text-sm text-muted-foreground mt-0.5">{formatEnumValue(item.location)}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5">
+                        {formatEnumValue(item.location)}
+                      </p>
                     )}
                   </div>
 
                   <div className="flex items-center">
                     <p className="text-sm text-muted-foreground">
-                      {formatDate(item.startDate)} - {item.endDate ? formatDate(item.endDate) : "Present"}
+                      {formatDate(item.startDate)} -{" "}
+                      {item.endDate ? formatDate(item.endDate) : "Present"}
                     </p>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleEdit(item)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => handleEdit(item)}
+                      >
                         <Pencil className="h-3.5 w-3.5" />
                         <span className="sr-only">Edit</span>
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 hover:text-destructive hover:bg-destructive/10" onClick={() => openDeleteDialog(item.id)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => openDeleteDialog(item.id)}
+                      >
                         <Trash2 className="h-3.5 w-3.5" />
                         <span className="sr-only">Delete</span>
                       </Button>
@@ -332,7 +414,9 @@ export function WorkEditor({
                 </div>
 
                 {item.description && (
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap mt-1 leading-snug">{item.description}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap mt-1 leading-snug">
+                    {item.description}
+                  </p>
                 )}
                 {item.points && item.points.length > 0 && (
                   <ul className="list-disc pl-4 mt-1 text-sm text-muted-foreground leading-snug">
@@ -347,15 +431,26 @@ export function WorkEditor({
         </div>
       )}
 
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Work Experience</AlertDialogTitle>
-            <AlertDialogDescription>Are you sure you want to delete this work experience entry? This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              Are you sure you want to delete this work experience entry? This
+              action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

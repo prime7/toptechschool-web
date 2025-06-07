@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { ListContentEditor } from "./ListContentEditor";
 import { formatEnumValue } from "@/lib/utils";
+import { formatDate } from "@/lib/date-utils";
 
 interface EducationEditorProps {
   education: EducationItem[];
@@ -66,7 +67,9 @@ export function EducationEditor({
   const [formData, setFormData] = useState<FormData>(initialFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -78,15 +81,18 @@ export function EducationEditor({
       current: checked,
       endDate: checked ? undefined : prev.endDate,
     }));
-    if (checked && errors.endDate) setErrors((prev) => ({ ...prev, endDate: "" }));
+    if (checked && errors.endDate)
+      setErrors((prev) => ({ ...prev, endDate: "" }));
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.institution.trim()) newErrors.institution = "Institution is required";
+    if (!formData.institution.trim())
+      newErrors.institution = "Institution is required";
     if (!formData.degree) newErrors.degree = "Degree is required";
     if (!formData.startDate) newErrors.startDate = "Start date is required";
-    if (!formData.current && !formData.endDate) newErrors.endDate = "End date is required if not currently studying";
+    if (!formData.current && !formData.endDate)
+      newErrors.endDate = "End date is required if not currently studying";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -145,42 +151,42 @@ export function EducationEditor({
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("default", {
-      month: "short",
-      year: "numeric",
-    });
-  };
-
   return (
     <div className="space-y-2">
       <div className="grid grid-cols-[1fr,auto] gap-4 items-start mb-1">
         <div className="space-y-0.5">
-          {title && <h2 className="text-xl font-semibold leading-none">{title}</h2>}
+          {title && (
+            <h2 className="text-xl font-semibold leading-none">{title}</h2>
+          )}
           {description && (
-            <p className="text-sm text-muted-foreground">
-              {description}
-            </p>
+            <p className="text-sm text-muted-foreground">{description}</p>
           )}
         </div>
         <Button size="sm" onClick={() => setIsDialogOpen(true)} className="h-8">
-          <Plus className="h-4 w-4 mr-1" />Add Education
+          <Plus className="h-4 w-4 mr-1" />
+          Add Education
         </Button>
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Edit Education" : "Add Education"}</DialogTitle>
+            <DialogTitle>
+              {isEditing ? "Edit Education" : "Add Education"}
+            </DialogTitle>
             <DialogDescription>
-              {isEditing ? "Update your education information." : "Add a new education entry to your resume."}
+              {isEditing
+                ? "Update your education information."
+                : "Add a new education entry to your resume."}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="institution" className="text-sm">Institution <span className="text-destructive">*</span></Label>
+                <Label htmlFor="institution" className="text-sm">
+                  Institution <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="institution"
                   name="institution"
@@ -189,11 +195,17 @@ export function EducationEditor({
                   placeholder="University or school name"
                   className={errors.institution ? "border-destructive" : ""}
                 />
-                {errors.institution && <p className="text-xs text-destructive">{errors.institution}</p>}
+                {errors.institution && (
+                  <p className="text-xs text-destructive">
+                    {errors.institution}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="degree" className="text-sm">Degree <span className="text-destructive">*</span></Label>
+                <Label htmlFor="degree" className="text-sm">
+                  Degree <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="degree"
                   name="degree"
@@ -202,11 +214,15 @@ export function EducationEditor({
                   placeholder="Enter your degree"
                   className={errors.degree ? "border-destructive" : ""}
                 />
-                {errors.degree && <p className="text-xs text-destructive">{errors.degree}</p>}
+                {errors.degree && (
+                  <p className="text-xs text-destructive">{errors.degree}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="startDate" className="text-sm">Start Date <span className="text-destructive">*</span></Label>
+                <Label htmlFor="startDate" className="text-sm">
+                  Start Date <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   type="month"
                   id="startDate"
@@ -215,11 +231,18 @@ export function EducationEditor({
                   onChange={handleChange}
                   className={errors.startDate ? "border-destructive" : ""}
                 />
-                {errors.startDate && <p className="text-xs text-destructive">{errors.startDate}</p>}
+                {errors.startDate && (
+                  <p className="text-xs text-destructive">{errors.startDate}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="endDate" className="text-sm">End Date {!formData.current && <span className="text-destructive">*</span>}</Label>
+                <Label htmlFor="endDate" className="text-sm">
+                  End Date{" "}
+                  {!formData.current && (
+                    <span className="text-destructive">*</span>
+                  )}
+                </Label>
                 <Input
                   type="month"
                   id="endDate"
@@ -229,10 +252,18 @@ export function EducationEditor({
                   disabled={formData.current}
                   className={errors.endDate ? "border-destructive" : ""}
                 />
-                {errors.endDate && <p className="text-xs text-destructive">{errors.endDate}</p>}
+                {errors.endDate && (
+                  <p className="text-xs text-destructive">{errors.endDate}</p>
+                )}
                 <div className="flex items-center gap-2 pt-1">
-                  <Checkbox id="current" checked={formData.current} onCheckedChange={handleCheckboxChange} />
-                  <Label htmlFor="current" className="text-sm">Currently studying here</Label>
+                  <Checkbox
+                    id="current"
+                    checked={formData.current}
+                    onCheckedChange={handleCheckboxChange}
+                  />
+                  <Label htmlFor="current" className="text-sm">
+                    Currently studying here
+                  </Label>
                 </div>
               </div>
             </div>
@@ -241,12 +272,31 @@ export function EducationEditor({
               <Label className="text-sm">Description & Key Points</Label>
               <ListContentEditor
                 description={formData.description}
-                onDescriptionChange={(description) => setFormData((prev) => ({ ...prev, description }))}
+                onDescriptionChange={(description) =>
+                  setFormData((prev) => ({ ...prev, description }))
+                }
                 bulletPoints={formData.points}
-                onAdd={(bullet) => setFormData((prev) => ({ ...prev, points: [...prev.points, bullet] }))}
-                onUpdate={(index, text) => setFormData((prev) => ({ ...prev, points: prev.points.map((b, i) => (i === index ? text : b)) }))}
-                onRemove={(index) => setFormData((prev) => ({ ...prev, points: prev.points.filter((_, i) => i !== index) }))}
-                onReorder={(newOrder) => setFormData((prev) => ({ ...prev, points: newOrder }))}
+                onAdd={(bullet) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: [...prev.points, bullet],
+                  }))
+                }
+                onUpdate={(index, text) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: prev.points.map((b, i) => (i === index ? text : b)),
+                  }))
+                }
+                onRemove={(index) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: prev.points.filter((_, i) => i !== index),
+                  }))
+                }
+                onReorder={(newOrder) =>
+                  setFormData((prev) => ({ ...prev, points: newOrder }))
+                }
                 showDescription={true}
                 descriptionLabel="Description"
                 descriptionPlaceholder="Brief description of your education"
@@ -257,8 +307,12 @@ export function EducationEditor({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
-            <Button onClick={handleSubmit}>{isEditing ? "Update" : "Save"}</Button>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              {isEditing ? "Update" : "Save"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -273,21 +327,33 @@ export function EducationEditor({
                     <div className="flex items-center gap-1.5">
                       <GraduationCap className="h-4 w-4 text-primary shrink-0" />
                       <h3 className="font-medium leading-none">
-                        {item.degree ? formatEnumValue(item.degree) : ''} • {item.institution}
+                        {item.degree ? formatEnumValue(item.degree) : ""} •{" "}
+                        {item.institution}
                       </h3>
                     </div>
                   </div>
 
                   <div className="flex items-center">
                     <p className="text-sm text-muted-foreground">
-                      {formatDate(item.startDate)} - {item.endDate ? formatDate(item.endDate) : "Present"}
+                      {formatDate(item.startDate)} -{" "}
+                      {item.endDate ? formatDate(item.endDate) : "Present"}
                     </p>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleEdit(item)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => handleEdit(item)}
+                      >
                         <Pencil className="h-3.5 w-3.5" />
                         <span className="sr-only">Edit</span>
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 hover:text-destructive hover:bg-destructive/10" onClick={() => openDeleteDialog(item.id)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => openDeleteDialog(item.id)}
+                      >
                         <Trash2 className="h-3.5 w-3.5" />
                         <span className="sr-only">Delete</span>
                       </Button>
@@ -296,7 +362,9 @@ export function EducationEditor({
                 </div>
 
                 {item.description && (
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap mt-1 leading-snug">{item.description}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap mt-1 leading-snug">
+                    {item.description}
+                  </p>
                 )}
                 {item.points && item.points.length > 0 && (
                   <ul className="list-disc pl-4 mt-1 text-sm text-muted-foreground leading-snug">
@@ -311,15 +379,26 @@ export function EducationEditor({
         </div>
       )}
 
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Education</AlertDialogTitle>
-            <AlertDialogDescription>Are you sure you want to delete this education entry? This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              Are you sure you want to delete this education entry? This action
+              cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

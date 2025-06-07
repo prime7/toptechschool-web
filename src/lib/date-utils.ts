@@ -10,8 +10,11 @@ export function formatDate(date: Date | string | null): string {
   if (date instanceof Date) {
     year = date.getFullYear();
     month = date.getMonth();
+  } else if (date.includes('-')) {
+    const [yearStr, monthStr] = date.split('-');
+    year = parseInt(yearStr, 10);
+    month = parseInt(monthStr, 10) - 1; 
   } else {
-    // If it's an ISO string (from database), parse it properly
     const d = new Date(date);
     year = d.getFullYear();
     month = d.getMonth();
