@@ -55,6 +55,8 @@ export interface ProjectItem {
 }
 
 export interface ResumeStyle {
+  pagePaddingX: number;
+  pagePaddingY: number;
   fontFamily: string;
   fontSize: number;
   accentColor: string;

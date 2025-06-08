@@ -37,7 +37,7 @@ Font.register({
 const createStyles = (style: ResumeStyle) =>
   StyleSheet.create({
     page: {
-      padding: 24,
+      padding: style.pagePaddingY + "px " + style.pagePaddingX + "px",
       fontSize: style.fontSize,
       fontFamily: style.fontFamily,
       lineHeight: parseFloat(style.lineHeight.toString()),

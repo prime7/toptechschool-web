@@ -1,6 +1,8 @@
 import { ResumeStyle } from "./types";
 
 export const defaultStyle: ResumeStyle = {
+  pagePaddingX: 24,
+  pagePaddingY: 24,
   fontFamily: "Helvetica",
   fontSize: 11,
   accentColor: '#000',

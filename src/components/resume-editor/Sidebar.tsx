@@ -1,16 +1,32 @@
-import React from 'react';
-import { useResume } from './context/ResumeContext';
-import { SectionType } from './types';
-import { User, FileText, Briefcase, GraduationCap, Calendar, Plus, GripVertical, Layout, Type } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
+import React from "react";
+import { useResume } from "./context/ResumeContext";
+import { SectionType } from "./types";
+import {
+  User,
+  FileText,
+  Briefcase,
+  GraduationCap,
+  Calendar,
+  Plus,
+  GripVertical,
+  Layout,
+  Type,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 
 interface SectionsListProps {
   activeSection: SectionType;
@@ -23,29 +39,52 @@ interface SectionInfo {
   icon: React.ReactNode;
 }
 
-const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSection }) => {
+const SectionsList: React.FC<SectionsListProps> = ({
+  activeSection,
+  setActiveSection,
+}) => {
   const { state, dispatch } = useResume();
 
   const sections: SectionInfo[] = [
-    { id: 'personal', label: 'Personal Information', icon: <User className="h-4 w-4" /> },
-    { id: 'summary', label: 'Professional Summary', icon: <FileText className="h-4 w-4" /> },
-    { id: 'work', label: 'Work Experience', icon: <Briefcase className="h-4 w-4" /> },
-    { id: 'education', label: 'Education', icon: <GraduationCap className="h-4 w-4" /> },
-    { id: 'projects', label: 'Projects', icon: <Calendar className="h-4 w-4" /> },
+    {
+      id: "personal",
+      label: "Personal Information",
+      icon: <User className="h-4 w-4" />,
+    },
+    {
+      id: "summary",
+      label: "Professional Summary",
+      icon: <FileText className="h-4 w-4" />,
+    },
+    {
+      id: "work",
+      label: "Work Experience",
+      icon: <Briefcase className="h-4 w-4" />,
+    },
+    {
+      id: "education",
+      label: "Education",
+      icon: <GraduationCap className="h-4 w-4" />,
+    },
+    {
+      id: "projects",
+      label: "Projects",
+      icon: <Calendar className="h-4 w-4" />,
+    },
   ];
 
-  const availableSections = sections.filter(section => {
+  const availableSections = sections.filter((section) => {
     if (state.activeSections.includes(section.id)) return false;
-    
+
     // Check if section has content
     switch (section.id) {
-      case 'summary':
+      case "summary":
         return !state.summary;
-      case 'work':
+      case "work":
         return !state.work || state.work.length === 0;
-      case 'education':
+      case "education":
         return !state.education || state.education.length === 0;
-      case 'projects':
+      case "projects":
         return !state.projects || state.projects.length === 0;
       default:
         return true;
@@ -53,20 +92,23 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
   });
 
   const toggleSection = (sectionId: SectionType) => {
-    dispatch({ type: 'TOGGLE_SECTION', payload: sectionId });
+    dispatch({ type: "TOGGLE_SECTION", payload: sectionId });
 
-    if (sectionId === activeSection && !state.activeSections.includes(sectionId)) {
-      setActiveSection(state.activeSections[0] || 'personal');
+    if (
+      sectionId === activeSection &&
+      !state.activeSections.includes(sectionId)
+    ) {
+      setActiveSection(state.activeSections[0] || "personal");
     }
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     const sectionId = state.activeSections[index];
-    if (sectionId === 'personal') {
+    if (sectionId === "personal") {
       e.preventDefault();
       return;
     }
-    e.dataTransfer.setData('text/plain', index.toString());
+    e.dataTransfer.setData("text/plain", index.toString());
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -75,28 +117,32 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
 
   const handleDrop = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'));
+    const draggedIndex = parseInt(e.dataTransfer.getData("text/plain"));
     if (draggedIndex === index) return;
 
     const newSections = [...state.activeSections];
     const [removed] = newSections.splice(draggedIndex, 1);
-    
-    const targetIndex = index === 0 && newSections[0] === 'personal' ? 1 : index;
+
+    const targetIndex =
+      index === 0 && newSections[0] === "personal" ? 1 : index;
     newSections.splice(targetIndex, 0, removed);
-    
-    if (newSections.includes('personal') && newSections[0] !== 'personal') {
-        const personalIndex = newSections.indexOf('personal');
-        newSections.splice(personalIndex, 1);
-        newSections.unshift('personal');
+
+    if (newSections.includes("personal") && newSections[0] !== "personal") {
+      const personalIndex = newSections.indexOf("personal");
+      newSections.splice(personalIndex, 1);
+      newSections.unshift("personal");
     }
 
-    dispatch({ type: 'REORDER_SECTIONS', payload: newSections });
+    dispatch({ type: "REORDER_SECTIONS", payload: newSections });
   };
 
-  const handleStyleChange = (key: keyof typeof state.style, value: string | number | boolean) => {
+  const handleStyleChange = (
+    key: keyof typeof state.style,
+    value: string | number | boolean
+  ) => {
     dispatch({
-      type: 'UPDATE_STYLE',
-      payload: { [key]: value }
+      type: "UPDATE_STYLE",
+      payload: { [key]: value },
     });
   };
 
@@ -119,13 +165,13 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
               {state.activeSections.length > 0 && (
                 <div className="space-y-1 mb-4">
                   {state.activeSections.map((sectionId, index) => {
-                    const section = sections.find(s => s.id === sectionId);
+                    const section = sections.find((s) => s.id === sectionId);
                     if (!section) return null;
 
                     return (
                       <div
                         key={section.id}
-                        draggable={section.id !== 'personal'}
+                        draggable={section.id !== "personal"}
                         onDragStart={(e) => handleDragStart(e, index)}
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, index)}
@@ -137,12 +183,12 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                         )}
                         onClick={() => setActiveSection(section.id)}
                       >
-                        {section.id !== 'personal' && (
+                        {section.id !== "personal" && (
                           <GripVertical className="h-4 w-4 mr-2 text-muted-foreground cursor-grab" />
                         )}
                         <span className="mr-3">{section.icon}</span>
                         <span className="font-medium">{section.label}</span>
-                        {section.id !== 'personal' && (
+                        {section.id !== "personal" && (
                           <Button
                             variant="ghost"
                             size="icon"
@@ -165,10 +211,12 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
               {availableSections.length > 0 && (
                 <React.Fragment>
                   <div className="px-3 mb-2">
-                    <h3 className="text-sm font-medium text-muted-foreground">Add Sections</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      Add Sections
+                    </h3>
                   </div>
                   <div className="space-y-1">
-                    {availableSections.map(section => (
+                    {availableSections.map((section) => (
                       <div
                         key={section.id}
                         className="flex items-center px-3 py-2 text-sm text-muted-foreground hover:bg-muted rounded-md cursor-pointer"
@@ -191,11 +239,48 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
           <TabsContent value="styling">
             <div className="px-4 py-2 space-y-6">
               <div className="space-y-4">
+                <Label>Page Margins</Label>
+                <div className="space-y-2">
+                  <Label>Horizontal Margin</Label>
+                  <div className="flex items-center space-x-2">
+                    <Slider
+                      value={[state.style.pagePaddingX]}
+                      onValueChange={([value]) =>
+                        handleStyleChange("pagePaddingX", value)
+                      }
+                      max={40}
+                      min={16}
+                      step={2}
+                    />
+                    <span className="w-12 text-sm">
+                      {state.style.pagePaddingX}
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Vertical Margin</Label>
+                  <div className="flex items-center space-x-2">
+                    <Slider
+                      value={[state.style.pagePaddingY]}
+                      onValueChange={([value]) =>
+                        handleStyleChange("pagePaddingY", value)
+                      }
+                      max={40}
+                      min={16}
+                      step={2}
+                    />
+                    <span className="w-12 text-sm">
+                      {state.style.pagePaddingY}
+                    </span>
+                  </div>
+                </div>
                 <div className="space-y-2">
                   <Label>Font Family</Label>
-                  <Select 
+                  <Select
                     value={state.style.fontFamily}
-                    onValueChange={(value) => handleStyleChange('fontFamily', value)}
+                    onValueChange={(value) =>
+                      handleStyleChange("fontFamily", value)
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select font" />
@@ -203,7 +288,9 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                     <SelectContent>
                       <SelectItem value="Helvetica">Helvetica</SelectItem>
                       <SelectItem value="Times-Roman">Times-Roman</SelectItem>
-                      <SelectItem value="Anonymous Pro">Anonymous Pro</SelectItem>
+                      <SelectItem value="Anonymous Pro">
+                        Anonymous Pro
+                      </SelectItem>
                       <SelectItem value="Open Sans">Open Sans</SelectItem>
                       <SelectItem value="Poppins">Poppins</SelectItem>
                     </SelectContent>
@@ -213,30 +300,38 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                 <div className="space-y-2">
                   <Label>Font Size</Label>
                   <div className="flex items-center space-x-2">
-                    <Slider 
-                      value={[state.style.fontSize]} 
-                      onValueChange={([value]) => handleStyleChange('fontSize', value)}
-                      max={13} 
-                      min={10} 
-                      step={.1} 
+                    <Slider
+                      value={[state.style.fontSize]}
+                      onValueChange={([value]) =>
+                        handleStyleChange("fontSize", value)
+                      }
+                      max={13}
+                      min={10}
+                      step={0.1}
                     />
-                    <span className="w-12 text-sm">{state.style.fontSize}px</span>
+                    <span className="w-12 text-sm">
+                      {state.style.fontSize}px
+                    </span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Accent Color</Label>
                   <div className="flex items-center space-x-2">
-                    <input 
-                      type="color" 
-                      className="w-10 h-10 rounded-md cursor-pointer border border-input" 
+                    <input
+                      type="color"
+                      className="w-10 h-10 rounded-md cursor-pointer border border-input"
                       value={state.style.accentColor}
-                      onChange={(e) => handleStyleChange('accentColor', e.target.value)}
+                      onChange={(e) =>
+                        handleStyleChange("accentColor", e.target.value)
+                      }
                     />
-                    <Input 
-                      type="text" 
+                    <Input
+                      type="text"
                       value={state.style.accentColor}
-                      onChange={(e) => handleStyleChange('accentColor', e.target.value)}
+                      onChange={(e) =>
+                        handleStyleChange("accentColor", e.target.value)
+                      }
                       className="w-24"
                     />
                   </div>
@@ -245,42 +340,52 @@ const SectionsList: React.FC<SectionsListProps> = ({ activeSection, setActiveSec
                 <div className="space-y-2">
                   <Label>Section Spacing</Label>
                   <div className="flex items-center space-x-2">
-                    <Slider 
-                      value={[state.style.sectionSpacing]} 
-                      onValueChange={([value]) => handleStyleChange('sectionSpacing', value)}
-                      max={14} 
-                      min={6} 
-                      step={1} 
+                    <Slider
+                      value={[state.style.sectionSpacing]}
+                      onValueChange={([value]) =>
+                        handleStyleChange("sectionSpacing", value)
+                      }
+                      max={14}
+                      min={6}
+                      step={1}
                     />
-                    <span className="w-12 text-sm">{state.style.sectionSpacing}px</span>
+                    <span className="w-12 text-sm">
+                      {state.style.sectionSpacing}px
+                    </span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Line Height</Label>
                   <div className="flex items-center space-x-2">
-                    <Slider 
-                      value={[state.style.lineHeight]} 
-                      onValueChange={([value]) => handleStyleChange('lineHeight', value)}
-                      max={2} 
-                      min={1} 
-                      step={0.1} 
+                    <Slider
+                      value={[state.style.lineHeight]}
+                      onValueChange={([value]) =>
+                        handleStyleChange("lineHeight", value)
+                      }
+                      max={2}
+                      min={1}
+                      step={0.1}
                     />
-                    <span className="w-12 text-sm">{state.style.lineHeight}</span>
+                    <span className="w-12 text-sm">
+                      {state.style.lineHeight}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between space-x-2">
                   <Label>Show Section Dividers</Label>
                   <Switch
                     checked={state.style.showSectionHorizontalRule}
-                    onCheckedChange={(checked) => handleStyleChange('showSectionHorizontalRule', checked)}
+                    onCheckedChange={(checked) =>
+                      handleStyleChange("showSectionHorizontalRule", checked)
+                    }
                   />
                 </div>
 
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full"
-                  onClick={() => dispatch({ type: 'RESET_STYLE' })}
+                  onClick={() => dispatch({ type: "RESET_STYLE" })}
                 >
                   Reset to Default
                 </Button>
