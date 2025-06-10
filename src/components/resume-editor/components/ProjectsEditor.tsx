@@ -54,7 +54,8 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Omit<ProjectItem, "id">>(emptyProject);
+  const [formData, setFormData] =
+    useState<Omit<ProjectItem, "id">>(emptyProject);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -105,30 +106,37 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
     <div className="space-y-2">
       <div className="grid grid-cols-[1fr,auto] gap-4 items-start mb-1">
         <div className="space-y-0.5">
-          {title && <h2 className="text-xl font-semibold leading-none">{title}</h2>}
+          {title && (
+            <h2 className="text-xl font-semibold leading-none">{title}</h2>
+          )}
           {description && (
-            <p className="text-sm text-muted-foreground">
-              {description}
-            </p>
+            <p className="text-sm text-muted-foreground">{description}</p>
           )}
         </div>
         <Button size="sm" onClick={() => setIsDialogOpen(true)} className="h-8">
-          <Plus className="h-4 w-4 mr-1" />Add Project
+          <Plus className="h-4 w-4 mr-1" />
+          Add Project
         </Button>
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Edit Project" : "Add Project"}</DialogTitle>
+            <DialogTitle>
+              {isEditing ? "Edit Project" : "Add Project"}
+            </DialogTitle>
             <DialogDescription>
-              {isEditing ? "Update your project information." : "Add a new project to your resume."}
+              {isEditing
+                ? "Update your project information."
+                : "Add a new project to your resume."}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm">Project Name</Label>
+              <Label htmlFor="name" className="text-sm">
+                Project Name
+              </Label>
               <Input
                 id="name"
                 name="name"
@@ -139,7 +147,9 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="url" className="text-sm">Project URL</Label>
+              <Label htmlFor="url" className="text-sm">
+                Project URL
+              </Label>
               <Input
                 id="url"
                 type="url"
@@ -154,24 +164,46 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
               <Label className="text-sm">Description & Key Features</Label>
               <ListContentEditor
                 description={formData.description}
-                onDescriptionChange={(description) => setFormData((prev) => ({ ...prev, description }))}
+                onDescriptionChange={(description) =>
+                  setFormData((prev) => ({ ...prev, description }))
+                }
                 bulletPoints={formData.points || []}
-                onAdd={(bullet) => setFormData((prev) => ({ ...prev, points: [...prev.points, bullet] }))}
-                onUpdate={(index, text) => setFormData((prev) => ({ ...prev, points: prev.points.map((b, i) => (i === index ? text : b)) }))}
-                onRemove={(index) => setFormData((prev) => ({ ...prev, points: prev.points.filter((_, i) => i !== index) }))}
-                onReorder={(newOrder) => setFormData((prev) => ({ ...prev, points: newOrder }))}
+                onAdd={(bullet) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: [...prev.points, bullet],
+                  }))
+                }
+                onUpdate={(index, text) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: prev.points.map((b, i) => (i === index ? text : b)),
+                  }))
+                }
+                onRemove={(index) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    points: prev.points.filter((_, i) => i !== index),
+                  }))
+                }
+                onReorder={(newOrder) =>
+                  setFormData((prev) => ({ ...prev, points: newOrder }))
+                }
                 showDescription={true}
                 descriptionLabel="Description"
                 descriptionPlaceholder="Describe the project, its purpose, and your role"
                 bulletPlaceholder="Add a key feature or achievement"
-                addButtonText="Add Feature"
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
-            <Button onClick={handleSubmit}>{isEditing ? "Update" : "Save"}</Button>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              {isEditing ? "Update" : "Save"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -236,17 +268,24 @@ const ProjectsEditor: React.FC<ProjectsEditorProps> = ({
         </div>
       )}
 
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Project</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this project? This action cannot be undone.
+              Are you sure you want to delete this project? This action cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -348,7 +348,6 @@ export function WorkEditor({
                 descriptionLabel="Description"
                 descriptionPlaceholder="Brief description of your role and responsibilities"
                 bulletPlaceholder="Add a key achievement or responsibility"
-                addButtonText="Add Achievement"
               />
             </div>
           </div>

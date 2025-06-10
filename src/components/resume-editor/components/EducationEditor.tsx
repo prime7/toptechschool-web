@@ -301,7 +301,6 @@ export function EducationEditor({
                 descriptionLabel="Description"
                 descriptionPlaceholder="Brief description of your education"
                 bulletPlaceholder="Add a key point or achievement"
-                addButtonText="Add Point"
               />
             </div>
           </div>
