@@ -15,7 +15,6 @@ interface BulletPointEditorProps {
 }
 
 interface BulletItem {
-  id: string;
   text: string;
   isEditing?: boolean;
 }
@@ -31,13 +30,13 @@ export function BulletPointEditor({
 }: BulletPointEditorProps) {
   const [newBullet, setNewBullet] = useState("");
   const [items, setItems] = useState<BulletItem[]>(
-    bulletPoints.map((text, i) => ({ id: i.toString(), text }))
+    bulletPoints.map((text) => ({ text }))
   );
-  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    setItems(bulletPoints.map((text, i) => ({ id: i.toString(), text })));
+    setItems(bulletPoints.map((text) => ({ text })));
   }, [bulletPoints]);
 
   const handleAddBullet = () => {
@@ -51,18 +50,18 @@ export function BulletPointEditor({
     onUpdate(index, text);
   };
 
-  const handleStartEditing = (id: string) => {
+  const handleStartEditing = (index: number) => {
     setItems((prev) =>
-      prev.map((item) =>
-        item.id === id
+      prev.map((item, i) =>
+        i === index
           ? { ...item, isEditing: true }
           : { ...item, isEditing: false }
       )
     );
   };
 
-  const handleDragStart = (e: React.DragEvent, id: string) => {
-    setDraggedItem(id);
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -78,10 +77,7 @@ export function BulletPointEditor({
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
     e.preventDefault();
-    if (!draggedItem || !onReorder) return;
-
-    const draggedIndex = items.findIndex((item) => item.id === draggedItem);
-    if (draggedIndex === -1) return;
+    if (draggedIndex === null || !onReorder) return;
 
     const newItems = [...items];
     const [draggedItemData] = newItems.splice(draggedIndex, 1);
@@ -89,7 +85,7 @@ export function BulletPointEditor({
 
     setItems(newItems);
     onReorder(newItems.map((item) => item.text));
-    setDraggedItem(null);
+    setDraggedIndex(null);
     setDragOverIndex(null);
   };
 
@@ -97,40 +93,63 @@ export function BulletPointEditor({
     <div className="space-y-1">
       <div className="rounded-md bg-card text-card-foreground">
         {items.map((item, index) => (
-          <div key={item.id}>
+          <div key={index}>
             <BulletItemComponent
               item={item}
               index={index}
               isDraggedOver={dragOverIndex === index}
+              isDragging={draggedIndex === index}
               onDragStart={handleDragStart}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onUpdate={(text) => handleUpdateBullet(index, text)}
               onRemove={() => onRemove(index)}
-              onStartEdit={() => handleStartEditing(item.id)}
+              onStartEdit={() => handleStartEditing(index)}
             />
           </div>
         ))}
       </div>
 
-      <div className="flex gap-2">
-        <Input
-          value={newBullet}
-          onChange={(e) => setNewBullet(e.target.value)}
-          placeholder={placeholder || "Add a new bullet point"}
-          className="h-8 text-sm"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleAddBullet();
-            }
-          }}
-        />
-        <Button onClick={handleAddBullet} size="sm" className="flex-shrink-0">
-          <Plus className="h-3.5 w-3.5 mr-1" />
-          {addButtonText || "Add"}
-        </Button>
+      <div className="px-2 py-1.5">
+        <div className="flex items-center gap-2">
+          <div className="w-2.5" />
+          <div className="flex-1">
+            <textarea
+              value={newBullet}
+              onChange={(e) => {
+                setNewBullet(e.target.value);
+                e.currentTarget.style.height = "auto";
+                e.currentTarget.style.height =
+                  Math.max(32, e.currentTarget.scrollHeight) + "px";
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleAddBullet();
+                } else if (e.key === "Escape") {
+                  e.preventDefault();
+                  setNewBullet("");
+                }
+              }}
+              onBlur={() => {
+                if (newBullet.trim()) {
+                  handleAddBullet();
+                }
+              }}
+              rows={1}
+              className="w-full resize-none rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              style={{
+                minHeight: "32px",
+                height: "32px",
+                overflow: "hidden",
+              }}
+              placeholder={
+                placeholder || "Press Enter to add. Cancel with Escape."
+              }
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -140,7 +159,8 @@ interface BulletItemProps {
   item: BulletItem;
   index: number;
   isDraggedOver: boolean;
-  onDragStart: (e: React.DragEvent, id: string) => void;
+  isDragging: boolean;
+  onDragStart: (e: React.DragEvent, index: number) => void;
   onDragOver: (e: React.DragEvent, index: number) => void;
   onDragLeave: () => void;
   onDrop: (e: React.DragEvent, index: number) => void;
@@ -153,6 +173,7 @@ const BulletItemComponent: React.FC<BulletItemProps> = ({
   item,
   index,
   isDraggedOver,
+  isDragging,
   onDragStart,
   onDragOver,
   onDragLeave,
@@ -190,9 +211,13 @@ const BulletItemComponent: React.FC<BulletItemProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSave();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setEditText(item.text); // Reset to original text
+      onUpdate(item.text); // This will trigger the parent to exit edit mode
     }
   };
 
@@ -200,15 +225,16 @@ const BulletItemComponent: React.FC<BulletItemProps> = ({
     <div
       className={cn(
         "group flex items-center gap-2 py-1.5 px-2 rounded-sm transition-colors",
-        isDraggedOver && "bg-muted/50",
-        !isDraggedOver && "hover:bg-muted/30 data-[dragging=true]:bg-muted/30"
+        isDraggedOver && "bg-muted/50 border-t-2 border-primary",
+        isDragging && "opacity-50",
+        !isDraggedOver && !isDragging && "hover:bg-muted/30"
       )}
       draggable={!item.isEditing}
-      onDragStart={(e) => onDragStart(e, item.id)}
+      onDragStart={(e) => onDragStart(e, index)}
       onDragOver={(e) => onDragOver(e, index)}
       onDragLeave={onDragLeave}
       onDrop={(e) => onDrop(e, index)}
-      data-dragging={isDraggedOver}
+      data-dragging={isDragging}
     >
       <div
         className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors"
