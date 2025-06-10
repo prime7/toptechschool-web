@@ -199,8 +199,16 @@ const SummarySection = ({
   </View>
 );
 
-const WorkItem = ({ item, styles }: { item: WorkItem; styles: any }) => (
-  <View style={{ marginBottom: styles.sectionSpacing * 0.5 }} wrap={false}>
+const WorkItem = ({
+  item,
+  styles,
+  isLast = false,
+}: {
+  item: WorkItem;
+  styles: any;
+  isLast?: boolean;
+}) => (
+  <View style={{ marginBottom: isLast ? 0 : 6 }} wrap={false}>
     <View style={styles.row}>
       <View style={styles.title}>
         <Text>
@@ -261,7 +269,12 @@ const WorkSection = ({ work, styles }: { work: WorkItem[]; styles: any }) => {
             <Text style={styles.sectionHeader}>Experience</Text>
           )}
           {chunk.map((item, index) => (
-            <WorkItem key={index} item={item} styles={styles} />
+            <WorkItem
+              key={index}
+              item={item}
+              styles={styles}
+              isLast={index === chunk.length - 1}
+            />
           ))}
         </View>
       ))}
@@ -276,11 +289,12 @@ const EducationItem = ({
   item: EducationItem;
   styles: any;
 }) => (
-  <View style={{ marginBottom: 10 }} wrap={false}>
+  <View style={styles.section} wrap={false}>
     <View style={styles.row}>
       <View>
-        <Text style={styles.title}>{item.degree}</Text>
-        <Text>{item.institution}</Text>
+        <Text style={styles.title}>
+          {item.degree} - {item.institution}
+        </Text>
       </View>
       <Text style={styles.date}>
         {formatDate(item.startDate)} -{" "}
@@ -302,55 +316,36 @@ const EducationSection = ({
 }: {
   education: EducationItem[];
   styles: any;
-}) => {
-  const chunks: EducationItem[][] = [];
-  let currentChunk: EducationItem[] = [];
-  let currentChunkLength = 0;
-
-  const estimateItemSize = (item: EducationItem) => {
-    return (
-      0.5 + (item.description ? 0.2 : 0) + (item.points?.length || 0) * 0.15
-    );
-  };
-
-  education.forEach((item) => {
-    const itemSize = estimateItemSize(item);
-
-    if (currentChunkLength + itemSize > 5) {
-      if (currentChunk.length > 0) {
-        chunks.push([...currentChunk]);
-        currentChunk = [];
-        currentChunkLength = 0;
-      }
-    }
-
-    currentChunk.push(item);
-    currentChunkLength += itemSize;
-  });
-
-  if (currentChunk.length > 0) {
-    chunks.push(currentChunk);
-  }
-
-  return (
-    <>
-      {chunks.map((chunk, chunkIndex) => (
-        <View
-          key={`edu-chunk-${chunkIndex}`}
-          style={styles.section}
-          break={chunkIndex > 0}
-        >
-          {chunkIndex === 0 && (
-            <Text style={styles.sectionHeader}>Education</Text>
-          )}
-          {chunk.map((item, index) => (
-            <EducationItem key={index} item={item} styles={styles} />
-          ))}
+}) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionHeader}>Education</Text>
+    {education.map((item, index) => (
+      <View
+        key={index}
+        style={{ marginBottom: index === education.length - 1 ? 0 : 6 }}
+        wrap={false}
+      >
+        <View style={styles.row}>
+          <View>
+            <Text style={styles.title}>
+              {item.degree} - {item.institution}
+            </Text>
+          </View>
+          <Text style={styles.date}>
+            {formatDate(item.startDate)} -{" "}
+            {item.endDate ? formatDate(item.endDate) : "Present"}
+          </Text>
         </View>
-      ))}
-    </>
-  );
-};
+        {item.description && (
+          <Text style={styles.description}>{item.description}</Text>
+        )}
+        {item.points && item.points.length > 0 && (
+          <BulletPointsList bulletPoints={item.points} styles={styles} />
+        )}
+      </View>
+    ))}
+  </View>
+);
 
 const ProjectItem = ({
   project,
