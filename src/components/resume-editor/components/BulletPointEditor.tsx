@@ -243,7 +243,8 @@ const BulletItemComponent: React.FC<BulletItemProps> = ({
           <button
             type="button"
             onClick={onStartEdit}
-            className="w-full text-left py-1 text-sm text-foreground/90 hover:text-primary truncate"
+            className="w-full text-left py-1 text-sm text-foreground/90 hover:text-primary break-words whitespace-pre-line truncate line-clamp-3"
+            title={item.text}
           >
             {item.text || "Click to edit..."}
           </button>

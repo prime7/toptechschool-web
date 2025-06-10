@@ -17,7 +17,6 @@ interface ListContentEditorProps {
   showDescription?: boolean;
 
   bulletPlaceholder?: string;
-  addButtonText?: string;
   className?: string;
 }
 
@@ -33,7 +32,6 @@ export function ListContentEditor({
   descriptionPlaceholder = "Enter description...",
   showDescription = false,
   bulletPlaceholder = "Add a new bullet point",
-  addButtonText = "Add",
   className = "",
 }: ListContentEditorProps) {
   return (
@@ -57,7 +55,6 @@ export function ListContentEditor({
         onRemove={onRemove}
         onReorder={onReorder}
         placeholder={bulletPlaceholder}
-        addButtonText={addButtonText}
       />
     </div>
   );

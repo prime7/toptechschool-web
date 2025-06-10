@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { InputField } from "@/components/common/FormField";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useToast } from "@/hooks/use-toast";
-import { type User, } from "@prisma/client";
+import { type User } from "@prisma/client";
 import {
   Edit,
   MapPin,
@@ -78,7 +78,7 @@ const ProfileEditDialog = ({
   user: User;
 }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="sm:max-w-[575px] p-6 border-primary/20 overflow-y-auto max-h-[90vh]">
+    <DialogContent className="p-6 border-primary/20 overflow-y-auto max-w-4xl">
       <DialogHeader className="space-y-2">
         <DialogTitle className="text-xl font-semibold">
           Edit Profile
@@ -147,7 +147,6 @@ const ProfileEditDialog = ({
             descriptionPlaceholder="Write a brief summary about your professional experience, skills, and career goals..."
             showDescription={true}
             bulletPlaceholder="Add a career highlight or achievement"
-            addButtonText="Add Highlight"
           />
         </div>
 
