@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus, X, Edit3, GripVertical } from "lucide-react";
+import { X, Edit3, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BulletPointEditorProps {
@@ -11,7 +10,6 @@ interface BulletPointEditorProps {
   onRemove: (index: number) => void;
   onReorder?: (bulletPoints: string[]) => void;
   placeholder?: string;
-  addButtonText?: string;
 }
 
 interface BulletItem {
@@ -26,7 +24,6 @@ export function BulletPointEditor({
   onRemove,
   onReorder,
   placeholder,
-  addButtonText,
 }: BulletPointEditorProps) {
   const [newBullet, setNewBullet] = useState("");
   const [items, setItems] = useState<BulletItem[]>(
