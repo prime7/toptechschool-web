@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Save, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { VoiceTextarea } from "@/components/common/VoiceTextArea";
 import axios, { AxiosError } from "axios";
 
 interface AnswerSubmissionProps {
@@ -42,7 +42,7 @@ export default function AnswerSubmission({
           : "Please wait while we save your answer."
       );
 
-      const method = withAIFeedback ? 'post' : 'patch';
+      const method = withAIFeedback ? "post" : "patch";
       await axios[method]("/api/evaluate/practice", {
         questionId,
         answer: localAnswer,
@@ -105,11 +105,13 @@ export default function AnswerSubmission({
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="relative">
-          <Textarea
+          <VoiceTextarea
             value={localAnswer}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-            placeholder="Type your answer here... (minimum 50 characters)"
-            className="min-h-[200px] resize-y"
+            onChange={handleAnswerChange}
+            placeholder="Type your answer here or click the microphone to speak."
+            className="min-h-[200px]"
+            mode="toggle"
+            showStatus={true}
           />
         </div>
 
