@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { Mic, MicOff, Play, Pause } from "lucide-react";
+import { Mic, MicOff } from "lucide-react";
 
 // Type declarations for Speech Recognition API
 declare global {
@@ -374,18 +374,9 @@ export const VoiceTextarea: React.FC<VoiceTextareaProps> = ({
     [onChange, isRecording]
   );
 
-  // Render the appropriate icon
   const renderIcon = () => {
     if (micIcon) {
       return micIcon;
-    }
-
-    if (mode === "toggle") {
-      return isRecording ? (
-        <Pause className="h-4 w-4" />
-      ) : (
-        <Play className="h-4 w-4" />
-      );
     }
 
     return isRecording ? (
