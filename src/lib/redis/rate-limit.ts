@@ -37,7 +37,7 @@ const rateLimitConfig: Record<RateLimitKey, RateLimitConfig> = {
   [RateLimitKey.PracticeAnalyze]: {
     limit: 10, 
     duration: '1d',
-    errorMessage: 'You can analyze 1 practice answer per day'
+    errorMessage: 'You can analyze 10 practice answer per day'
   }
 }
 
