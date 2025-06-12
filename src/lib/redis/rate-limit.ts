@@ -1,6 +1,8 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { redis } from './client';
 
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 export enum RateLimitKey {
   ResumeUpload = 'resume_upload',
   JobAnalyze = 'job_analyze',
@@ -64,6 +66,11 @@ export class RateLimitError extends Error {
 }
 
 export const checkRateLimit = async (key: RateLimitKey, identifier: string) => {
+  // Skip rate limiting in development
+  if (isDevelopment) {
+    return true;
+  }
+
   const rateLimiter = getRateLimitKey(key);
   const uniqueKey = `${key}_${identifier}`;
   const config = rateLimitConfig[key];

@@ -3,16 +3,16 @@ import { AIProvider, AIConfig } from "../types";
 
 const MODEL_COST_PER_TOKEN = {
   "gpt-4o-mini": {
-    input: 0.00000015,
-    output: 0.00000060
+    input: 0.00000015,    // $0.15/1M tokens
+    output: 0.00000060    // $0.60/1M tokens
   },
   "gpt-4.1-mini": {
-    input: 0.00000040,
-    output: 0.00000160,
+    input: 0.00000040,    // $0.40/1M tokens
+    output: 0.00000160,   // $1.60/1M tokens
   },
   "gpt-4.1-2025-04-14": {
-    input: 0.00000800,
-    output: 0.00002000
+    input: 0.00000800,    // $8.00/1M tokens
+    output: 0.00002000    // $20.00/1M tokens
   }
 } as const;
 

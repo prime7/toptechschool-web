@@ -3,12 +3,12 @@ import { AIProvider, AIConfig } from "../types";
 
 const MODEL_COST_PER_TOKEN = {
   "claude-3-haiku-20240307": {
-    input: 0.00000025,
-    output: 0.00000125
+    input: 0.00000025,    // $0.25/1M tokens
+    output: 0.00000125    // $1.25/1M tokens
   },
   "claude-3-5-haiku-20241022": {
-    input: 0.00000080,
-    output: 0.00000400
+    input: 0.00000080,    // $0.80/1M tokens
+    output: 0.00000400    // $4.00/1M tokens
   }
 } as const;
 
