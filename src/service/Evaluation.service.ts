@@ -118,8 +118,8 @@ export class EvaluationService extends BaseService {
         const prompt = generatePracticePrompt(question, answer);
         const response = await ai.generateResponse({
           prompt,
-          model: "gpt-4.1-2025-04-14",
-          provider: "openai",
+          model: "gemini-2.0-flash",
+          provider: "gemini",
           requestType: "practice_evaluation",
           userId,
         });

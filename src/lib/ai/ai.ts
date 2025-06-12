@@ -1,10 +1,11 @@
 import { OpenAIProvider, OpenAIModels } from "./providers/openai";
 import { AnthropicProvider, AnthropicModels } from "./providers/anthropic";
+import { GeminiProvider, GeminiModels } from "./providers/gemini";
 import { AIProvider, AIConfig } from "./types";
 import { prisma } from "../prisma";
 
-export type ProviderType = 'openai' | 'anthropic';
-export type ModelType = OpenAIModels | AnthropicModels;
+export type ProviderType = 'openai' | 'anthropic' | 'gemini';
+export type ModelType = OpenAIModels | AnthropicModels | GeminiModels;
 
 export class AI {
   private providers: Map<ProviderType, AIProvider> = new Map();
@@ -19,6 +20,8 @@ export class AI {
         this.providers.set(type, new OpenAIProvider(config));
       } else if (type === 'anthropic') {
         this.providers.set(type, new AnthropicProvider(config));
+      } else if (type === 'gemini') {
+        this.providers.set(type, new GeminiProvider(config));
       }
     }
     this.defaultProvider = configs.defaultProvider;
@@ -95,6 +98,10 @@ export const ai = new AI({
     {
       type: 'anthropic',
       config: { apiKey: process.env.ANTHROPIC_API_KEY || '' }
+    },
+    {
+      type: 'gemini',
+      config: { apiKey: process.env.GEMINI_API_KEY || '' }
     }
   ],
   defaultProvider: 'anthropic'
