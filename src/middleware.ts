@@ -3,21 +3,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { ALLOWED_ORIGINS } from "@/lib/constants";
 
-// Internal use only
-export const RESTRICTED_PAGES = [
-  "/upload",
-  "/resume",
-  "/job",
-  "/practice/:id/start",
-] as const;
-
-export const RESTRICTED_API_ROUTES = [
-  "/api/resume",
-  "/api/evaluate/job",
-  "/api/file-upload",
-  "/api/resume/:resumeId",
-] as const;
-
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const origin = req.headers.get("origin") || "";
@@ -49,15 +34,14 @@ export default async function middleware(req: NextRequest) {
   if (req.method === "OPTIONS") {
     return response;
   }
-
   if (pathname === "/verify-email" && session?.user?.isEmailVerified) {
     return NextResponse.redirect(new URL("/", req.url));
   } else if (pathname === "/verify-email" && !session?.user) {
     return NextResponse.redirect(new URL("/api/auth/signin", req.url));
   } else if (
-    ["/upload", "/resume", "/job", "/practice/:id/start"].some((route) =>
+    ["/upload", "/resume", "/job"].some((route) =>
       pathname.startsWith(route)
-    )
+    ) || pathname.match(/^\/practice\/.+/)
   ) {
     if (!session) {
       return NextResponse.redirect(new URL("/api/auth/signin", req.url));
@@ -86,7 +70,7 @@ export const config = {
     "/upload",
     "/resume",
     "/job",
-    "/practice/:id/start",
+    "/practice/:id",
     "/api/resume",
     "/api/evaluate/job",
     "/api/file-upload",
