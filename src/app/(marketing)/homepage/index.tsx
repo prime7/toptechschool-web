@@ -1,19 +1,23 @@
 "use client";
 
-import React, { useRef } from "react";
 import dynamic from "next/dynamic";
-import { Hero } from "./Hero";
+import { useRef } from "react";
+import { Hero } from "./_components/Hero";
 
 const Features = dynamic(
-  () => import("./Features").then((mod) => mod.Features),
+  () => import("./_components/Features").then((mod) => mod.Features),
   { ssr: false }
 );
 const HowItWorks = dynamic(
-  () => import("./HowItWorks").then((mod) => mod.HowItWorks),
+  () => import("./_components/HowItWorks").then((mod) => mod.HowItWorks),
   { ssr: false }
 );
 const FormSubmission = dynamic(
-  () => import("./Form").then((mod) => mod.FormSubmission),
+  () => import("./_components/Form").then((mod) => mod.FormSubmission),
+  { ssr: false }
+);
+const PracticeHighlight = dynamic(
+  () => import("./_components/PracticeHighlight").then((mod) => mod.PracticeHighlight),
   { ssr: false }
 );
 
@@ -29,6 +33,7 @@ export default function Home() {
       <div className="container mx-auto">
         <Hero onJoinWaitlist={scrollToWaitlist} />
         <Features />
+        <PracticeHighlight />
         <HowItWorks />
         <section ref={waitlistRef} className="mb-24">
           <FormSubmission />
