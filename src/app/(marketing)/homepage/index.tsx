@@ -16,6 +16,10 @@ const FormSubmission = dynamic(
   () => import("./_components/Form").then((mod) => mod.FormSubmission),
   { ssr: false }
 );
+const ResumeBuilderHighlight = dynamic(
+  () => import("./_components/ResumeBuilderHighlight").then((mod) => mod.ResumeBuilderHighlight),
+  { ssr: false }
+);
 const PracticeHighlight = dynamic(
   () => import("./_components/PracticeHighlight").then((mod) => mod.PracticeHighlight),
   { ssr: false }
@@ -33,6 +37,7 @@ export default function Home() {
       <div className="container mx-auto">
         <Hero onJoinWaitlist={scrollToWaitlist} />
         <Features />
+        <ResumeBuilderHighlight />
         <PracticeHighlight />
         <HowItWorks />
         <section ref={waitlistRef} className="mb-24">
