@@ -7,42 +7,42 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowRight, FileText, PenLine, Sparkles, User, FileSpreadsheet, GraduationCap, FolderGit2, Globe, Github, Linkedin, Plus, Zap } from "lucide-react"
+import { ArrowRight, FileText, PenLine, Sparkles, User, FileSpreadsheet, GraduationCap, FolderGit2, Globe, Github, Linkedin, Plus, Zap, Eye } from "lucide-react"
 import Link from 'next/link'
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Type } from "lucide-react"
 
 const SECTIONS = [
     {
         id: "personal",
         label: "Personal Information",
-        icon: <User className="h-4 w-4" />,
+        icon: <User size={16} />,
         active: true
     },
     {
         id: "summary",
         label: "Professional Summary",
-        icon: <FileText className="h-4 w-4" />,
+        icon: <FileText size={16} />,
         active: false
     },
     {
         id: "work",
         label: "Work Experience",
-        icon: <FileSpreadsheet className="h-4 w-4" />,
+        icon: <FileSpreadsheet size={16} />,
         active: false
     },
     {
         id: "education",
         label: "Education",
-        icon: <GraduationCap className="h-4 w-4" />,
+        icon: <GraduationCap size={16} />,
         active: false
     },
     {
         id: "projects",
         label: "Projects",
-        icon: <FolderGit2 className="h-4 w-4" />,
+        icon: <FolderGit2 size={16} />,
         active: false
     }
 ] as const
@@ -154,15 +154,15 @@ PreviewBadge.displayName = 'PreviewBadge'
 const ResumePreviewLinks = memo(({ website, linkedin, github }: Pick<ResumeData, 'website' | 'linkedin' | 'github'>) => (
     <div className="text-sm text-gray-600 space-y-1 mt-2">
         <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4" />
+            <Globe size={16} />
             <span>{website}</span>
         </div>
         <div className="flex items-center gap-2">
-            <Linkedin className="h-4 w-4" />
+            <Linkedin size={16} />
             <span>{linkedin}</span>
         </div>
         <div className="flex items-center gap-2">
-            <Github className="h-4 w-4" />
+            <Github size={16} />
             <span>{github}</span>
         </div>
     </div>
@@ -264,7 +264,7 @@ const MobileTabs = memo(({ activeTab, onTabChange }: {
                 )}
                 onClick={() => onTabChange('form')}
             >
-                <FileText className="h-4 w-4 mr-2" />
+                <FileText size={16} className="mr-2" />
                 Editor
             </Button>
             <Button
@@ -276,7 +276,7 @@ const MobileTabs = memo(({ activeTab, onTabChange }: {
                 )}
                 onClick={() => onTabChange('preview')}
             >
-                <FileText className="h-4 w-4 mr-2" />
+                <Eye size={16} className="mr-2" />
                 Preview
             </Button>
         </div>
@@ -497,7 +497,7 @@ export const ResumeBuilderHighlight = memo(() => {
                                                     variant="ghost"
                                                     className="w-full justify-start text-sm h-9 px-3 text-muted-foreground hover:bg-gray-900 hover:text-white"
                                                 >
-                                                    <Plus className="h-4 w-4" />
+                                                    <Plus size={16} />
                                                     <span className="ml-2">Projects</span>
                                                 </Button>
                                             </div>
@@ -574,7 +574,7 @@ export const ResumeBuilderHighlight = memo(() => {
                     <Link href="/resume/editor" className="sm:w-auto">
                         <Button
                             size="lg"
-                            className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold px-6 sm:px-10 py-2.5 sm:py-3 w- h-auto rounded-full transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] text-sm sm:text-base"
+                            className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold px-6 sm:px-10 py-2.5 sm:py-3 h-auto rounded-full transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] text-sm sm:text-base"
                         >
                             Start Building Your Resume
                             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
