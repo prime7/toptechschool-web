@@ -24,6 +24,10 @@ const PracticeHighlight = dynamic(
   () => import("./_components/PracticeHighlight").then((mod) => mod.PracticeHighlight),
   { ssr: false }
 );
+const ResumeAnalysisHighlight = dynamic(
+  () => import("./_components/ResumeAnalysisHighlight").then((mod) => mod.ResumeAnalysisHighlight),
+  { ssr: false }
+);
 
 export default function Home() {
   const waitlistRef = useRef<HTMLDivElement>(null);
@@ -39,6 +43,7 @@ export default function Home() {
         <Features />
         <ResumeBuilderHighlight />
         <PracticeHighlight />
+        <ResumeAnalysisHighlight />
         <HowItWorks />
         <section ref={waitlistRef} className="mb-24">
           <FormSubmission />
