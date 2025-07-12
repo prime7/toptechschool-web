@@ -297,8 +297,8 @@ const SidebarContent = memo(() => (
                     <h3 className="text-lg font-medium text-white">Missing Skills</h3>
                 </div>
                 <div className="space-y-2">
-                    {MISSING_SKILLS.map((skill, index) => (
-                        <div key={index} className="text-sm text-gray-300 bg-gray-800/50 p-3 rounded-lg">
+                    {MISSING_SKILLS.map((skill) => (
+                        <div key={skill} className="text-sm text-gray-300 bg-gray-800/50 p-3 rounded-lg">
                             {skill}
                         </div>
                     ))}
@@ -313,8 +313,8 @@ const SidebarContent = memo(() => (
                     <h3 className="text-lg font-medium text-white">Red Flags</h3>
                 </div>
                 <div className="space-y-2">
-                    {RED_FLAGS.map((flag, index) => (
-                        <div key={index} className="text-sm text-red-400 bg-red-900/20 p-3 rounded-lg border border-red-900/50">
+                    {RED_FLAGS.map((flag) => (
+                        <div key={flag.title} className="text-sm text-red-400 bg-red-900/20 p-3 rounded-lg border border-red-900/50">
                             {flag.title}
                         </div>
                     ))}
