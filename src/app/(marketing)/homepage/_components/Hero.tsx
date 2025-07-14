@@ -11,13 +11,13 @@ export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
   return (
     <div className="h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="text-center max-w-4xl mx-auto">
-        <Badge className="mb-8 py-1.5 px-4 bg-emerald-100/80 hover:bg-emerald-100/80 text-emerald-700 text-sm">
+        <Badge className="mb-8 py-1.5 px-4 bg-emerald-100/80 hover:bg-emerald-100/80 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm">
           🚀 Powered by Advanced AI Technology
         </Badge>
         <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
           Land Your Dream Tech Job with
           <span className="text-primary relative">
-            <span className="relative inline-block px-2 text-emerald-700">
+            <span className="px-2 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               Confidence
               <svg
                 className="absolute bottom-0 left-0 w-full h-2 text-primary/30"
