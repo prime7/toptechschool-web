@@ -33,6 +33,7 @@ export function ThemeToggle() {
         id="theme-switch"
         checked={theme === "dark"}
         onCheckedChange={toggleTheme}
+        className="data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-gray-800"
       />
       <Label htmlFor="theme-switch" className="sr-only">
         Toggle theme
