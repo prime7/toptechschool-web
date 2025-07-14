@@ -7,6 +7,7 @@ export const useEmailVerify = () => {
   const [verificationError, setVerificationError] = useState<string | null>(null)
   const [isVerified, setIsVerified] = useState(false)
   const { update } = useSession()
+
   const sendVerificationEmail = useCallback(async () => {
     setIsVerifying(true)
     setVerificationError(null)
@@ -42,7 +43,7 @@ export const useEmailVerify = () => {
         console.error("Failed to verify email:", err)
       })
       .finally(() => setIsVerifying(false))
-  }, [isVerifying, isVerified])
+  }, [isVerifying, isVerified, update])
 
   return {
     sendVerificationEmail,
