@@ -131,10 +131,10 @@ const FeatureCard = memo(({ feature }: { feature: typeof FEATURES[number] }) => 
                     {feature.icon}
                 </motion.div>
                 <div className="flex-1">
-                    <h3 className="text-lg sm:text-xl text-gray-900 dark:text-gray-100 mb-2 sm:mb-3 font-semibold">
+                    <h3 className="text-lg sm:text-xl mb-2 sm:mb-3 font-semibold">
                         {feature.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">
+                    <p className="dark:text-muted-foreground text-sm sm:text-base leading-relaxed">
                         {feature.description}
                     </p>
                 </div>
@@ -433,16 +433,14 @@ export const ResumeBuilderHighlight = memo(() => {
                     transition={{ duration: 0.5 }}
                     className="text-center mb-6 sm:mb-8 lg:mb-12"
                 >
-                    <Badge variant="outline" className="inline-flex items-center gap-2 rounded-full border-green-200 bg-green-50 text-green-600 dark:text-green-400 dark:bg-green-950/30 dark:border-green-900 px-2 sm:px-3 py-1 mb-3 sm:mb-4">
-                        <Zap size={14} />
-                        <span className="text-xs sm:text-sm font-medium">
-                            AI-Powered Resume Builder
-                        </span>
+                    <Badge className="mb-8 py-1.5 px-4 bg-emerald-100/80 hover:bg-emerald-100/80 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm">
+                        <Zap size={14} className='mr-2' />
+                        AI-Powered Resume Builder
                     </Badge>
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white">
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">
                         Build Your Professional Resume
                     </h2>
-                    <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-2">
+                    <p className="text- dark:text-muted-foreground max-w-2xl mx-auto px-2">
                         Create a standout resume with our intuitive builder. Get real-time preview, AI-powered suggestions, and export to PDF in minutes.
                     </p>
                 </motion.div>
