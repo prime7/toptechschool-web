@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Search, Eye, Save, Star, NotebookPen } from "lucide-react"
+import { ArrowRight, Search, Eye, Save, Star, NotebookPen, Mic } from "lucide-react"
 import { Section } from "@/components/common/Section"
 import { Progress } from "@/components/ui/progress"
 import { Input } from "@/components/ui/input"
@@ -90,10 +90,10 @@ const FeatureCard = memo(({ feature }: { feature: typeof FEATURES[number] }) => 
         {feature.icon}
       </div>
       <div className="flex-1">
-        <CardTitle className="text-lg sm:text-xl text-gray-800 dark:text-gray-100 mb-2 sm:mb-3">
+        <CardTitle className="text-lg sm:text-xl mb-2 sm:mb-3">
           {feature.title}
         </CardTitle>
-        <CardDescription className="text-gray-600 dark:text-muted-foreground text-sm sm:text-base leading-relaxed">
+        <CardDescription className="text-foreground dark:text-muted-foreground text-sm sm:text-base leading-relaxed">
           {feature.description}
         </CardDescription>
       </div>
@@ -105,7 +105,7 @@ FeatureCard.displayName = 'FeatureCard'
 const QuestionCard = memo(({ question }: { question: typeof PRACTICE_QUESTIONS[number] }) => (
   <Card className="bg-gray-900 border-gray-800 hover:bg-gray-900/80 transition-colors cursor-pointer group">
     <CardContent className="p-3">
-      <Badge variant="secondary" className="mb-2 text-xs bg-gray-950 text-muted-foreground px-2 py-0.5">
+      <Badge variant="secondary" className="mb-2 text-xs bg-gray-950 text-background dark:text-muted-foreground px-2 py-0.5">
         {question.category}
       </Badge>
       <h4 className="text-white text-xs font-medium mb-2 group-hover:text-green-400 transition-colors line-clamp-2">
@@ -127,8 +127,8 @@ const CategoryButton = memo(({ category }: { category: typeof CATEGORIES[number]
     className={cn(
       "px-3 py-1 rounded-full text-[10px] font-semibold h-auto",
       category.active
-        ? "bg-green-500/90 text-white hover:bg-green-600/90"
-        : "bg-gray-800/90 text-muted-foreground hover:bg-gray-700/90"
+        ? "bg-green-500/90 text-background hover:bg-green-600/90"
+        : "bg-gray-800/90 text-background dark:text-muted-foreground hover:bg-gray-700/90"
     )}
   >
     {category.name}
@@ -141,15 +141,14 @@ export const PracticeHighlight = memo(() => {
     <Section>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 text-green-600 dark:text-green-400 dark:bg-green-950/30 dark:border-green-900 px-3 sm:px-4 py-1 sm:py-1.5 mb-4 sm:mb-6">
-            <NotebookPen size={16} className="-rotate-45"/>
-            <span className="text-xs sm:text-sm font-medium">
-              Interview Practice Platform</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4">
+          <Badge className="mb-8 py-1.5 px-4 bg-emerald-100/80 hover:bg-emerald-100/80 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm">
+            <NotebookPen size={16} className="-rotate-45 mr-2" />
+            AI-Powered Interview Practice
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">
             Practice Interview Questions
           </h2>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+          <p className="dark:text-muted-foreground max-w-2xl mx-auto px-2">
             Sharpen your skills with our comprehensive collection of interview questions. Practice individual questions, save your answers, and get AI feedback.
           </p>
         </div>
@@ -186,7 +185,7 @@ export const PracticeHighlight = memo(() => {
                       <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
-                    <div className="flex-1 text-center text-xs lg:text-sm text-muted-foreground bg-gray-900 rounded-full px-3 py-1 mx-4">
+                    <div className="flex-1 text-center text-xs lg:text-sm text-background dark:text-muted-foreground bg-gray-900 rounded-full px-3 py-1 mx-4">
                       toptechschool.com/practice
                     </div>
                   </div>
@@ -196,11 +195,11 @@ export const PracticeHighlight = memo(() => {
                   <div className="flex flex-col sm:flex-row">
                     <div className="w-full sm:w-48 bg-gray-950 sm:rounded-bl-xl p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-800">
                       <div className="relative mb-4">
-                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3" />
+                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-background dark:text-muted-foreground h-3 w-3" />
                         <Input
                           type="text"
                           placeholder="Search questions..."
-                          className="w-full bg-gray-900/75 text-muted-foreground pl-7 pr-2 py-1.5 rounded border-gray-800 focus:ring-0 placeholder:text-xs"
+                          className="w-full bg-gray-900/75 text-background dark:text-muted-foreground pl-7 pr-2 py-1.5 rounded border-gray-800 focus:ring-0 placeholder:text-xs placeholder:text-background dark:placeholder:text-muted-foreground"
                         />
                       </div>
 
@@ -211,14 +210,14 @@ export const PracticeHighlight = memo(() => {
                       </div>
 
                       <div className="mb-4">
-                        <div className="text-xs text-muted-foreground mb-1">1 of 23 completed</div>
+                        <div className="text-xs text-background dark:text-muted-foreground mb-1">1 of 23 completed</div>
                         <Progress value={4} className="h-1 mb-4" />
 
                         <div className="space-y-1">
                           {STATS.map((stat, index) => (
-                            <div key={index} className="flex items-center justify-between text-muted-foreground text-xs">
+                            <div key={index} className="flex items-center justify-between text-background dark:text-muted-foreground text-xs">
                               <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full border border-muted-foreground"></div>
+                                <div className="w-2 h-2 rounded-full border border-background dark:border-muted-foreground"></div>
                                 {stat.label}
                               </div>
                               <span>{stat.count}</span>
@@ -230,7 +229,7 @@ export const PracticeHighlight = memo(() => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="w-full flex items-center justify-center gap-2 text-xs text-muted-foreground"
+                        className="w-full flex items-center justify-center gap-2 text-xs dark:text-muted-foreground"
                       >
                         <Eye size={16} />
                         Review Answers
@@ -239,8 +238,8 @@ export const PracticeHighlight = memo(() => {
 
                     <div className="flex-1 p-3 sm:p-4 bg-gray-950 sm:rounded-br-xl">
                       <div className="text-center mb-4">
-                        <h3 className="text-base sm:text-lg font-bold text-white mb-1">Practice Interview Questions</h3>
-                        <p className="text-xs text-muted-foreground">Sharpen your skills with our comprehensive collection</p>
+                        <h3 className="text-base sm:text-lg font-bold text-background mb-1 text-foreground">Practice Interview Questions</h3>
+                        <p className="text-xs text-background dark:text-muted-foreground">Sharpen your skills with our comprehensive collection</p>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative">
@@ -289,8 +288,8 @@ export const PracticeHighlight = memo(() => {
                       <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
-                    <div className="flex-1 text-center text-sm text-muted-foreground bg-gray-900 rounded-full px-3 py-1 mx-1">
-                      <span className="text-xs lg:text-sm text-muted-foreground">toptechschool.com/practice/answer</span>
+                    <div className="flex-1 text-center text-sm text-background dark:text-muted-foreground bg-gray-900 rounded-full px-3 py-1 mx-1">
+                      <span className="text-xs lg:text-sm">toptechschool.com/practice/answer</span>
                     </div>
                   </div>
                 </CardHeader>
@@ -299,15 +298,15 @@ export const PracticeHighlight = memo(() => {
                   <Card className="bg-gray-900 border-0 rounded-xl">
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start mb-6">
-                        <h3 className="font-semibold text-white">
+                        <h3 className="text-lg font-semibold text-background dark:text-foreground">
                           Describe your most challenging project
                         </h3>
-                        <div className="text-xs text-muted-foreground">200 chars</div>
+                        <div className="text-xs text-background dark:text-muted-foreground">200 chars</div>
                       </div>
 
                       <div className="relative">
                         <textarea
-                          className="w-full bg-gray-950 text-muted-foreground text-sm p-4 rounded-lg resize-none focus:outline-none min-h-[200px] mb-2 whitespace-pre-line"
+                          className="w-full bg-gray-950 text-background dark:text-muted-foreground text-sm p-4 rounded-lg resize-none focus:outline-none min-h-[200px] mb-2 whitespace-pre-line"
                           defaultValue={`Built a cloud automation platform with AWS, Next.js, and Prisma
 
 Challenge: Designed scalable system for resource management and automation
@@ -323,24 +322,21 @@ Results:
                         <Button
                           variant="secondary"
                           size="icon"
-                          className="absolute right-3 top-3 p-2 rounded-lg bg-gray-900 text-muted-foreground"
+                          className="absolute right-3 top-3 p-2 rounded-lg bg-gray-900 text-background dark:text-muted-foreground"
                         >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 14C13.66 14 15 12.66 15 11V5C15 3.34 13.66 2 12 2C10.34 2 9 3.34 9 5V11C9 12.66 10.34 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M19 11V13C19 16.87 15.87 20 12 20C8.13 20 5 16.87 5 13V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
+                          <Mic size={14} />
                         </Button>
                       </div>
-                      <div className="text-xs text-gray-500">Click mic to record • Auto-punctuation enabled</div>
+                      <div className="text-xs text-background/50 dark:text-muted-foreground">Click mic to record • Auto-punctuation enabled</div>
                     </CardContent>
                   </Card>
 
                   <Card className="bg-gray-900 mt-4 border-0 rounded-xl">
                     <CardContent className="p-6 text-sm">
-                      <p className="text-muted-foreground mb-4">
+                      <p className="text-background dark:text-muted-foreground mb-4">
                         Use STAR method to describe your experience:
                       </p>
-                      <p className="text-muted-foreground mb-6">
+                      <p className="text-background dark:text-muted-foreground mb-6">
                         Focus on project context, challenges, and measurable results.
                       </p>
                       <ul className="space-y-3">
@@ -349,7 +345,7 @@ Results:
                             <Badge variant="secondary" className="text-green-400 bg-green-500/10">
                               {index + 1}
                             </Badge>
-                            <span className="text-sm text-muted-foreground">{text}</span>
+                            <span className="text-sm text-background dark:text-muted-foreground">{text}</span>
                           </li>
                         ))}
                       </ul>
@@ -365,7 +361,7 @@ Results:
                       <Star size={16} />
                       Get Feedback
                     </Button>
-                    <Button variant="outline" className="text-muted-foreground hover:text-muted-foreground text-sm">
+                    <Button variant="outline" className="dark:text-muted-foreground hover:text-muted-foreground text-sm">
                       Clear
                     </Button>
                   </div>
@@ -382,15 +378,15 @@ Results:
                         </div>
                       </div>
 
-                      <p className="text-muted-foreground mb-6 text-sm">
+                      <p className="text-background dark:text-muted-foreground mb-6 text-sm">
                         Good structure and clear results. Add more specific details about technical challenges and implementation approach.
                       </p>
 
                       <div className="flex items-center gap-2 mb-4">
                         <div className="w-1 h-5 bg-green-500 rounded-full"></div>
-                        <h4 className="text-white text-sm font-medium">Suggestions</h4>
+                        <h4 className="text-background text-sm font-medium">Suggestions</h4>
                       </div>
-                      <ul className="space-y-3 text-muted-foreground text-sm">
+                      <ul className="space-y-3 text-background dark:text-muted-foreground text-sm">
                         {SUGGESTIONS.map((suggestion, index) => (
                           <li key={index} className="flex items-start gap-3">
                             <Badge variant="secondary" className="text-green-400 bg-green-500/10">
@@ -404,9 +400,9 @@ Results:
                       <div className="mt-8">
                         <div className="flex items-center gap-2 mb-4">
                           <div className="w-1 h-5 bg-green-500 rounded-full"></div>
-                          <h4 className="text-white text-sm font-medium">Answer</h4>
+                          <h4 className="text-background text-sm font-medium">Answer</h4>
                         </div>
-                        <p className="text-muted-foreground whitespace-pre-line text-sm">
+                        <p className="text-background dark:text-muted-foreground whitespace-pre-line text-sm">
                           Project: Cloud automation platform (AWS, Next.js, Prisma). Challenge: Built scalable system for resource management. Approach: Microservices architecture, API optimization, role-based access. Results: 40% faster provisioning, 500+ active users, high reliability scores.
                         </p>
                       </div>
