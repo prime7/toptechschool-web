@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { Hero } from "./_components/Hero";
 
 const Features = dynamic(
-  () => import("./_components/Features").then((mod) => mod.Features),
+  () => import("./_components/Features/Features").then((mod) => mod.Features),
   { ssr: false }
 );
 const HowItWorks = dynamic(
