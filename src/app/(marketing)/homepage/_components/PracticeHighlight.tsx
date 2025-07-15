@@ -145,10 +145,10 @@ export const PracticeHighlight = memo(() => {
             <NotebookPen size={16} className="-rotate-45 mr-2" />
             AI-Powered Interview Practice
           </Badge>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white">
             Practice Interview Questions
           </h2>
-          <p className="dark:text-muted-foreground max-w-2xl mx-auto px-2">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-2">
             Sharpen your skills with our comprehensive collection of interview questions. Practice individual questions, save your answers, and get AI feedback.
           </p>
         </div>

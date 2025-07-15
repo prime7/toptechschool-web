@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Inter, Roboto, Poppins, Open_Sans } from 'next/font/google';
 import { Providers } from "./providers";
 import Navbar from "@/components/navbar/navbar";
+import Footer from "@/components/footer/footer";
 import "./globals.css";
 import { auth } from "@/lib/auth";
 
@@ -76,6 +77,7 @@ export default async function RootLayout({
         <Providers>
           <Navbar session={session} />
           <main className="flex-1">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>

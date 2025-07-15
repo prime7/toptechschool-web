@@ -34,7 +34,7 @@ export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
             </span>
           </span>
         </h1>
-        <p className="dark:text-muted-foreground mb-12 leading-relaxed max-w-3xl mx-auto">
+        <p className="text-gray-600 dark:text-gray-300  mb-12 leading-relaxed max-w-3xl mx-auto">
           Leverage AI-powered insights, real-time job validation, and expert
           mentorship to accelerate your tech career journey. Join thousands of
           successful professionals who&apos;ve transformed their careers with
@@ -44,7 +44,7 @@ export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
           <Button
             onClick={onJoinWaitlist}
             size="lg"
-            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-lg px-8 py-3 h-auto shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-lg px-8 py-3 h-auto shadow-xl hover:shadow-2xl transition-all duration-300 rounded-full"
           >
             Start Your Journey
             <MoveRight size={20} className="ml-2" />
@@ -52,7 +52,7 @@ export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
           <Button
             variant="outline"
             size="lg"
-            className="text-lg px-8 py-3 h-auto transition-all duration-300 bg-transparent shadow-lg"
+            className="text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200 text-lg px-8 py-3 h-auto transition-all duration-300 bg-transparent shadow-lg rounded-full"
           >
             <Video size={20} className="mr-2" />
             Watch Demo (WIP)

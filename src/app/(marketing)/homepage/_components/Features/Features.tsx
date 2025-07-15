@@ -12,14 +12,13 @@ const FeaturesHeader = React.memo(function FeaturesHeader() {
       >
         ✨ Supercharge Your Career Growth
       </Badge>
-
-      <h2 className="text-4xl font-bold mb-6">
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white">
         Cutting-Edge{' '}
         <span className="text-emerald-600 dark:text-emerald-400">
           Features
         </span>
       </h2>
-      <p className="dark:text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
+      <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-2">
         Our platform combines AI technology with human expertise to provide
         you with the most comprehensive job search toolkit.
       </p>
