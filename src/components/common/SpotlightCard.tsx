@@ -1,7 +1,6 @@
 import React, { useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
-import "@/app/globals.css";
 
 interface SpotlightCardProps extends React.PropsWithChildren {
     className?: string;
