@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { Section } from "@/components/common/Section";
+import { MoveRight, Video } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface HeroProps {
   onJoinWaitlist: () => void;
@@ -9,52 +9,56 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onJoinWaitlist }) => {
   return (
-    <Section>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center">
-          <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-            🚀 Powered by Advanced AI Technology
-          </div>
-          <h1 className="text-6xl md:text-6xl font-bold tracking-tight mb-6">
-            Land Your Dream Tech Job with
-            <span className="text-primary relative">
-              <span className="relative inline-block px-2">
-                Confidence
-                <svg
-                  className="absolute bottom-0 left-0 w-full h-2 text-primary/30"
-                  viewBox="0 0 100 10"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    d="M0 5 Q 25 0, 50 5 Q 75 10, 100 5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                </svg>
-              </span>
+    <div className="h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="text-center max-w-4xl mx-auto">
+        <Badge className="mb-8 py-1.5 px-4 bg-emerald-100/80 hover:bg-emerald-100/80 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm">
+          🚀 Powered by Advanced AI Technology
+        </Badge>
+        <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
+          Land Your Dream Tech Job with
+          <span className="text-primary relative">
+            <span className="px-2 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+              Confidence
+              <svg
+                className="absolute bottom-0 left-0 w-full h-2 text-primary/30"
+                viewBox="0 0 100 10"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M0 5 Q 25 0, 50 5 Q 75 10, 100 5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                />
+              </svg>
             </span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Leverage AI-powered insights, real-time job validation, and expert
-            mentorship to accelerate your tech career journey. Join thousands of
-            successful professionals who&apos;ve transformed their careers with
-            our platform.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
-            <Button
-              size="lg"
-              className="gap-2 font-semibold"
-              onClick={onJoinWaitlist}
-            >
-              Get Started <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="lg" className="font-semibold">
-              Watch Demo(WIP)
-            </Button>
-          </div>
+          </span>
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300  mb-12 leading-relaxed max-w-3xl mx-auto">
+          Leverage AI-powered insights, real-time job validation, and expert
+          mentorship to accelerate your tech career journey. Join thousands of
+          successful professionals who&apos;ve transformed their careers with
+          our platform.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button
+            onClick={onJoinWaitlist}
+            size="lg"
+            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-lg px-8 py-3 h-auto shadow-xl hover:shadow-2xl transition-all duration-300 rounded-full"
+          >
+            Start Your Journey
+            <MoveRight size={20} className="ml-2" />
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            className="text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200 text-lg px-8 py-3 h-auto transition-all duration-300 bg-transparent shadow-lg rounded-full"
+          >
+            <Video size={20} className="mr-2" />
+            Watch Demo (WIP)
+          </Button>
         </div>
       </div>
-    </Section>
+    </div>
   );
 };

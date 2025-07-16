@@ -11,6 +11,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu"
 import { Menu } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
@@ -18,6 +24,7 @@ import { ThemeToggle } from "./ThemeSwitch";
 import { Session } from "next-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitialsFromName } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const navItems = [
@@ -49,12 +56,13 @@ const Navbar = ({ session }: { session: Session | null }) => {
               {item.name}
             </Link>
           ))}
-          <button
+          <Button
+            variant="outline"
             onClick={() => signOut()}
             className="text-sm font-medium text-muted-foreground hover:text-foreground text-left"
           >
             Sign Out
-          </button>
+          </Button>
         </div>
       ) : (
         <DropdownMenu modal={false}>
@@ -81,9 +89,16 @@ const Navbar = ({ session }: { session: Session | null }) => {
 
     return (
       <Button
-        variant="outline"
-        className="text-foreground"
         onClick={() => signIn()}
+        className={cn(
+          "bg-gradient-to-r from-emerald-500 to-teal-600",
+          "hover:from-emerald-600 hover:to-teal-700",
+          "text-white font-medium",
+          "px-6 py-2 h-9",
+          "rounded-full",
+          "shadow-md hover:shadow-xl",
+          "transition-all duration-300"
+        )}
       >
         Sign In
       </Button>
@@ -91,59 +106,95 @@ const Navbar = ({ session }: { session: Session | null }) => {
   };
 
   return (
-    <nav className="bg-background shadow-sm border-b border-border">
-      <div className="container mx-auto">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="hidden sm:flex sm:space-x-8">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-muted-foreground hover:border-primary hover:text-foreground"
-                >
-                  {item.name}
-                </a>
-              ))}
+    <nav className="bg-background p-2">
+      <div className="container mx-auto shadow-inner rounded-full px-3">
+        <div className="flex items-center justify-between py-2 md:py-3">
+          <div className="flex-1">
+            <Link
+              href="/"
+              className={cn(
+                "text-2xl font-bold tracking-tighter select-none",
+                "bg-gradient-to-r from-emerald-600 to-teal-600",
+                "bg-clip-text text-transparent",
+                "hover:from-emerald-500 hover:to-teal-500",
+                "transition-all duration-300",
+                "flex items-center"
+              )}
+            >
+              <span className="text-foreground">Toptech</span>school
+            </Link>
+          </div>
+
+          <div className="flex-1 flex items-center justify-center">
+            <div className="hidden sm:block">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  {navItems.map((item) => (
+                    <NavigationMenuItem key={item.name}>
+                      <NavigationMenuLink
+                        asChild
+                        className={cn(
+                          "group inline-flex w-max items-center justify-center px-4 py-2",
+                          "text-sm font-medium uppercase tracking-wide",
+                          "relative transition-all duration-300",
+                          "dark:text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400",
+                          "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full",
+                          "after:origin-left after:scale-x-0",
+                          "after:bg-gradient-to-r after:from-emerald-500 after:to-teal-500",
+                          "after:transition-transform after:duration-300 hover:after:scale-x-100",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
+                          "disabled:pointer-events-none disabled:opacity-50"
+                        )}
+                      >
+                        <Link href={item.href}>{item.name}</Link>
+                      </NavigationMenuLink>
+                    </NavigationMenuItem>
+                  ))}
+                </NavigationMenuList>
+              </NavigationMenu>
             </div>
           </div>
-          <div className="hidden sm:flex sm:items-center sm:space-x-4">
-            <ThemeToggle />
-            <AuthButton />
-          </div>
-          <div className="flex items-center sm:hidden">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-foreground">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="bg-background">
-                <nav className="flex flex-col h-full">
-                  {session && (
-                    <div className="mb-6 pb-4 border-b border-border">
-                      <span className="text-sm font-medium">Howdy! {session.user?.name}</span>
+
+          <div className="flex-1 flex items-center justify-end">
+            <div className="hidden sm:flex sm:items-center sm:space-x-4">
+              <ThemeToggle />
+              <AuthButton />
+            </div>
+
+            <div className="flex items-center sm:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-foreground">
+                    <Menu className="h-6 w-6" />
+                    <span className="sr-only">Open menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="bg-background">
+                  <nav className="flex flex-col h-full">
+                    {session && (
+                      <div className="mb-6 pb-4 border-b border-border">
+                        <span className="text-sm font-medium">Howdy! {session.user?.name}</span>
+                      </div>
+                    )}
+                    <div className="flex flex-col space-y-4 flex-grow">
+                      {navItems.map((item) => (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          className="text-sm font-medium dark:text-muted-foreground hover:text-foreground"
+                        >
+                          {item.name}
+                        </a>
+                      ))}
+                      <AuthButton isMobile={true} />
                     </div>
-                  )}
-                  <div className="flex flex-col space-y-4 flex-grow">
-                    {navItems.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className="text-sm font-medium text-muted-foreground hover:text-foreground"
-                      >
-                        {item.name}
-                      </a>
-                    ))}
-                    <AuthButton isMobile={true} />
-                  </div>
-                  <div className="pt-4 mt-auto border-t border-border">
-                    <ThemeToggle />
-                  </div>
-                </nav>
-              </SheetContent>
-            </Sheet>
+                    <div className="pt-4 mt-auto border-t border-border">
+                      <ThemeToggle />
+                    </div>
+                  </nav>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </div>

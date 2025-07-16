@@ -122,7 +122,7 @@ const FeatureCard = memo(({ feature }: { feature: typeof FEATURES[number] }) => 
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
     >
         <Card className="group border-none bg-transparent">
-            <CardContent className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 p-0">
+            <CardContent className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 px-0">
                 <motion.div
                     whileHover={{ scale: 1.05 }}
                     className={cn("w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center flex-shrink-0", feature.bgColor)}
@@ -131,10 +131,10 @@ const FeatureCard = memo(({ feature }: { feature: typeof FEATURES[number] }) => 
                     {feature.icon}
                 </motion.div>
                 <div className="flex-1">
-                    <h3 className="text-lg sm:text-xl text-gray-900 dark:text-gray-100 mb-2 sm:mb-3 font-semibold">
+                    <h3 className="text-lg sm:text-xl mb-2 sm:mb-3 font-semibold">
                         {feature.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">
+                    <p className="dark:text-muted-foreground text-sm sm:text-base leading-relaxed">
                         {feature.description}
                     </p>
                 </div>
@@ -235,7 +235,7 @@ const SectionNavigation = memo(({ activeSection, onSectionChange }: {
                 <Button
                     variant="ghost"
                     className={cn(
-                        "w-full justify-start text-sm h-9 px-3 text-muted-foreground hover:bg-gray-900 hover:text-white transition-colors",
+                        "w-full justify-start text-sm h-9 px-3 text-background dark:text-muted-foreground hover:bg-gray-900 hover:text-white transition-colors",
                         activeSection === section.id && "bg-gray-900 text-white",
                     )}
                     onClick={() => onSectionChange(section.id)}
@@ -433,16 +433,14 @@ export const ResumeBuilderHighlight = memo(() => {
                     transition={{ duration: 0.5 }}
                     className="text-center mb-6 sm:mb-8 lg:mb-12"
                 >
-                    <Badge variant="outline" className="inline-flex items-center gap-2 rounded-full border-green-200 bg-green-50 text-green-600 dark:text-green-400 dark:bg-green-950/30 dark:border-green-900 px-2 sm:px-3 py-1 mb-3 sm:mb-4">
-                        <Zap size={14} />
-                        <span className="text-xs sm:text-sm font-medium">
-                            AI-Powered Resume Builder
-                        </span>
+                    <Badge className="mb-8 py-1.5 px-4 bg-emerald-100/80 hover:bg-emerald-100/80 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm">
+                        <Zap size={14} className='mr-2' />
+                        AI-Powered Resume Builder
                     </Badge>
                     <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white">
                         Build Your Professional Resume
                     </h2>
-                    <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-2">
+                    <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-2">
                         Create a standout resume with our intuitive builder. Get real-time preview, AI-powered suggestions, and export to PDF in minutes.
                     </p>
                 </motion.div>
@@ -461,7 +459,7 @@ export const ResumeBuilderHighlight = memo(() => {
                                         <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 bg-yellow-500 rounded-full"></div>
                                         <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 bg-green-500 rounded-full"></div>
                                     </div>
-                                    <div className="flex-1 text-center text-xs sm:text-sm text-muted-foreground bg-gray-900 rounded-full px-2 sm:px-4 py-1 mx-2 sm:mx-4 truncate">
+                                    <div className="flex-1 text-center text-xs sm:text-sm text-background dark:text-muted-foreground bg-gray-900 rounded-full px-2 sm:px-4 py-1 mx-2 sm:mx-4 truncate">
                                         toptechschool.com/resume/editor
                                     </div>
                                 </div>
@@ -477,12 +475,18 @@ export const ResumeBuilderHighlight = memo(() => {
                                     )}>
                                         <div className="p-4">
                                             <Tabs defaultValue="sections" className="w-full mb-4">
-                                                <TabsList className="flex bg-gray-900">
-                                                    <TabsTrigger value="sections" className="flex items-center gap-2">
+                                                <TabsList className="flex bg-gray-900/90">
+                                                    <TabsTrigger
+                                                        value="sections"
+                                                        className="flex items-center gap-2 text-muted-foreground data-[state=active]:text-white data-[state=active]:bg-gray-800"
+                                                    >
                                                         <FileText size={16} />
                                                         <span>Sections</span>
                                                     </TabsTrigger>
-                                                    <TabsTrigger value="styling" className="flex items-center gap-2">
+                                                    <TabsTrigger
+                                                        value="styling"
+                                                        className="flex items-center gap-2 text-muted-foreground data-[state=active]:text-white data-[state=active]:bg-gray-800"
+                                                    >
                                                         <Type size={16} />
                                                         <span>Styling</span>
                                                     </TabsTrigger>
@@ -492,10 +496,10 @@ export const ResumeBuilderHighlight = memo(() => {
                                             <SectionNavigation activeSection={activeSection} onSectionChange={handleSectionChange} />
 
                                             <div className="mt-6">
-                                                <div className="text-xs text-muted-foreground px-2 mb-2">Add Sections</div>
+                                                <div className="text-xs text-background dark:text-muted-foreground px-2 mb-2">Add Sections</div>
                                                 <Button
                                                     variant="ghost"
-                                                    className="w-full justify-start text-sm h-9 px-3 text-muted-foreground hover:bg-gray-900 hover:text-white"
+                                                    className="w-full justify-start text-sm h-9 px-3 text-background dark:text-muted-foreground hover:bg-gray-900 hover:text-white"
                                                 >
                                                     <Plus size={16} />
                                                     <span className="ml-2">Projects</span>
@@ -509,7 +513,7 @@ export const ResumeBuilderHighlight = memo(() => {
                                         activeTab === 'preview' && "hidden lg:block"
                                     )}>
                                         <div className="flex items-center justify-between mb-4">
-                                            <h2 className="text-lg text-white font-semibold">Personal Information</h2>
+                                            <h2 className="text-lg text-background dark:text-foreground font-semibold">Personal Information</h2>
                                             <Button size="sm" className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700">
                                                 Export
                                             </Button>

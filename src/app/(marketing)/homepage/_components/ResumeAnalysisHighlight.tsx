@@ -200,16 +200,16 @@ const ImprovementArea = memo(({ area, index }: { area: ImprovementArea; index: n
 
         <div className="bg-gray-900/50 rounded-lg overflow-hidden flex-1 ml-8">
             <div className="p-4">
-                <h3 className="text-lg font-medium text-white mb-4">{area.title}</h3>
+                <h3 className="text-lg font-medium text-background dark:text-foreground mb-4">{area.title}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <div className="text-sm font-semibold text-muted-foreground mb-2">Current</div>
-                        <div className="text-sm text-muted-foreground bg-gray-800/50 p-3 rounded">
+                        <div className="text-sm font-semibold text-background dark:text-muted-foreground mb-2">Current</div>
+                        <div className="text-sm text-background dark:text-muted-foreground bg-gray-800/50 p-3 rounded">
                             {area.current}
                         </div>
                     </div>
                     <div>
-                        <div className="text-sm font-semibold text-muted-foreground mb-2">Improved</div>
+                        <div className="text-sm font-semibold text-background dark:text-muted-foreground mb-2">Improved</div>
                         <div className="text-sm text-green-400 bg-green-900/20 p-3 rounded border border-green-900/50">
                             {area.improved}
                         </div>
@@ -218,11 +218,11 @@ const ImprovementArea = memo(({ area, index }: { area: ImprovementArea; index: n
             </div>
             <div className="px-4 pb-4">
                 <Collapsible open={true}>
-                    <CollapsibleTrigger className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-white transition-colors">
+                    <CollapsibleTrigger className="flex items-center gap-2 text-sm font-semibold text-background dark:text-muted-foreground  transition-colors">
                         <ChevronDown size={16} />
                         Why This Matters
                     </CollapsibleTrigger>
-                    <CollapsibleContent className="text-sm text-muted-foreground mt-2 pl-6">
+                    <CollapsibleContent className="text-sm text-background dark:text-muted-foreground mt-2 pl-6">
                         {area.explanation}
                     </CollapsibleContent>
                 </Collapsible>
@@ -237,11 +237,9 @@ const HeaderSection = memo(() => (
         {...fadeInUpAnimation}
         className="text-center mb-6 sm:mb-8 lg:mb-12"
     >
-        <Badge variant="outline" className="inline-flex items-center gap-2 rounded-full border-purple-200 bg-purple-50 text-purple-600 dark:text-purple-400 dark:bg-purple-950/30 dark:border-purple-900 px-2 sm:px-3 py-1 mb-3 sm:mb-4">
-            <Zap size={14} />
-            <span className="text-xs sm:text-sm font-medium">
-                AI-Powered Resume Analysis
-            </span>
+        <Badge className="mb-8 py-1.5 px-4 bg-emerald-100/80 hover:bg-emerald-100/80 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm">
+            <Zap size={14} className='mr-2' />
+            AI-Powered Expert Resume Analysis
         </Badge>
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white">
             Get Expert Resume Feedback
@@ -278,7 +276,7 @@ AnalysisHeaderCard.displayName = 'AnalysisHeaderCard'
 
 const MainContent = memo(() => (
     <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-white mb-6">Areas for Improvement</h2>
+        <h2 className="text-xl font-semibold text-background dark:text-foreground mb-6">Areas for Improvement</h2>
         <div className="space-y-8">
             {IMPROVEMENT_AREAS.map((area, index) => (
                 <ImprovementArea key={index} area={area} index={index} />
@@ -379,7 +377,7 @@ export const ResumeAnalysisHighlight = memo(() => {
                                     <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 bg-yellow-500 rounded-full"></div>
                                     <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 bg-green-500 rounded-full"></div>
                                 </div>
-                                <div className="flex-1 text-center text-xs sm:text-sm text-muted-foreground bg-gray-900 rounded-full px-2 sm:px-4 py-1 mx-2 sm:mx-4 truncate">
+                                <div className="flex-1 text-center text-xs sm:text-sm text-background dark:text-muted-foreground bg-gray-900 rounded-full px-2 sm:px-4 py-1 mx-2 sm:mx-4 truncate">
                                     toptechschool.com/resume
                                 </div>
                             </div>
