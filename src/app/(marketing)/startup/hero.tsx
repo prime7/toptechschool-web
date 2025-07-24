@@ -71,7 +71,7 @@ export function StartupHero() {
           >
             Get instant access to our premium Notion template designed to help entrepreneurs
             build, measure, learn, and iterate faster. Join hundreds of successful founders
-            who've validated their ideas with our template.
+            who&apos;ve validated their ideas with our template.
           </motion.p>
 
           <motion.div
