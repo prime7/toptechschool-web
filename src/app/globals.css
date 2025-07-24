@@ -125,8 +125,6 @@ blockquote {
 /* Card Spotlight */
 .card-spotlight {
   position: relative;
-  border-radius: 1.5rem;
-  padding: 0.5rem;
   overflow: hidden;
   --mouse-x: 50%;
   --mouse-y: 50%;
