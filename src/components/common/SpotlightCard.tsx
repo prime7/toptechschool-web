@@ -29,7 +29,7 @@ const SpotlightCard = React.memo(function SpotlightCard({
             ref={divRef}
             onMouseMove={handleMouseMove}
             className={cn(
-                "relative bg-transparent backdrop-blur-sm border-none shadow-lg rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full card-spotlight",
+                "relative bg-transparent backdrop-blur-sm shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full card-spotlight",
                 className
             )}
         >
