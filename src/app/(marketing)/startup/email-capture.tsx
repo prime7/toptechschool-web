@@ -7,14 +7,15 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle2, Shield, ArrowRight } from "lucide-react";
+import { CheckCircle2, Shield, ArrowRight, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { Section } from "@/components/common/Section";
+import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
 
 export function EmailCapture() {
   const [email, setEmail] = useState("");
@@ -41,20 +42,20 @@ export function EmailCapture() {
       })
       .catch((error) => {
         console.error("Template request error:", error);
-        
+
         // Format error message for better debugging
         const errorData = error.response?.data;
         const errorMessage = errorData?.error?.message || errorData?.error || "Unknown error";
         const errorCode = errorData?.error?.code ? `[${errorData.error.code}]` : "";
         const errorDetails = errorData?.error?.details ? JSON.stringify(errorData.error.details) : "";
-        
+
         const formattedError = [
           errorMessage,
           errorCode,
           errorDetails,
           `Environment: ${process.env.NODE_ENV || 'unknown'}`
         ].filter(Boolean).join(" ");
-        
+
         toast({
           title: errorData?.message || "Request failed",
           description: formattedError,
@@ -68,33 +69,48 @@ export function EmailCapture() {
 
   return (
     <Section id="email-capture">
-      <div className="container px-4 md:px-6">
-        <div className="mx-auto max-w-3xl">
-          <Card className="overflow-hidden border rounded-xl shadow-2xl">
-            <CardHeader className="text-center space-y-2 pb-6 pt-8">
-              <CardTitle className="text-2xl sm:text-3xl font-bold">
-                Get Your Free Template
+      <Card className="relative flex items-center justify-center overflow-hidden bg-transparent shadow-none rounded-2xl border-none">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -bottom-0 -left-0 w-64 h-64 bg-emerald-200 opacity-20 rounded-full mix-blend-multiply filter blur-xl animate-blob" />
+        </div>
+
+        <div className="relative z-10 max-w-xl mx-auto p-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <CardHeader className="space-y-4 p-0">
+              <Badge className="mb-4 w-fit mx-auto py-1.5 px-4 bg-emerald-100/80 dark:bg-emerald-800/20 text-emerald-600 text-sm">
+                <Zap size={16} className="mr-2" />
+                FREE TEMPLATE
+              </Badge>
+
+              <CardTitle className="text-4xl sm:text-5xl font-bold mb-4 text-foreground leading-tight">
+                Get Your Free Lean Startup Template
               </CardTitle>
-              <CardDescription className="text-sm sm:text-base text-muted-foreground mx-auto">
-                Access our Notion template to build and validate your startup
-                faster.
+              <CardDescription className="text-lg text-gray-600 dark:text-muted-foreground max-w-2xl mx-auto">
+                Join 500+ entrepreneurs who are building successful startups with our template
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="px-8 pb-8">
+            <CardContent className="p-0 mt-8">
               {!isSubmitted ? (
-                <form
+                <motion.form
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                   onSubmit={handleSubmit}
                   className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 max-w-xl mx-auto"
                 >
                   <div className="flex-1 relative">
                     <Input
                       type="email"
-                      placeholder="Your work email"
+                      placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20 pr-4 pl-4"
+                      className="h-12 text-base transition-all duration-200 focus:ring-0 pr-4 pl-4 rounded-full"
                       aria-label="Email Address"
                     />
                   </div>
@@ -102,8 +118,7 @@ export function EmailCapture() {
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="h-12 px-6 text-base font-medium transition-all duration-200 shadow-md hover:shadow-lg"
-                    aria-label="Submit Email"
+                    className="h-12 px-6 text-base font-medium bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white transition-all duration-200 shadow-xl hover:shadow-2xl rounded-full"
                   >
                     {isLoading ? (
                       <span className="flex items-center gap-2">
@@ -117,38 +132,44 @@ export function EmailCapture() {
                       </span>
                     )}
                   </Button>
-                </form>
+                </motion.form>
               ) : (
-                <div className="flex flex-col items-center space-y-6 py-8 text-center animate-fadeIn max-w-md mx-auto">
-                  <div className="rounded-full bg-green-100 p-3 ring-4 ring-green-50">
-                    <CheckCircle2 className="h-10 w-10 text-green-600" />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex flex-col items-center space-y-6 py-8 text-center animate-fadeIn max-w-md mx-auto"
+                >
+                  <div className="rounded-full bg-emerald-100 p-3 ring-4 ring-emerald-50">
+                    <CheckCircle2 className="h-10 w-10 text-emerald-600" />
                   </div>
                   <div className="space-y-3">
                     <h3 className="text-2xl font-bold">
                       Template Access Granted
                     </h3>
-                    <p className="text-muted-foreground text-base">
+                    <p className="text-gray-600 dark:text-muted-foreground text-base">
                       We&apos;ve sent access instructions to{" "}
-                      <span className="font-semibold text-primary">
+                      <span className="font-semibold text-emerald-600">
                         {email}
                       </span>
                       . Please check your inbox and spam folder.
                     </p>
                   </div>
-                </div>
+                </motion.div>
               )}
-            </CardContent>
 
-            <CardFooter className="flex justify-center px-8">
-              <p className="text-center text-sm text-muted-foreground flex items-center gap-2">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-center text-sm text-gray-600 dark:text-muted-foreground flex items-center justify-center gap-2 mt-6"
+              >
                 <Shield className="h-4 w-4" />
-                Your data is secure. We respect your privacy and will never
-                share your information.
-              </p>
-            </CardFooter>
-          </Card>
+                Your data is secure. We respect your privacy.
+              </motion.p>
+            </CardContent>
+          </motion.div>
         </div>
-      </div>
+      </Card>
     </Section>
   );
 }

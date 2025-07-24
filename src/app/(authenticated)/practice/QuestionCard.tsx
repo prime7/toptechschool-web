@@ -15,13 +15,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
   const attempted = isAttempted(question.id);
 
   return (
-    <Card
-      className={`group hover:shadow-md transition-all duration-200 hover:-translate-y-1 ${
-        attempted
-          ? "ring-2 ring-emerald-200 bg-emerald-50/50 dark:ring-emerald-800 dark:bg-emerald-950/50"
-          : ""
-      }`}
-    >
+    <Card className={`shadow-lg hover:shadow-xl rounded-lg border-gray-200 dark:border-gray-700 transition-all duration-300 ${attempted ? "ring-2 ring-emerald-200 bg-emerald-50/50" : ""
+      }`}>
       <CardHeader>
         <h3 className="text-lg font-semibold group-hover:text-primary transition-colors leading-tight">
           {question.title}
