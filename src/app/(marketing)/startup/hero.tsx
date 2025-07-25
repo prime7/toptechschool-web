@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { UserAvatar } from "@/components/avatars/UserAvatar";
-import { Section } from "@/components/common/Section";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
