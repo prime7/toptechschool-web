@@ -106,9 +106,9 @@ const Navbar = ({ session }: { session: Session | null }) => {
   };
 
   return (
-    <nav className="bg-background p-2">
-      <div className="container mx-auto shadow-inner rounded-full px-3">
-        <div className="flex items-center justify-between py-2 md:py-3">
+    <nav className="sticky top-0 z-50 w-full border-b bg-card">
+      <div className="container mx-auto">
+        <div className="flex h-16 items-center justify-between">
           <div className="flex-1">
             <Link
               href="/"
