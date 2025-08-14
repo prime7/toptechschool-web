@@ -137,7 +137,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
                           "group inline-flex w-max items-center justify-center px-4 py-2",
                           "text-sm font-medium uppercase tracking-wide",
                           "relative transition-all duration-300",
-                          "dark:text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400",
+                          "text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400",
                           "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full",
                           "after:origin-left after:scale-x-0",
                           "after:bg-gradient-to-r after:from-emerald-500 after:to-teal-500",
@@ -181,7 +181,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
                         <a
                           key={item.name}
                           href={item.href}
-                          className="text-sm font-medium dark:text-muted-foreground hover:text-foreground"
+                          className="text-sm font-medium text-muted-foreground hover:text-foreground"
                         >
                           {item.name}
                         </a>
