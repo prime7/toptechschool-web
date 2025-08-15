@@ -41,6 +41,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
     { name: "Resume", href: "/resume" },
     { name: "Resume Editor", href: "/resume/editor" },
     { name: "Job", href: "/job" },
+    { name: "Recommendations", href: "/recommendations" },
   ];
 
   const AuthButton = ({ isMobile = false }) => {
