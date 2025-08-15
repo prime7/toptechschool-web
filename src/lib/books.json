@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+    "category": "Software Architecture",
+    "amazonLink": "https://www.amazon.com/s?k=Clean+Code"
+  },
+  {
+    "title": "The Pragmatic Programmer: Your Journey to Mastery",
+    "category": "Software Architecture",
+    "amazonLink": "https://www.amazon.com/s?k=The+Pragmatic+Programmer"
+  },
+  {
+    "title": "Eloquent JavaScript, 3rd Edition: A Modern Introduction to Programming",
+    "category": "JavaScript",
+    "amazonLink": "https://www.amazon.com/s?k=Eloquent+JavaScript"
+  },
+  {
+    "title": "You Don't Know JS Yet: Get Started",
+    "category": "JavaScript",
+    "amazonLink": "https://www.amazon.com/s?k=You+Don%27t+Know+JS+Yet"
+  },
+  {
+    "title": "Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems",
+    "category": "Software Architecture",
+    "amazonLink": "https://www.amazon.com/s?k=Designing+Data-Intensive+Applications"
+  },
+  {
+    "title": "Cracking the Coding Interview: 189 Programming Questions and Solutions",
+    "category": "Career",
+    "amazonLink": "https://www.amazon.com/s?k=Cracking+the+Coding+Interview"
+  },
+  {
+    "title": "The Phoenix Project: A Novel about IT, DevOps, and Helping Your Business Win",
+    "category": "DevOps",
+    "amazonLink": "https://www.amazon.com/s?k=The+Phoenix+Project"
+  }
+]

@@ -22,6 +22,7 @@ model User {
   updatedAt       DateTime         @updatedAt
   summary         String?
   highlights      String[]
+  interests       String[]
   github          String?
   website         String?
   linkedin        String?
